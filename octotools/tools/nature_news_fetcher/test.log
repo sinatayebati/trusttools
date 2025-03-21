@@ -1,0 +1,179 @@
+{'tool_name': 'Nature_News_Fetcher_Tool', 'tool_description': 'A tool that fetches the latest news articles from Nature.', 'tool_version': '1.0.0', 'input_types': {'num_articles': 'int - The number of articles to fetch (default: 100).', 'max_pages': 'int - The maximum number of pages to fetch (default: 5).'}, 'output_type': 'list - A list of dictionaries containing information about the latest Nature news articles.', 'demo_commands': [{'command': 'execution = tool.execute()', 'description': 'Fetch the latest 100 news articles from Nature.'}, {'command': 'execution = tool.execute(num_articles=50, max_pages=3)', 'description': 'Fetch the latest 50 news articles from Nature, searching up to 3 pages.'}], 'require_llm_engine': False}
+[
+    {
+        "title": "Babies do make memories \u2014 so why can\u2019t we recall our earliest years?",
+        "url": "https://www.nature.com/articles/d41586-025-00855-0",
+        "description": "MRI scans show that the brains of infants and toddlers can encode memories, even if we don\u2019t remember them as adults.",
+        "authors": [
+            "Chris Simms"
+        ],
+        "date": "2025-03-20",
+        "image_url": "https://media.springernature.com/w290h158/magazine-assets/d41586-025-00855-0/d41586-025-00855-0_50768346.jpg"
+    },
+    {
+        "title": "Trump team \u2018survey\u2019 sent to overseas researchers prompts foreign interference fears",
+        "url": "https://www.nature.com/articles/d41586-025-00850-5",
+        "description": "The document asks US-funded scientists in Australia, the UK and the EU to declare links to China or projects on diversity, equity and inclusion.",
+        "authors": [
+            "Smriti Mallapaty"
+        ],
+        "date": "2025-03-20",
+        "image_url": "https://media.springernature.com/w290h158/magazine-assets/d41586-025-00850-5/d41586-025-00850-5_50768082.jpg"
+    },
+    {
+        "title": "World\u2019s tiniest LED display has pixels smaller than a virus",
+        "url": "https://www.nature.com/articles/d41586-025-00813-w",
+        "description": "See images of another tiny display with pixels the size of a human hair.",
+        "authors": [
+            "Davide Castelvecchi"
+        ],
+        "date": "2025-03-19",
+        "image_url": "https://media.springernature.com/w290h158/magazine-assets/d41586-025-00813-w/d41586-025-00813-w_50759774.jpg"
+    },
+    {
+        "title": "Mini-satellite paves the way for quantum messaging anywhere on Earth",
+        "url": "https://www.nature.com/articles/d41586-025-00581-7",
+        "description": "A Chinese team has transmitted quantum-encrypted images a record 12,900 kilometres.",
+        "authors": [
+            "Elizabeth Gibney"
+        ],
+        "date": "2025-03-19",
+        "image_url": "https://media.springernature.com/w290h158/magazine-assets/d41586-025-00581-7/d41586-025-00581-7_50764596.jpg"
+    },
+    {
+        "title": "Immune cells \u2018bandage\u2019 wounds with bacteria-trapping goo",
+        "url": "https://www.nature.com/articles/d41586-025-00796-8",
+        "description": "Cells called neutrophils form gooey rings around sites where skin is punctured, study in mice shows.",
+        "authors": [
+            "Miryam Naddaf"
+        ],
+        "date": "2025-03-19",
+        "image_url": "https://media.springernature.com/w290h158/magazine-assets/d41586-025-00796-8/d41586-025-00796-8_50760280.jpg"
+    },
+    {
+        "title": "AI could soon tackle projects that take humans weeks",
+        "url": "https://www.nature.com/articles/d41586-025-00831-8",
+        "description": "New metric assesses how AI is getting better at completing long tasks \u2014 but some researchers are wary of long-term predictions.",
+        "authors": [
+            "Garrison Lovely"
+        ],
+        "date": "2025-03-19",
+        "image_url": "https://media.springernature.com/w290h158/magazine-assets/d41586-025-00831-8/d41586-025-00831-8_50764160.jpg"
+    },
+    {
+        "title": "Is dark energy getting weaker? Fresh data bolster shock finding",
+        "url": "https://www.nature.com/articles/d41586-025-00837-2",
+        "description": "Physicists had long assumed that the elusive force has constant strength. But the latest results from a project to map the Universe\u2019s expansion challenge this idea.",
+        "authors": [
+            "Davide Castelvecchi"
+        ],
+        "date": "2025-03-19",
+        "image_url": "https://media.springernature.com/w290h158/magazine-assets/d41586-025-00837-2/d41586-025-00837-2_50764618.jpg"
+    },
+    {
+        "title": "Can Earth\u2019s rotation generate power? Physicists divided over controversial claim",
+        "url": "https://www.nature.com/articles/d41586-025-00847-0",
+        "description": "Experiments suggest that an unusual magnetic material can help harness energy from the planet\u2019s rotation. But not everyone is convinced.",
+        "authors": [
+            "Elizabeth Gibney"
+        ],
+        "date": "2025-03-19",
+        "image_url": "https://media.springernature.com/w290h158/magazine-assets/d41586-025-00847-0/d41586-025-00847-0_50764760.jpg"
+    },
+    {
+        "title": "Light pollution threatens fleet of world-class telescopes in Atacama Desert",
+        "url": "https://www.nature.com/articles/d41586-025-00397-5",
+        "description": "The effects of a proposed green-energy facility in Chile could be devastating for some of the most powerful instruments available to astronomers.",
+        "authors": [
+            "Humberto Basilio"
+        ],
+        "date": "2025-03-19",
+        "image_url": "https://media.springernature.com/w290h158/magazine-assets/d41586-025-00397-5/d41586-025-00397-5_50610028.jpg"
+    },
+    {
+        "title": "Microsoft quantum computing claim still lacks evidence: physicists are dubious",
+        "url": "https://www.nature.com/articles/d41586-025-00829-2",
+        "description": "Some attendees of a packed presentation were curious about the prospect of the first \u2018topological\u2019 qubits, but left with questions unanswered.",
+        "authors": [
+            "Dan Garisto"
+        ],
+        "date": "2025-03-18",
+        "image_url": "https://media.springernature.com/w290h158/magazine-assets/d41586-025-00829-2/d41586-025-00829-2_50760046.jpg"
+    }
+]
+
+Execution Result:
+Number of articles fetched: 10
+
+Sample articles:
+
+1. Title: Babies do make memories — so why can’t we recall our earliest years?
+   URL: https://www.nature.com/articles/d41586-025-00855-0
+   Description: MRI scans show that the brains of infants and toddlers can encode memories, even if we don’t remembe...
+   Authors: Chris Simms
+   Date: 2025-03-20
+   Image URL: https://media.springernature.com/w290h158/magazine-assets/d41586-025-00855-0/d41586-025-00855-0_50768346.jpg
+
+2. Title: Trump team ‘survey’ sent to overseas researchers prompts foreign interference fears
+   URL: https://www.nature.com/articles/d41586-025-00850-5
+   Description: The document asks US-funded scientists in Australia, the UK and the EU to declare links to China or ...
+   Authors: Smriti Mallapaty
+   Date: 2025-03-20
+   Image URL: https://media.springernature.com/w290h158/magazine-assets/d41586-025-00850-5/d41586-025-00850-5_50768082.jpg
+
+3. Title: World’s tiniest LED display has pixels smaller than a virus
+   URL: https://www.nature.com/articles/d41586-025-00813-w
+   Description: See images of another tiny display with pixels the size of a human hair....
+   Authors: Davide Castelvecchi
+   Date: 2025-03-19
+   Image URL: https://media.springernature.com/w290h158/magazine-assets/d41586-025-00813-w/d41586-025-00813-w_50759774.jpg
+
+4. Title: Mini-satellite paves the way for quantum messaging anywhere on Earth
+   URL: https://www.nature.com/articles/d41586-025-00581-7
+   Description: A Chinese team has transmitted quantum-encrypted images a record 12,900 kilometres....
+   Authors: Elizabeth Gibney
+   Date: 2025-03-19
+   Image URL: https://media.springernature.com/w290h158/magazine-assets/d41586-025-00581-7/d41586-025-00581-7_50764596.jpg
+
+5. Title: Immune cells ‘bandage’ wounds with bacteria-trapping goo
+   URL: https://www.nature.com/articles/d41586-025-00796-8
+   Description: Cells called neutrophils form gooey rings around sites where skin is punctured, study in mice shows....
+   Authors: Miryam Naddaf
+   Date: 2025-03-19
+   Image URL: https://media.springernature.com/w290h158/magazine-assets/d41586-025-00796-8/d41586-025-00796-8_50760280.jpg
+
+6. Title: AI could soon tackle projects that take humans weeks
+   URL: https://www.nature.com/articles/d41586-025-00831-8
+   Description: New metric assesses how AI is getting better at completing long tasks — but some researchers are war...
+   Authors: Garrison Lovely
+   Date: 2025-03-19
+   Image URL: https://media.springernature.com/w290h158/magazine-assets/d41586-025-00831-8/d41586-025-00831-8_50764160.jpg
+
+7. Title: Is dark energy getting weaker? Fresh data bolster shock finding
+   URL: https://www.nature.com/articles/d41586-025-00837-2
+   Description: Physicists had long assumed that the elusive force has constant strength. But the latest results fro...
+   Authors: Davide Castelvecchi
+   Date: 2025-03-19
+   Image URL: https://media.springernature.com/w290h158/magazine-assets/d41586-025-00837-2/d41586-025-00837-2_50764618.jpg
+
+8. Title: Can Earth’s rotation generate power? Physicists divided over controversial claim
+   URL: https://www.nature.com/articles/d41586-025-00847-0
+   Description: Experiments suggest that an unusual magnetic material can help harness energy from the planet’s rota...
+   Authors: Elizabeth Gibney
+   Date: 2025-03-19
+   Image URL: https://media.springernature.com/w290h158/magazine-assets/d41586-025-00847-0/d41586-025-00847-0_50764760.jpg
+
+9. Title: Light pollution threatens fleet of world-class telescopes in Atacama Desert
+   URL: https://www.nature.com/articles/d41586-025-00397-5
+   Description: The effects of a proposed green-energy facility in Chile could be devastating for some of the most p...
+   Authors: Humberto Basilio
+   Date: 2025-03-19
+   Image URL: https://media.springernature.com/w290h158/magazine-assets/d41586-025-00397-5/d41586-025-00397-5_50610028.jpg
+
+10. Title: Microsoft quantum computing claim still lacks evidence: physicists are dubious
+   URL: https://www.nature.com/articles/d41586-025-00829-2
+   Description: Some attendees of a packed presentation were curious about the prospect of the first ‘topological’ q...
+   Authors: Dan Garisto
+   Date: 2025-03-18
+   Image URL: https://media.springernature.com/w290h158/magazine-assets/d41586-025-00829-2/d41586-025-00829-2_50760046.jpg
+Done!
