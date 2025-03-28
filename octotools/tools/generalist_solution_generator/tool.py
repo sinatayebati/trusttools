@@ -1,11 +1,12 @@
 import os
 from octotools.tools.base import BaseTool
 from octotools.engine.openai import ChatOpenAI
+import argparse
 
 class Generalist_Solution_Generator_Tool(BaseTool):
     require_llm_engine = True
 
-    def __init__(self, model_string="gpt-4o-mini"):
+    def __init__(self, model_string=None, use_local_model=False, capture_logits=False, logits_dir=None):
         super().__init__(
             tool_name="Generalist_Solution_Generator_Tool",
             tool_description="A generalized tool that takes query from the user as prompt, and answers the question step by step to the best of its ability. It can also accept an image.",
@@ -46,13 +47,23 @@ class Generalist_Solution_Generator_Tool(BaseTool):
             }
 
         )
-        self.model_string = model_string  
+        self.model_string = model_string
+        self.use_local_model = use_local_model
+        self.capture_logits = capture_logits
+        self.logits_dir = logits_dir
 
     def execute(self, prompt, image=None):
-
-        print(f"\nInitializing Generalist Tool with model: {self.model_string}")
+        model_type = "local" if self.use_local_model else "API"
+        print(f"\nInitializing Generalist Tool with {model_type} model: {self.model_string or 'default'}")
+        
         multimodal = True if image else False
-        llm_engine = ChatOpenAI(model_string=self.model_string, is_multimodal=multimodal)
+        llm_engine = ChatOpenAI(
+            model_string=self.model_string, 
+            is_multimodal=multimodal,
+            use_local_model=self.use_local_model,
+            capture_logits=self.capture_logits,
+            logits_dir=self.logits_dir
+        )
 
         try:
             input_data = [prompt]
@@ -78,39 +89,27 @@ class Generalist_Solution_Generator_Tool(BaseTool):
         return metadata
 
 if __name__ == "__main__":
-    # Test command:
-    """
-    Run the following commands in the terminal to test the script:
+    parser = argparse.ArgumentParser(description="Run the Generalist Solution Generator Tool")
+    parser.add_argument("--model", default=None, help="Model to use (defaults based on local vs API setting)")
+    parser.add_argument("--prompt", default="Explain the concept of machine learning", help="Prompt to send to the model")
+    parser.add_argument("--image", default=None, help="Path to image (optional)")
+    parser.add_argument("--use-local-model", action="store_true", help="Use locally hosted model")
+    parser.add_argument("--capture-logits", action="store_true", help="Capture and store logits (only works with local model)")
+    parser.add_argument("--logits-dir", default="./captured_logits", help="Directory to store captured logits")
     
-    cd octotools/tools/generalist_solution_generator
-    python tool.py
-    """
-
-    # Get the directory of the current script
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    print(f"Script directory: {script_dir}")
-
-    # Example usage of the Generalist_Tool
-    tool = Generalist_Solution_Generator_Tool()
-    # tool = Generalist_Solution_Generator_Tool(model_string="gpt-4o-mini")
-    # tool = Generalist_Solution_Generator_Tool(model_string="gpt-4o")
-
-    # Get tool metadata
-    metadata = tool.get_metadata()
-    print(metadata)
-
-    # Construct the full path to the image using the script's directory
-    relative_image_path = "examples/baseball.png"
-    image_path = os.path.join(script_dir, relative_image_path)
-    prompt = "Describe the image in detail."
-
-    # Execute the tool with default prompt
+    args = parser.parse_args()
+    
+    # Create and run the tool
+    tool = Generalist_Solution_Generator_Tool(
+        model_string=args.model,
+        use_local_model=args.use_local_model,
+        capture_logits=args.capture_logits,
+        logits_dir=args.logits_dir
+    )
+    
     try:
-        execution = tool.execute(prompt=prompt, image=image_path)
-        # execution = tool.execute(prompt=prompt)
-        print("Generated Response:")
-        print(execution)
-    except Exception as e: 
-        print(f"Execution failed: {e}")
-
-    print("Done!")
+        result = tool.execute(prompt=args.prompt, image=args.image)
+        print("\nResult:")
+        print(result)
+    except Exception as e:
+        print(f"Error: {e}")

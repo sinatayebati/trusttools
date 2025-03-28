@@ -1,5 +1,18 @@
 ## Installation
 
+Create a conda environment for hosting local LLMs using VLLM server:
+
+```sh
+conda create -n local-llm python=3.10
+conda activate local-llm
+
+# Install PyTorch with CUDA support (adjust based on your GPU)
+conda install pytorch torchvision torchaudio pytorch-cuda=12.1 -c pytorch -c nvidia
+
+# Install VLLM and other dependencies
+pip install -r octotools/server/requirements_vllm.txt
+```
+
 Create a conda environment from the `conda.yaml` file:
 
 ```sh
@@ -27,6 +40,9 @@ GOOGLE_CX=<your-cx-here>
 
 # Used for the Advanced Object Detector tool (Optional)
 DINO_KEY=<your-dino-key-here>
+
+# Local LLM settings
+LOCAL_LLM_ENDPOINT=http://localhost:8000
 ```
 
 Obtain a Google API Key and Google CX according to the [Google Custom Search API](https://developers.google.com/custom-search/v1/overview) documation.
@@ -38,9 +54,18 @@ sudo apt-get update
 sudo apt-get install parallel
 ```
 
+## Start the VLLM server for local LLM hosting
+
+```sh
+# Start the LLM server
+python -m octotools.server.server_vllm --model-name "meta-llama/Llama-3.2-3B-Instruct" --port 8000 --enable-logits
+# Or use following if already downloaded the model
+python -m octotools.server.server_vllm --model-name /path/to/downloaded/model --port 8000 --enable-logits
+```
+
 ## Test tools in the toolbox
 
-Using `Python_Code_Generator_Tool` as an example, test the availability of the tool by running the following:
+Testing tools using OpenAI API: Using `Python_Code_Generator_Tool` as an example, test the availability of the tool by running the following:
 
 ```sh
 cd octotools/tools/python_code_generator
@@ -51,6 +76,24 @@ Expected output:
 
 ```
 Execution Result: {'printed_output': 'The sum of all the numbers in the list is: 15', 'variables': {'numbers': [1, 2, 3, 4, 5], 'total_sum': 15}}
+```
+
+Testing tools using locally hosted LLM: Using `Generalist_Solution_Generator_Tool` as an example, test the availability of the tool by running the following:
+
+```sh
+cd octotools/tools/generalist_solution_generator
+
+# API model
+python -m octotools.tools.generalist_solution_generator.tool --prompt "Explain the advantages of transformer models in natural language processing"
+
+# test without logits
+python -m octotools.tools.generalist_solution_generator.tool --use-local-model --prompt "Explain the advantages of transformer models in natural language processing"
+
+# test with logits
+python -m octotools.tools.generalist_solution_generator.tool --use-local-model --capture-logits --logits-dir "./captured_logits" --prompt "Explain the advantages of transformer models in natural language processing"
+
+# with specific model and multimodal mode
+python -m octotools.tools.generalist_solution_generator.tool --use-local-model --model "llama-3.2-11b-vision-instruct" --prompt "Describe this image in detail" --image "/path/to/your/image.jpg"
 ```
 
 You can also test all tools available in the toolbox by running the following:
