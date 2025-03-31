@@ -89,6 +89,12 @@ class Generalist_Solution_Generator_Tool(BaseTool):
         return metadata
 
 if __name__ == "__main__":
+    """
+    Run the following commands in the terminal to test the script:
+    
+    cd octotools/tools/generalist_solution_generator
+    python tool.py
+    """
     parser = argparse.ArgumentParser(description="Run the Generalist Solution Generator Tool")
     parser.add_argument("--model", default=None, help="Model to use (defaults based on local vs API setting)")
     parser.add_argument("--prompt", default="Explain the concept of machine learning", help="Prompt to send to the model")
@@ -106,10 +112,24 @@ if __name__ == "__main__":
         capture_logits=args.capture_logits,
         logits_dir=args.logits_dir
     )
+
+    metadata = tool.get_metadata()
+    print(metadata)
+
+    test_prompt = "Explain the concept of machine learning"
     
-    try:
-        result = tool.execute(prompt=args.prompt, image=args.image)
-        print("\nResult:")
-        print(result)
-    except Exception as e:
-        print(f"Error: {e}")
+    if args.prompt is None:
+        try:
+            result = tool.execute(prompt=test_prompt, image=None)
+            print("\nGenerated Response:")
+            print(result)
+        except Exception as e:
+            print(f"Error: {e}")
+    else:
+        try:
+            result = tool.execute(prompt=args.prompt, image=args.image)
+            print("\nGenerated Response:")
+            print(result)
+        except Exception as e:
+            print(f"Error: {e}")
+    print("Done!")
