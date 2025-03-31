@@ -5,6 +5,7 @@ import re
 import sys
 from io import StringIO
 import contextlib
+import argparse
 
 import threading
 from octotools.tools.base import BaseTool
@@ -56,7 +57,7 @@ def timeout(seconds):
 class Python_Code_Generator_Tool(BaseTool):
     require_llm_engine = True
 
-    def __init__(self, model_string="gpt-4o-mini"):
+    def __init__(self, model_string=None, use_local_model=False, capture_logits=False, logits_dir=None):
         super().__init__(
             tool_name="Python_Code_Generator_Tool",
             tool_description="A tool that generates and executes simple Python code snippets for basic arithmetical calculations and math-related problems. The generated code runs in a highly restricted environment with only basic mathematical operations available.",
@@ -100,8 +101,13 @@ class Python_Code_Generator_Tool(BaseTool):
                 ]
             }
         )
-        print(f"\nInitializing Python_Code_Generator_Tool with model_string: {model_string}")
-        self.llm_engine = ChatOpenAI(model_string=model_string, is_multimodal=False) if model_string else None
+        self.model_string = model_string
+        self.use_local_model = use_local_model
+        self.capture_logits = capture_logits
+        self.logits_dir = logits_dir
+        
+        model_type = "local" if use_local_model else "API"
+        print(f"\nInitializing Python_Code_Generator_Tool with {model_type} model: {model_string or 'default'}")
 
     @staticmethod
     def preprocess_code(code):
@@ -202,9 +208,13 @@ class Python_Code_Generator_Tool(BaseTool):
         Returns:
             dict: A dictionary containing the executed output, local variables, or any error message.
         """
-
-        if not self.llm_engine:
-            raise ValueError("LLM engine not initialized. Please provide a valid model_string when initializing the tool.")
+        llm_engine = ChatOpenAI(
+            model_string=self.model_string,
+            is_multimodal=False,
+            use_local_model=self.use_local_model,
+            capture_logits=self.capture_logits,
+            logits_dir=self.logits_dir
+        )
 
         task_description = """
         Given a query, generate a Python code snippet that performs the specified operation on the provided data. Please think step by step. Ensure to break down the process into clear, logical steps. Make sure to print the final result in the generated code snippet with a descriptive message explaining what the output represents. The final output should be presented in the following format:
@@ -216,9 +226,12 @@ class Python_Code_Generator_Tool(BaseTool):
         task_description = task_description.strip()
         full_prompt = f"Task:\n{task_description}\n\nQuery:\n{query}"
 
-        response = self.llm_engine(full_prompt)
-        result_or_error = self.execute_code_snippet(response)
-        return result_or_error
+        try:
+            response = llm_engine(full_prompt)
+            result_or_error = self.execute_code_snippet(response)
+            return result_or_error
+        except Exception as e:
+            return {"error": f"Error generating or executing code: {str(e)}"}
 
     def get_metadata(self):
         """
@@ -233,36 +246,46 @@ class Python_Code_Generator_Tool(BaseTool):
 
 
 if __name__ == "__main__":
-    # Test command:
     """
     Run the following commands in the terminal to test the script:
     
     cd octotools/tools/python_code_generator
     python tool.py
     """
+    parser = argparse.ArgumentParser(description="Run the Python Code Generator Tool")
+    parser.add_argument("--model", default=None, help="Model to use (defaults based on local vs API setting)")
+    parser.add_argument("--query", default=None, help="Query to generate code for")
+    parser.add_argument("--use-local-model", action="store_true", help="Use locally hosted model")
+    parser.add_argument("--capture-logits", action="store_true", help="Capture and store logits (only works with local model)")
+    parser.add_argument("--logits-dir", default="./captured_logits", help="Directory to store captured logits")
+    
+    args = parser.parse_args()
+    
+    # Create and run the tool
+    tool = Python_Code_Generator_Tool(
+        model_string=args.model,
+        use_local_model=args.use_local_model,
+        capture_logits=args.capture_logits,
+        logits_dir=args.logits_dir
+    )
 
-    # Get the directory of the current script
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-
-    # Example usage of the Python_Code_Generator_Tool
-    tool = Python_Code_Generator_Tool()
-    tool = Python_Code_Generator_Tool(model_string="gpt-4o-mini")
-
-    # Get tool metadata
     metadata = tool.get_metadata()
     print(metadata)
 
-    # Sample query for generating and executing Python code
-    queries = [
-        "Given the number list: [1, 2, 3, 4, 5], calculate the sum of all the numbers in the list.",
-    ]
-    for query in queries:
-        print(f"\n###Query: {query}")
-        # Execute the tool with the sample query
+    # Default test case if no query is provided
+    if args.query is None:
+        test_query = "Given the number list: [1, 2, 3, 4, 5], calculate the sum of all the numbers in the list."
+        print(f"\nRunning test with default query: {test_query}")
         try:
-            execution = tool.execute(query=query)
-            print("\n###Execution Result:", execution)
-        except ValueError as e:
+            execution = tool.execute(query=test_query)
+            print("\nExecution Result:", execution)
+        except Exception as e:
+            print(f"Execution failed: {e}")
+    else:
+        try:
+            execution = tool.execute(query=args.query)
+            print("\nExecution Result:", execution)
+        except Exception as e:
             print(f"Execution failed: {e}")
 
     print("Done!")

@@ -3,6 +3,7 @@ import cv2
 from pydantic import BaseModel
 from octotools.tools.base import BaseTool
 from octotools.engine.openai import ChatOpenAI
+import argparse
 
 class PatchZoomerResponse(BaseModel):
     analysis: str
@@ -11,7 +12,7 @@ class PatchZoomerResponse(BaseModel):
 class Relevant_Patch_Zoomer_Tool(BaseTool):
     require_llm_engine = True
 
-    def __init__(self, model_string="gpt-4o"):
+    def __init__(self, model_string=None, use_local_model=False, capture_logits=False, logits_dir=None):
         super().__init__(
             tool_name="Relevant_Patch_Zoomer_Tool",
             tool_description="A tool that analyzes an image, divides it into 5 regions (4 quarters + center), and identifies the most relevant patches based on a question. The returned patches are zoomed in by a factor of 2.",
@@ -43,9 +44,14 @@ class Relevant_Patch_Zoomer_Tool(BaseTool):
             "E": "center"
         }
 
-        print(f"\nInitializing Patch Zoomer Tool with model: {model_string}")
-        self.llm_engine = ChatOpenAI(model_string=model_string, is_multimodal=True) if model_string else None
+        self.model_string = model_string
+        self.use_local_model = use_local_model
+        self.capture_logits = capture_logits
+        self.logits_dir = logits_dir
         
+        model_type = "local" if use_local_model else "API"
+        print(f"\nInitializing Patch Zoomer Tool with {model_type} model: {model_string or 'default'}")
+
     def _save_patch(self, image_path, patch, save_path, zoom_factor=2):
         """Extract and save a specific patch from the image with 10% margins."""
         img = cv2.imread(image_path)
@@ -85,8 +91,13 @@ class Relevant_Patch_Zoomer_Tool(BaseTool):
 
     def execute(self, image, question, zoom_factor=2):
         try:
-            if not self.llm_engine:
-                return "Error: LLM engine not initialized. Please provide a valid model_string."
+            llm_engine = ChatOpenAI(
+                model_string=self.model_string,
+                is_multimodal=True,
+                use_local_model=self.use_local_model,
+                capture_logits=self.capture_logits,
+                logits_dir=self.logits_dir
+            )
             
             # Prepare the prompt
             prompt = f"""
@@ -106,7 +117,6 @@ Instructions:
 2. Then select the most relevant region(s) to answer the question.
 3. Choose only the minimum necessary regions - avoid selecting redundant areas that show the same content. For example, if one patch contains the entire object(s), do not select another patch that only shows a part of the same object(s).
 
-
 Response format:
 <analysis>: Describe the image and five patches first. Then analyze the question and select the most relevant patch or list of patches.
 <patch>: List of letters (A-E)
@@ -117,7 +127,7 @@ Response format:
             input_data = [prompt, image_bytes]
             
             # Get response from LLM
-            response = self.llm_engine(input_data, response_format=PatchZoomerResponse)
+            response = llm_engine(input_data, response_format=PatchZoomerResponse)
             
             # Save patches
             image_dir = os.path.dirname(image)
@@ -149,40 +159,69 @@ Response format:
         return super().get_metadata()
 
 if __name__ == "__main__":
-    # Test command:
     """
     Run the following commands in the terminal to test the script:
     
     cd octotools/tools/relevant_patch_zoomer
     python tool.py
     """
+    parser = argparse.ArgumentParser(description="Run the Relevant Patch Zoomer Tool")
+    parser.add_argument("--model", default=None, help="Model to use (defaults based on local vs API setting)")
+    parser.add_argument("--image", default=None, help="Path to image file")
+    parser.add_argument("--question", default=None, help="Question about the image content")
+    parser.add_argument("--use-local-model", action="store_true", help="Use locally hosted model")
+    parser.add_argument("--capture-logits", action="store_true", help="Capture and store logits (only works with local model)")
+    parser.add_argument("--logits-dir", default="./captured_logits", help="Directory to store captured logits")
+    
+    args = parser.parse_args()
+    
+    # Create and run the tool
+    tool = Relevant_Patch_Zoomer_Tool(
+        model_string=args.model,
+        use_local_model=args.use_local_model,
+        capture_logits=args.capture_logits,
+        logits_dir=args.logits_dir
+    )
 
     # Get the directory of the current script
     script_dir = os.path.dirname(os.path.abspath(__file__))
-
-    # Example usage of the Relevant_Patch_Zoomer_Tool
-    tool = Relevant_Patch_Zoomer_Tool()
     tool.set_custom_output_dir(f"{script_dir}/zoomed_patches")
 
     # Get tool metadata
     metadata = tool.get_metadata()
     print(metadata)
 
-    # Construct the full path to the image using the script's directory
-    relative_image_path = "examples/car.png"
-    image_path = os.path.join(script_dir, relative_image_path)
-    question = "What is the color of the car?"
-
-    # Execute the tool
-    try:
-        result = tool.execute(image=image_path, question=question)
-        if result:
-            print("\nDetected Patches:")
-            for patch in result['patches']:
-                print(f"Path: {patch['path']}")
-                print(f"Description: {patch['description']}")
-                print()
-    except Exception as e:
-        print(f"Execution failed: {e}")
+    # Default test case if no image/question is provided
+    if args.image is None or args.question is None:
+        # Construct the full path to the image using the script's directory
+        relative_image_path = "examples/car.png"
+        test_image_path = os.path.join(script_dir, relative_image_path)
+        test_question = "What is the color of the car?"
+        
+        print(f"\nRunning test with default image: {test_image_path}")
+        print(f"Test question: {test_question}")
+        
+        try:
+            result = tool.execute(image=test_image_path, question=test_question)
+            if result:
+                print("\nDetected Patches:")
+                for patch in result['patches']:
+                    print(f"Path: {patch['path']}")
+                    print(f"Description: {patch['description']}")
+                    print()
+        except Exception as e:
+            print(f"Execution failed: {e}")
+    else:
+        # Run with provided arguments
+        try:
+            result = tool.execute(image=args.image, question=args.question)
+            if result:
+                print("\nDetected Patches:")
+                for patch in result['patches']:
+                    print(f"Path: {patch['path']}")
+                    print(f"Description: {patch['description']}")
+                    print()
+        except Exception as e:
+            print(f"Execution failed: {e}")
 
     print("Done!")

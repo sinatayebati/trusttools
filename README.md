@@ -83,9 +83,6 @@ Testing tools using locally hosted LLM: Using `Generalist_Solution_Generator_Too
 ```sh
 cd octotools/tools/generalist_solution_generator
 
-# API model
-python -m octotools.tools.generalist_solution_generator.tool --prompt "Explain the advantages of transformer models in natural language processing"
-
 # test without logits
 python -m octotools.tools.generalist_solution_generator.tool --use-local-model --prompt "Explain the advantages of transformer models in natural language processing"
 
