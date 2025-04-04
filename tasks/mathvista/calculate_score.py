@@ -13,7 +13,7 @@ except:
 
 from tasks.utils import ResultAnalyzer
 
-from octotools.engine.openai import ChatOpenAI
+from trusttools.engine.openai import ChatOpenAI
 
 # Demos (pids = 852,  104,  824,  506,  540) from MathVista
 demo_prompt = """

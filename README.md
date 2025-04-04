@@ -19,7 +19,7 @@
    conda env create -f conda.yaml
    
    # Activate the environment
-   conda activate octotools
+   conda activate trustools
    
    # Install package in development mode
    pip install -e .
@@ -63,16 +63,16 @@
    conda install pytorch torchvision torchaudio pytorch-cuda=12.1 -c pytorch -c nvidia
    
    # Install VLLM and other dependencies
-   pip install -r octotools/server/requirements_vllm.txt
+   pip install -r trusttools/server/requirements_vllm.txt
    ```
 
 2. **Start the VLLM server**:
    ```sh
    # Start with model from Hugging Face
-   python -m octotools.server.server_vllm --model-name "meta-llama/Llama-3.2-3B-Instruct" --port 8000 --enable-logits
+   python -m trusttools.server.server_vllm --model-name "meta-llama/Llama-3.2-3B-Instruct" --port 8000 --enable-logits
    
    # OR use an already downloaded model
-   python -m octotools.server.server_vllm --model-name /path/to/downloaded/model --port 8000 --enable-logits
+   python -m trusttools.server.server_vllm --model-name /path/to/downloaded/model --port 8000 --enable-logits
    ```
 
 ## 🧪 Testing
@@ -83,31 +83,31 @@ Using `Generalist_Solution_Generator_Tool` as an example:
 
 **With OpenAI API**:
 ```sh
-cd octotools/tools/generalist_solution_generator
+cd trusttools/tools/generalist_solution_generator
 
 # Test with logits and cache disabled
-python -m octotools.tools.generalist_solution_generator.tool --capture-logits --logits-dir "./captured_logits" --prompt "Explain the advantages of transformer models in natural language processing" --kwargs "enable_cache=False"
+python -m trusttools.tools.generalist_solution_generator.tool --capture-logits --logits-dir "./captured_logits" --prompt "Explain the advantages of transformer models in natural language processing" --kwargs "enable_cache=False"
 ```
 
 **With locally hosted LLM**:
 ```sh
-cd octotools/tools/generalist_solution_generator
+cd trusttools/tools/generalist_solution_generator
 
 # Basic test
-python -m octotools.tools.generalist_solution_generator.tool --use-local-model --prompt "Explain the advantages of transformer models in natural language processing"
+python -m trusttools.tools.generalist_solution_generator.tool --use-local-model --prompt "Explain the advantages of transformer models in natural language processing"
 
 # Test with logits capture
-python -m octotools.tools.generalist_solution_generator.tool --use-local-model --capture-logits --logits-dir "./captured_logits" --prompt "Explain the advantages of transformer models in natural language processing"
+python -m trusttools.tools.generalist_solution_generator.tool --use-local-model --capture-logits --logits-dir "./captured_logits" --prompt "Explain the advantages of transformer models in natural language processing"
 
 # With specific model and multimodal mode
-python -m octotools.tools.generalist_solution_generator.tool --use-local-model --model "llama-3.2-11b-vision-instruct" --prompt "Describe this image in detail" --image "/path/to/your/image.jpg"
+python -m trusttools.tools.generalist_solution_generator.tool --use-local-model --model "llama-3.2-11b-vision-instruct" --prompt "Describe this image in detail" --image "/path/to/your/image.jpg"
 ```
 
 ### Testing All Tools
 
 Run all tool tests at once:
 ```sh
-cd octotools/tools
+cd trusttools/tools
 source test_all_tools.sh
 ```
 
@@ -133,16 +133,16 @@ Failed: 0
 Using [CLEVR-Math](https://huggingface.co/datasets/dali-does/clevr-math) as an example:
 
 ```sh
-cd octotools/tasks
+cd tasks
 
 # Run inference using GPT-4o only
 source clevr-math/run_gpt4o.sh
 
 # Run inference using the base tool
-source clevr-math/run_octotool_base.sh
+source clevr-math/run_trusttools_base.sh
 
-# Run inference using Octotools with an optimized toolset
-source clevr-math/run_octotools.sh
+# Run inference using trusttools with an optimized toolset
+source clevr-math/run_trusttools.sh
 ```
 
 > 💡 **Note**: Enable tools for your tasks by setting the `enabled_tools` argument in [tasks/solve.py](https://github.com/sinatayebati/deeptrust/blob/main/tasks/solve.py). You can enable the entire toolset or just a specific subset of tools.

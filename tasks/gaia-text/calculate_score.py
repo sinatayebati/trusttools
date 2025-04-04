@@ -5,7 +5,7 @@ import argparse
 import tqdm
 
 from pydantic import BaseModel
-from octotools.engine.openai import ChatOpenAI
+from trusttools.engine.openai import ChatOpenAI
 
 from tasks.utils import ResultAnalyzer
 
@@ -16,7 +16,7 @@ class AnswerVerification(BaseModel):
 class BinaryAnswerVerification(BaseModel):
     true_false: bool
 
-from octotools.engine.openai import ChatOpenAI
+from trusttools.engine.openai import ChatOpenAI
 
 class ResultScorer:
     def __init__(self, llm_engine=None):
