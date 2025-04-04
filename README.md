@@ -1,4 +1,4 @@
-# TrustTools
+# 🔐 TrustTools
 
 ## 📋 Table of Contents
 - [Installation](#installation)
