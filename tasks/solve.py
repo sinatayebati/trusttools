@@ -10,11 +10,11 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.dirname(os.path.dirname(os.path.dirname(current_dir)))
 sys.path.insert(0, project_root)
 
-from octotools.models.initializer import Initializer
-from octotools.models.planner import Planner
-from octotools.models.memory import Memory
-from octotools.models.executor import Executor
-from octotools.models.utlis import make_json_serializable_truncated
+from trusttools.models.initializer import Initializer
+from trusttools.models.planner import Planner
+from trusttools.models.memory import Memory
+from trusttools.models.executor import Executor
+from trusttools.models.utlis import make_json_serializable_truncated
 
 class Solver:
     def __init__(
@@ -312,7 +312,7 @@ class Solver:
             print(f"==>Total execution time: {time.time() - start_time:.2f} seconds")
             
 def parse_arguments():
-    parser = argparse.ArgumentParser(description="Run the octotools demo with specified parameters.")
+    parser = argparse.ArgumentParser(description="Run the trusttools demo with specified parameters.")
     parser.add_argument("--llm_engine_name", default="gpt-4o", help="LLM engine name.")
     parser.add_argument("--max_tokens", type=int, default=4000, help="Maximum tokens for LLM generation.")
     parser.add_argument("--run_baseline_only", type=bool, default=False, help="Run only the baseline (no toolbox).")

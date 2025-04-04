@@ -1,4 +1,4 @@
-name: octotools
+name: trusttools
 channels:
   - defaults
 dependencies:

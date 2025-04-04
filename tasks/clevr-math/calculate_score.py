@@ -5,7 +5,7 @@ import argparse
 import tqdm
 
 from pydantic import BaseModel
-from octotools.engine.openai import ChatOpenAI
+from trusttools.engine.openai import ChatOpenAI
 
 from tasks.utils import ResultAnalyzer
 

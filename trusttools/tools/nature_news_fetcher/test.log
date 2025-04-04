@@ -1,0 +1,179 @@
+{'tool_name': 'Nature_News_Fetcher_Tool', 'tool_description': 'A tool that fetches the latest news articles from Nature.', 'tool_version': '1.0.0', 'input_types': {'num_articles': 'int - The number of articles to fetch (default: 100).', 'max_pages': 'int - The maximum number of pages to fetch (default: 5).'}, 'output_type': 'list - A list of dictionaries containing information about the latest Nature news articles.', 'demo_commands': [{'command': 'execution = tool.execute()', 'description': 'Fetch the latest 100 news articles from Nature.'}, {'command': 'execution = tool.execute(num_articles=50, max_pages=3)', 'description': 'Fetch the latest 50 news articles from Nature, searching up to 3 pages.'}], 'require_llm_engine': False}
+[
+    {
+        "title": "Take Nature\u2019s poll: How will Trump\u2019s policies affect US science?",
+        "url": "https://www.nature.com/articles/d41586-025-01031-0",
+        "description": "The new administration is reshaping the research landscape in the United States in profound ways. What do you think of all the changes?",
+        "authors": [
+            "No authors found"
+        ],
+        "date": "2025-04-03",
+        "image_url": "https://media.springernature.com/w290h158/magazine-assets/d41586-025-01031-0/d41586-025-01031-0_50815858.jpg"
+    },
+    {
+        "title": "How does the brain control consciousness? This deep-brain structure",
+        "url": "https://www.nature.com/articles/d41586-025-01021-2",
+        "description": "In a world of constant stimulation, the thalamus filters which thoughts we become aware of and which we don\u2019t.",
+        "authors": [
+            "Smriti Mallapaty"
+        ],
+        "date": "2025-04-03",
+        "image_url": "https://media.springernature.com/w290h158/magazine-assets/d41586-025-01021-2/d41586-025-01021-2_50824020.jpg"
+    },
+    {
+        "title": "Exclusive: Trump White House directs NIH to study \u2018regret\u2019 after transgender people transition",
+        "url": "https://www.nature.com/articles/d41586-025-01029-8",
+        "description": "After cancelling nearly all NIH projects studying transgender health, Trump\u2019s team instructs the US biomedical agency to study negative consequences of transitioning.",
+        "authors": [
+            "Max Kozlov"
+        ],
+        "date": "2025-04-03",
+        "image_url": "https://media.springernature.com/w290h158/magazine-assets/d41586-025-01029-8/d41586-025-01029-8_50824570.jpg"
+    },
+    {
+        "title": "Journal targeted by paper mill still grappling with the aftermath years later",
+        "url": "https://www.nature.com/articles/d41586-025-01010-5",
+        "description": "Dozens of problematic papers remain in the literature, after a publication hit by fraudsters pledged to tackle the issue.",
+        "authors": [
+            "Miryam Naddaf"
+        ],
+        "date": "2025-04-03",
+        "image_url": "https://media.springernature.com/w290h158/magazine-assets/d41586-025-01010-5/d41586-025-01010-5_50823912.jpg"
+    },
+    {
+        "title": "Revealed: first DNA profiles of ancient people who roamed a lush Sahara",
+        "url": "https://www.nature.com/articles/d41586-025-01020-3",
+        "description": "The genomes of two women who lived 7,000 years ago in the Sahara when it was a green savannah reveal a remarkably isolated population.",
+        "authors": [
+            "Freda Kreier"
+        ],
+        "date": "2025-04-02",
+        "image_url": "https://media.springernature.com/w290h158/magazine-assets/d41586-025-01020-3/d41586-025-01020-3_50824296.jpg"
+    },
+    {
+        "title": "AI masters Minecraft: DeepMind program finds diamonds without being taught",
+        "url": "https://www.nature.com/articles/d41586-025-01019-w",
+        "description": "The Dreamer system reached the milestone by \u2018imagining\u2019 the future impact of possible decisions.",
+        "authors": [
+            "Celeste Biever"
+        ],
+        "date": "2025-04-02",
+        "image_url": "https://media.springernature.com/w290h158/magazine-assets/d41586-025-01019-w/d41586-025-01019-w_50824344.jpg"
+    },
+    {
+        "title": "CERN releases detailed plans for supercollider \u2014 but no hints about funding",
+        "url": "https://www.nature.com/articles/d41586-025-01018-x",
+        "description": "Long-awaited report explores the practicalities of building a triple-sized version of the LHC.",
+        "authors": [
+            "Davide Castelvecchi"
+        ],
+        "date": "2025-04-01",
+        "image_url": "https://media.springernature.com/w290h158/magazine-assets/d41586-025-01018-x/d41586-025-01018-x_50815936.jpg"
+    },
+    {
+        "title": "\u2018One of the darkest days\u2019: NIH purges agency leadership amid mass layoffs",
+        "url": "https://www.nature.com/articles/d41586-025-01016-z",
+        "description": "In shock move, four institute directors at the US biomedical agency are removed from their posts.",
+        "authors": [
+            "Max Kozlov"
+        ],
+        "date": "2025-04-01",
+        "image_url": "https://media.springernature.com/w290h158/magazine-assets/d41586-025-01016-z/d41586-025-01016-z_50815902.jpg"
+    },
+    {
+        "title": "Deadly Myanmar earthquake was probably a rare rupture, scientists say",
+        "url": "https://www.nature.com/articles/d41586-025-00997-1",
+        "description": "\u2018Supershear\u2019 quake moved fast and far, amplifying the damage and human toll.",
+        "authors": [
+            "Alexandra Witze"
+        ],
+        "date": "2025-04-01",
+        "image_url": "https://media.springernature.com/w290h158/magazine-assets/d41586-025-00997-1/d41586-025-00997-1_50811656.jpg"
+    },
+    {
+        "title": "Brain implant translates thoughts to speech in an instant",
+        "url": "https://www.nature.com/articles/d41586-025-01001-6",
+        "description": "Improvements to brain\u2013computer interfaces are bringing the technology closer to natural conversational speed.",
+        "authors": [
+            "Miryam Naddaf"
+        ],
+        "date": "2025-03-31",
+        "image_url": "https://media.springernature.com/w290h158/magazine-assets/d41586-025-01001-6/d41586-025-01001-6_50811926.jpg"
+    }
+]
+
+Execution Result:
+Number of articles fetched: 10
+
+Sample articles:
+
+1. Title: Take Nature’s poll: How will Trump’s policies affect US science?
+   URL: https://www.nature.com/articles/d41586-025-01031-0
+   Description: The new administration is reshaping the research landscape in the United States in profound ways. Wh...
+   Authors: No authors found
+   Date: 2025-04-03
+   Image URL: https://media.springernature.com/w290h158/magazine-assets/d41586-025-01031-0/d41586-025-01031-0_50815858.jpg
+
+2. Title: How does the brain control consciousness? This deep-brain structure
+   URL: https://www.nature.com/articles/d41586-025-01021-2
+   Description: In a world of constant stimulation, the thalamus filters which thoughts we become aware of and which...
+   Authors: Smriti Mallapaty
+   Date: 2025-04-03
+   Image URL: https://media.springernature.com/w290h158/magazine-assets/d41586-025-01021-2/d41586-025-01021-2_50824020.jpg
+
+3. Title: Exclusive: Trump White House directs NIH to study ‘regret’ after transgender people transition
+   URL: https://www.nature.com/articles/d41586-025-01029-8
+   Description: After cancelling nearly all NIH projects studying transgender health, Trump’s team instructs the US ...
+   Authors: Max Kozlov
+   Date: 2025-04-03
+   Image URL: https://media.springernature.com/w290h158/magazine-assets/d41586-025-01029-8/d41586-025-01029-8_50824570.jpg
+
+4. Title: Journal targeted by paper mill still grappling with the aftermath years later
+   URL: https://www.nature.com/articles/d41586-025-01010-5
+   Description: Dozens of problematic papers remain in the literature, after a publication hit by fraudsters pledged...
+   Authors: Miryam Naddaf
+   Date: 2025-04-03
+   Image URL: https://media.springernature.com/w290h158/magazine-assets/d41586-025-01010-5/d41586-025-01010-5_50823912.jpg
+
+5. Title: Revealed: first DNA profiles of ancient people who roamed a lush Sahara
+   URL: https://www.nature.com/articles/d41586-025-01020-3
+   Description: The genomes of two women who lived 7,000 years ago in the Sahara when it was a green savannah reveal...
+   Authors: Freda Kreier
+   Date: 2025-04-02
+   Image URL: https://media.springernature.com/w290h158/magazine-assets/d41586-025-01020-3/d41586-025-01020-3_50824296.jpg
+
+6. Title: AI masters Minecraft: DeepMind program finds diamonds without being taught
+   URL: https://www.nature.com/articles/d41586-025-01019-w
+   Description: The Dreamer system reached the milestone by ‘imagining’ the future impact of possible decisions....
+   Authors: Celeste Biever
+   Date: 2025-04-02
+   Image URL: https://media.springernature.com/w290h158/magazine-assets/d41586-025-01019-w/d41586-025-01019-w_50824344.jpg
+
+7. Title: CERN releases detailed plans for supercollider — but no hints about funding
+   URL: https://www.nature.com/articles/d41586-025-01018-x
+   Description: Long-awaited report explores the practicalities of building a triple-sized version of the LHC....
+   Authors: Davide Castelvecchi
+   Date: 2025-04-01
+   Image URL: https://media.springernature.com/w290h158/magazine-assets/d41586-025-01018-x/d41586-025-01018-x_50815936.jpg
+
+8. Title: ‘One of the darkest days’: NIH purges agency leadership amid mass layoffs
+   URL: https://www.nature.com/articles/d41586-025-01016-z
+   Description: In shock move, four institute directors at the US biomedical agency are removed from their posts....
+   Authors: Max Kozlov
+   Date: 2025-04-01
+   Image URL: https://media.springernature.com/w290h158/magazine-assets/d41586-025-01016-z/d41586-025-01016-z_50815902.jpg
+
+9. Title: Deadly Myanmar earthquake was probably a rare rupture, scientists say
+   URL: https://www.nature.com/articles/d41586-025-00997-1
+   Description: ‘Supershear’ quake moved fast and far, amplifying the damage and human toll....
+   Authors: Alexandra Witze
+   Date: 2025-04-01
+   Image URL: https://media.springernature.com/w290h158/magazine-assets/d41586-025-00997-1/d41586-025-00997-1_50811656.jpg
+
+10. Title: Brain implant translates thoughts to speech in an instant
+   URL: https://www.nature.com/articles/d41586-025-01001-6
+   Description: Improvements to brain–computer interfaces are bringing the technology closer to natural conversation...
+   Authors: Miryam Naddaf
+   Date: 2025-03-31
+   Image URL: https://media.springernature.com/w290h158/magazine-assets/d41586-025-01001-6/d41586-025-01001-6_50811926.jpg
+Done!
