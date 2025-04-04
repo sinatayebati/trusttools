@@ -257,14 +257,51 @@ class ChatOpenAI(EngineLM, CachedEngine):
                 response_text = response.choices[0].message.parsed
                 
             else:
-                response = self.client.chat.completions.create(
-                    model=self.model_string,
-                    messages=messages,
-                    temperature=temperature,
-                    max_tokens=max_tokens,
-                    top_p=top_p,
-                )
+                completion_args = {
+                    "model": self.model_string,
+                    "messages": messages,
+                    "temperature": temperature,
+                    "max_tokens": max_tokens,
+                    "top_p": top_p,
+                }
+                
+                if self.capture_logits:
+                    completion_args.update({
+                        "logprobs": True,
+                        "top_logprobs": 5
+                    })
+                
+                response = self.client.chat.completions.create(**completion_args)
                 response_text = response.choices[0].message.content
+
+                # Save logits if they were captured
+                if self.capture_logits and hasattr(self, 'logits_dir'):
+                    import time
+                    import uuid
+                    
+                    timestamp = int(time.time())
+                    unique_id = str(uuid.uuid4())[:8]
+                    logits_filename = f"logits_api_{timestamp}_{unique_id}.json"
+                    logits_path = os.path.join(self.logits_dir, logits_filename)
+                    
+                    # Extract logprobs from the response
+                    logits_data = {
+                        "timestamp": timestamp,
+                        "model": self.model_string,
+                        "request": {
+                            "messages": messages,
+                            "temperature": temperature,
+                            "max_tokens": max_tokens,
+                            "top_p": top_p,
+                            "logprobs_requested": self.capture_logits
+                        },
+                        "response": response.model_dump(),  # Convert response to dict
+                    }
+                    
+                    with open(logits_path, 'w') as f:
+                        json.dump(logits_data, f, indent=2)
+                    
+                    print(f"\nSaved API response data to: {logits_path}")
 
             if self.enable_cache and response_text:
                 self._save_cache(cache_key, response_text)
