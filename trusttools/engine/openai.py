@@ -60,6 +60,8 @@ class ChatOpenAI(EngineLM, CachedEngine):
         use_local_model: bool=False,
         local_model_endpoint: str=None,
         capture_logits: bool=False,
+        exclude_top_logprobs: bool=False,
+        exclude_bytes: bool=True,
         logits_dir: str=None,
         **kwargs):
         """
@@ -70,6 +72,8 @@ class ChatOpenAI(EngineLM, CachedEngine):
         :param use_local_model: Whether to use a locally hosted model instead of OpenAI
         :param local_model_endpoint: The endpoint for the local model, defaults to env variable or http://localhost:8000/v1
         :param capture_logits: Whether to capture and save logits from the local model
+        :param exclude_top_logprobs: Whether to exclude top_logprobs from captured logits to save memory
+        :param exclude_bytes: Whether to exclude bytes from captured logits to save memory
         :param logits_dir: Directory to save captured logits
         """
         if model_string is None:
@@ -99,6 +103,8 @@ class ChatOpenAI(EngineLM, CachedEngine):
         self.enable_cache = enable_cache
         self.use_local_model = use_local_model
         self.capture_logits = capture_logits
+        self.exclude_top_logprobs = exclude_top_logprobs
+        self.exclude_bytes = exclude_bytes
         
         # Set up logits directory if needed
         if capture_logits:
@@ -108,6 +114,11 @@ class ChatOpenAI(EngineLM, CachedEngine):
             else:
                 self.logits_dir = logits_dir
             os.makedirs(self.logits_dir, exist_ok=True)
+        
+        if exclude_top_logprobs and capture_logits:
+            print(f"Note: top_logprobs will be excluded from captured logits to save memory")
+        if exclude_bytes and capture_logits:
+            print(f"Note: bytes field will be excluded from captured logits to save memory")
         
         # Configure client based on local vs OpenAI
         if use_local_model:
@@ -407,22 +418,43 @@ class ChatOpenAI(EngineLM, CachedEngine):
                                     for item in raw_logprob_content:
                                         if hasattr(item, 'to_dict'):
                                             # If it has a to_dict method (like OpenAI's ChatCompletionTokenLogprob), use it
-                                            logprob_content.append(item.to_dict())
+                                            item_dict = item.to_dict()
+                                            # Conditionally exclude fields to save memory
+                                            if self.exclude_top_logprobs and 'top_logprobs' in item_dict:
+                                                del item_dict['top_logprobs']
+                                            if self.exclude_bytes and 'bytes' in item_dict:
+                                                del item_dict['bytes']
+                                            logprob_content.append(item_dict)
                                         elif hasattr(item, 'model_dump'):
                                             # For Pydantic models
-                                            logprob_content.append(item.model_dump())
+                                            item_dict = item.model_dump()
+                                            # Conditionally exclude fields to save memory
+                                            if self.exclude_top_logprobs and 'top_logprobs' in item_dict:
+                                                del item_dict['top_logprobs']
+                                            if self.exclude_bytes and 'bytes' in item_dict:
+                                                del item_dict['bytes']
+                                            logprob_content.append(item_dict)
                                         elif isinstance(item, dict):
                                             # It's already a dict
-                                            logprob_content.append(item)
+                                            item_dict = item.copy()
+                                            # Conditionally exclude fields to save memory
+                                            if self.exclude_top_logprobs and 'top_logprobs' in item_dict:
+                                                del item_dict['top_logprobs']
+                                            if self.exclude_bytes and 'bytes' in item_dict:
+                                                del item_dict['bytes']
+                                            logprob_content.append(item_dict)
                                         else:
                                             # Try manual conversion - adjust based on the object's structure
                                             logprob_dict = {
                                                 'token': getattr(item, 'token', ''),
-                                                'logprob': getattr(item, 'logprob', -5.0),
-                                                # Add other fields if present
-                                                'bytes': getattr(item, 'bytes', None) if hasattr(item, 'bytes') else None,
-                                                'top_logprobs': getattr(item, 'top_logprobs', None) if hasattr(item, 'top_logprobs') else None
+                                                'logprob': getattr(item, 'logprob', -5.0)
+                                                # Don't include bytes or top_logprobs if excluded
                                             }
+                                                # Include optional fields if needed
+                                            if not self.exclude_top_logprobs and hasattr(item, 'top_logprobs'):
+                                                logprob_dict['top_logprobs'] = getattr(item, 'top_logprobs')
+                                            if not self.exclude_bytes and hasattr(item, 'bytes'):
+                                                logprob_dict['bytes'] = getattr(item, 'bytes')
                                             logprob_content.append(logprob_dict)
                                     print(f"Converted {len(logprob_content)} logprob items to dict format")
                                 except Exception as conv_err:
@@ -437,18 +469,35 @@ class ChatOpenAI(EngineLM, CachedEngine):
                                     logprob_content = []
                                     for item in raw_logprob_content:
                                         if hasattr(item, 'to_dict'):
-                                            logprob_content.append(item.to_dict())
+                                            item_dict = item.to_dict()
+                                            if self.exclude_top_logprobs and 'top_logprobs' in item_dict:
+                                                del item_dict['top_logprobs']
+                                            if self.exclude_bytes and 'bytes' in item_dict:
+                                                del item_dict['bytes']
+                                            logprob_content.append(item_dict)
                                         elif hasattr(item, 'model_dump'):
-                                            logprob_content.append(item.model_dump())
+                                            item_dict = item.model_dump()
+                                            if self.exclude_top_logprobs and 'top_logprobs' in item_dict:
+                                                del item_dict['top_logprobs']
+                                            if self.exclude_bytes and 'bytes' in item_dict:
+                                                del item_dict['bytes']
+                                            logprob_content.append(item_dict)
                                         elif isinstance(item, dict):
-                                            logprob_content.append(item)
+                                            item_dict = item.copy()
+                                            if self.exclude_top_logprobs and 'top_logprobs' in item_dict:
+                                                del item_dict['top_logprobs']
+                                            if self.exclude_bytes and 'bytes' in item_dict:
+                                                del item_dict['bytes']
+                                            logprob_content.append(item_dict)
                                         else:
                                             logprob_dict = {
                                                 'token': getattr(item, 'token', ''),
-                                                'logprob': getattr(item, 'logprob', -5.0),
-                                                'bytes': getattr(item, 'bytes', None) if hasattr(item, 'bytes') else None,
-                                                'top_logprobs': getattr(item, 'top_logprobs', None) if hasattr(item, 'top_logprobs') else None
+                                                'logprob': getattr(item, 'logprob', -5.0)
                                             }
+                                            if not self.exclude_top_logprobs and hasattr(item, 'top_logprobs'):
+                                                logprob_dict['top_logprobs'] = getattr(item, 'top_logprobs')
+                                            if not self.exclude_bytes and hasattr(item, 'bytes'):
+                                                logprob_dict['bytes'] = getattr(item, 'bytes')
                                             logprob_content.append(logprob_dict)
                                     print(f"Converted {len(logprob_content)} dict-content logprob items to dict format")
                                 except Exception as conv_err:
@@ -858,22 +907,43 @@ class ChatOpenAI(EngineLM, CachedEngine):
                                     for item in raw_logprob_content:
                                         if hasattr(item, 'to_dict'):
                                             # If it has a to_dict method (like OpenAI's ChatCompletionTokenLogprob), use it
-                                            logprob_content.append(item.to_dict())
+                                            item_dict = item.to_dict()
+                                            # Conditionally exclude fields to save memory
+                                            if self.exclude_top_logprobs and 'top_logprobs' in item_dict:
+                                                del item_dict['top_logprobs']
+                                            if self.exclude_bytes and 'bytes' in item_dict:
+                                                del item_dict['bytes']
+                                            logprob_content.append(item_dict)
                                         elif hasattr(item, 'model_dump'):
                                             # For Pydantic models
-                                            logprob_content.append(item.model_dump())
+                                            item_dict = item.model_dump()
+                                            # Conditionally exclude fields to save memory
+                                            if self.exclude_top_logprobs and 'top_logprobs' in item_dict:
+                                                del item_dict['top_logprobs']
+                                            if self.exclude_bytes and 'bytes' in item_dict:
+                                                del item_dict['bytes']
+                                            logprob_content.append(item_dict)
                                         elif isinstance(item, dict):
                                             # It's already a dict
-                                            logprob_content.append(item)
+                                            item_dict = item.copy()
+                                            # Conditionally exclude fields to save memory
+                                            if self.exclude_top_logprobs and 'top_logprobs' in item_dict:
+                                                del item_dict['top_logprobs']
+                                            if self.exclude_bytes and 'bytes' in item_dict:
+                                                del item_dict['bytes']
+                                            logprob_content.append(item_dict)
                                         else:
                                             # Try manual conversion - adjust based on the object's structure
                                             logprob_dict = {
                                                 'token': getattr(item, 'token', ''),
-                                                'logprob': getattr(item, 'logprob', -5.0),
-                                                # Add other fields if present
-                                                'bytes': getattr(item, 'bytes', None) if hasattr(item, 'bytes') else None,
-                                                'top_logprobs': getattr(item, 'top_logprobs', None) if hasattr(item, 'top_logprobs') else None
+                                                'logprob': getattr(item, 'logprob', -5.0)
+                                                # Don't include bytes or top_logprobs if excluded
                                             }
+                                                # Include optional fields if needed
+                                            if not self.exclude_top_logprobs and hasattr(item, 'top_logprobs'):
+                                                logprob_dict['top_logprobs'] = getattr(item, 'top_logprobs')
+                                            if not self.exclude_bytes and hasattr(item, 'bytes'):
+                                                logprob_dict['bytes'] = getattr(item, 'bytes')
                                             logprob_content.append(logprob_dict)
                                     print(f"Converted {len(logprob_content)} logprob items to dict format")
                                 except Exception as conv_err:
@@ -888,18 +958,35 @@ class ChatOpenAI(EngineLM, CachedEngine):
                                     logprob_content = []
                                     for item in raw_logprob_content:
                                         if hasattr(item, 'to_dict'):
-                                            logprob_content.append(item.to_dict())
+                                            item_dict = item.to_dict()
+                                            if self.exclude_top_logprobs and 'top_logprobs' in item_dict:
+                                                del item_dict['top_logprobs']
+                                            if self.exclude_bytes and 'bytes' in item_dict:
+                                                del item_dict['bytes']
+                                            logprob_content.append(item_dict)
                                         elif hasattr(item, 'model_dump'):
-                                            logprob_content.append(item.model_dump())
+                                            item_dict = item.model_dump()
+                                            if self.exclude_top_logprobs and 'top_logprobs' in item_dict:
+                                                del item_dict['top_logprobs']
+                                            if self.exclude_bytes and 'bytes' in item_dict:
+                                                del item_dict['bytes']
+                                            logprob_content.append(item_dict)
                                         elif isinstance(item, dict):
-                                            logprob_content.append(item)
+                                            item_dict = item.copy()
+                                            if self.exclude_top_logprobs and 'top_logprobs' in item_dict:
+                                                del item_dict['top_logprobs']
+                                            if self.exclude_bytes and 'bytes' in item_dict:
+                                                del item_dict['bytes']
+                                            logprob_content.append(item_dict)
                                         else:
                                             logprob_dict = {
                                                 'token': getattr(item, 'token', ''),
-                                                'logprob': getattr(item, 'logprob', -5.0),
-                                                'bytes': getattr(item, 'bytes', None) if hasattr(item, 'bytes') else None,
-                                                'top_logprobs': getattr(item, 'top_logprobs', None) if hasattr(item, 'top_logprobs') else None
+                                                'logprob': getattr(item, 'logprob', -5.0)
                                             }
+                                            if not self.exclude_top_logprobs and hasattr(item, 'top_logprobs'):
+                                                logprob_dict['top_logprobs'] = getattr(item, 'top_logprobs')
+                                            if not self.exclude_bytes and hasattr(item, 'bytes'):
+                                                logprob_dict['bytes'] = getattr(item, 'bytes')
                                             logprob_content.append(logprob_dict)
                                     print(f"Converted {len(logprob_content)} dict-content logprob items to dict format")
                                 except Exception as conv_err:
