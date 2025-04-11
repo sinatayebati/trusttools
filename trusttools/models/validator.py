@@ -1,5 +1,3 @@
-# Create this file: trusttools/models/conformal_validator.py
-
 import numpy as np
 import re
 import string # For normalization
@@ -67,7 +65,6 @@ Atoms:
 
             # Extract lines starting with '- '
             atoms = [line.strip()[2:].strip() for line in separation_result.strip().split('\n') if line.strip().startswith('- ')]
-            # Basic filtering for empty strings that might slip through
             atoms = [atom for atom in atoms if atom]
             print(f"Separator extracted {len(atoms)} atoms.")
             return atoms
@@ -103,7 +100,6 @@ Atoms:
 
         # Calculate the threshold: the alpha-quantile of scores.
         # Higher logprob scores are better. We want to keep scores >= threshold.
-        # Ensure scores are floats for quantile calculation
         valid_scores_float = [float(s) for s in valid_scores]
         threshold = np.quantile(valid_scores_float, alpha) # Low scores are trimmed
         print(f"  Calculated threshold (alpha={alpha} quantile): {threshold} ({len(valid_scores_float)} scores)")
@@ -111,7 +107,7 @@ Atoms:
         trimmed_atoms = []
         kept_count = 0
         for atom in atoms:
-            if atom.score is None or float(atom.score) < threshold: # Compare score against threshold
+            if atom.score is None or float(atom.score) < threshold:
                 atom.valid = False
             else:
                 atom.valid = True
@@ -130,7 +126,7 @@ Atoms:
 
         if not valid_atoms_text:
             print("Merging: No valid atoms remaining.")
-            return "" # Or return a message like "[No valid content remaining after conformal validation]"
+            return ""
 
         print(f"Merging {len(valid_atoms_text)} valid atoms...")
 
@@ -145,7 +141,6 @@ Facts:
 Merged Paragraph:
 """
         try:
-            # Use standard engine call
             merged_response_obj: GenerationResult = self.llm_engine(prompt)
             merged_response = merged_response_obj.text
             if merged_response is None:
@@ -156,7 +151,6 @@ Merged Paragraph:
             return merged_response.strip()
         except Exception as e:
             print(f"Error during merging process: {e}")
-            # Fallback: just join the sentences simply?
             return " ".join(valid_atoms_text)
 
     def _standardize_logprobs(self, logprob_content: List[Dict], keep_top_logprobs: bool = True) -> List[Dict]:
@@ -185,16 +179,13 @@ Merged Paragraph:
                     
                 std_item = {}
                 
-                # Handle token field - look for various possible names
                 if 'token' in item:
                     std_item['token'] = item['token']
                 elif 'text' in item:
                     std_item['token'] = item['text']
                 else:
-                    # If no token info, synthesize a placeholder
                     std_item['token'] = ''
                     
-                # Handle logprob field - look for various possible names
                 if 'logprob' in item:
                     std_item['logprob'] = item['logprob']
                 elif 'token_logprob' in item:
@@ -202,10 +193,8 @@ Merged Paragraph:
                 elif 'log_prob' in item: 
                     std_item['logprob'] = item['log_prob']
                 else:
-                    # If no logprob, use a default value
                     std_item['logprob'] = -5.0
-                
-                # Conditionally include top_logprobs based on parameter    
+                  
                 if keep_top_logprobs and 'top_logprobs' in item:
                     std_item['top_logprobs'] = item['top_logprobs']
                 
@@ -363,7 +352,6 @@ Merged Paragraph:
                 final_atoms.append(Atom(text=chunk, score=None, logprobs=None, valid=True))
         
         if not final_atoms:
-            # Fallback if chunking fails completely
             print("Warning: All chunking methods failed. Treating entire response as one chunk.")
             
             # Score the entire response
