@@ -167,7 +167,9 @@ cython_debug/
 trusttools.egg-info/
 locals/
 results/
+results_old/
 logs/
+logs_old/
 *.zip
 *.pt
 

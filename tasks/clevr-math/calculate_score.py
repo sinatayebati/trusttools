@@ -99,7 +99,7 @@ def parse_args():
     parser.add_argument("--output_file", type=str, default="final_results.json", help="The file to save the extracted results")
     parser.add_argument("--log_dir", type=str, default=None, help="The directory containing the logs")
     parser.add_argument("--response_type", type=str, default="direct_output", 
-                        choices=["final_output", "direct_output", "base_response"],
+                        choices=["final_output", "direct_output", "base_response", "validated_direct", "validated_final"],
                         help="The type of response to extract from the results")
     parser.add_argument("--max_workers", type=int, default=16, help="The maximum number of workers to use")
     return parser.parse_args()

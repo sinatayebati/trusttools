@@ -62,15 +62,30 @@ class Memory:
                 'description': desc
             })
 
-    def add_action(self, step_count: int, tool_name: str, sub_goal: str, command: str, result: Any) -> None:
+    def add_action(
+        self,
+        step_count: int,
+        tool_name: Optional[str],
+        sub_goal: Optional[str], 
+        command: Optional[str],
+        result: Any,
+        logprob_content: Optional[List[Dict]] = None
+        ) -> None:
+        """Adds an action taken during the process to memory."""
         action = {
             'tool_name': tool_name,
             'sub_goal': sub_goal,
             'command': command,
-            'result': result,
+            'result': result, 
+            'logprob_content': logprob_content,
         }
         step_name = f"Action Step {step_count}"
+        if step_name in self.actions:
+             suffix = tool_name if tool_name else "output"
+             step_name = f"{step_name}_{suffix}"
+
         self.actions[step_name] = action
+        print(f"Action '{step_name}' added to memory. Logprobs included: {logprob_content is not None}")
 
     def get_query(self) -> Optional[str]:
         return self.query
@@ -80,4 +95,8 @@ class Memory:
     
     def get_actions(self) -> Dict[str, Dict[str, Any]]:
         return self.actions
+    
+    def get_action(self, step_name: str) -> Optional[Dict[str, Any]]:
+        """Retrieves a specific action by its step name."""
+        return self.actions.get(step_name)
     

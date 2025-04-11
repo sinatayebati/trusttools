@@ -1,17 +1,26 @@
 import os
 import re
 from PIL import Image
-from typing import Dict, Any, List, Tuple
+from typing import Dict, Any, List, Tuple, Optional
 
-from trusttools.engine.openai import ChatOpenAI
+from trusttools.engine.openai import ChatOpenAI, GenerationResult
 from trusttools.models.memory import Memory
 from trusttools.models.formatters import QueryAnalysis, NextStep, MemoryVerification
 
 class Planner:
-    def __init__(self, llm_engine_name: str, toolbox_metadata: dict = None, available_tools: List = None):
+    def __init__(self, llm_engine_name: str, toolbox_metadata: dict = None, available_tools: List = None, capture_logits_for_outputs: bool = False):
         self.llm_engine_name = llm_engine_name
-        self.llm_engine_mm = ChatOpenAI(model_string=llm_engine_name, is_multimodal=True)
-        self.llm_engine = ChatOpenAI(model_string=llm_engine_name, is_multimodal=False)
+        self.llm_engine = ChatOpenAI(model_string=llm_engine_name, is_multimodal=False, capture_logits=False)
+        self.llm_engine_mm = ChatOpenAI(
+            model_string=llm_engine_name,
+            is_multimodal=True,
+            capture_logits=True,
+            exclude_top_logprobs=True, 
+            exclude_bytes=True
+        )
+        self.capture_logits_for_outputs = capture_logits_for_outputs
+        print(f"Planner initialized with capture_logits_for_outputs={capture_logits_for_outputs}, using model {llm_engine_name}")
+        print(f"Note: Excluding top_logprobs and bytes from captured logits for validation memory efficiency")
         self.toolbox_metadata = toolbox_metadata if toolbox_metadata is not None else {}
         self.available_tools = available_tools if available_tools is not None else []
 
@@ -90,19 +99,34 @@ Please present your analysis in a clear, structured format.
 
         return str(self.query_analysis).strip()
 
-    def extract_context_subgoal_and_tool(self, response: NextStep) -> Tuple[str, str, str]:
+    def extract_context_subgoal_and_tool(self, response: Optional[NextStep]) -> Tuple[Optional[str], Optional[str], Optional[str]]:
 
         def normalize_tool_name(tool_name: str) -> str:
             # Normalize the tool name to match the available tools
+            if not tool_name: return "No tool name provided"
             for tool in self.available_tools:
+                # Use case-insensitive matching and check if tool name is part of the response
                 if tool.lower() in tool_name.lower():
                     return tool
             return "No matched tool given: " + tool_name
+
+        if response is None:
+            print("Error: Received None instead of NextStep object in extract_context_subgoal_and_tool.")
+            return None, None, None
         
+        # Check if it's an error GenerationResult (shouldn't happen with previous fix, but defensive check)
+        if not isinstance(response, NextStep):
+             print(f"Warning: Received unexpected type {type(response)} in extract_context_subgoal_and_tool. Expected NextStep.")
+             # Attempt to extract info if it looks like the old error format, otherwise fail
+             if hasattr(response, 'error'):
+                  print(f"  Contained error: {getattr(response, 'error')}")
+             return None, None, None
+
         try:
-            context = response.context.strip()
-            sub_goal = response.sub_goal.strip()
-            tool_name = normalize_tool_name(response.tool_name.strip())
+            context = getattr(response, 'context', '').strip()
+            sub_goal = getattr(response, 'sub_goal', '').strip()
+            tool_name_raw = getattr(response, 'tool_name', '').strip()
+            tool_name = normalize_tool_name(tool_name_raw)
             return context, sub_goal, tool_name
         except Exception as e:
             print(f"Error extracting context, sub-goal, and tool name: {str(e)}")
@@ -237,13 +261,28 @@ Response Format:
 
         return stop_verification
 
-    def extract_conclusion(self, response: MemoryVerification) -> str:
-        if response.stop_signal:
-            return 'STOP'
-        else:
-            return 'CONTINUE'
+    def extract_conclusion(self, response: Optional[MemoryVerification]) -> str:
+        if response is None:
+             print("Error: Received None instead of MemoryVerification object in extract_conclusion.")
+             return 'CONTINUE' # Default to continue if verification failed
 
-    def generate_final_output(self, question: str, image: str, memory: Memory) -> str:
+        # Check if it's an error GenerationResult (defensive check)
+        if not isinstance(response, MemoryVerification):
+            print(f"Warning: Received unexpected type {type(response)} in extract_conclusion. Expected MemoryVerification.")
+            if hasattr(response, 'error'):
+                print(f"  Contained error: {getattr(response, 'error')}")
+            return 'CONTINUE' # Default to continue
+
+        try:
+            if response.stop_signal:
+                return 'STOP'
+            else:
+                return 'CONTINUE'
+        except AttributeError:
+            print("Error: MemoryVerification object missing 'stop_signal' attribute.")
+            return 'CONTINUE' # Default to continue on unexpected attribute error
+
+    def generate_final_output(self, question: str, image: str, memory: Memory, step_count: int) -> str:
         image_info = self.get_image_info(image)
 
         prompt_generate_final_output = f"""
@@ -297,30 +336,67 @@ Your response should be well-organized and include the following sections:
                 input_data.append(image_bytes)
             except Exception as e:
                 print(f"Error reading image file: {str(e)}")
+                return f"Error generating final output: Could not read image {str(e)}"
 
-        final_output = self.llm_engine_mm(input_data)
+        try:
+            # Generate with potential logit capture
+            generation_result: GenerationResult = self.llm_engine_mm.generate(
+                input_data,
+                capture_logits=self.capture_logits_for_outputs
+            )
 
-        return final_output
+            # Check if generation_result is None (indicates a severe error)
+            if generation_result is None:
+                error_msg = "Critical error: generation_result is None. API call likely failed."
+                print(f"Error generating final output: {error_msg}")
+                # Create a fallback response from memory
+                final_output_text = self._create_fallback_output_from_memory(question, memory)
+                logprob_content = None
+            else:
+                final_output_text = generation_result.text
+                logprob_content = generation_result.logprob_content
 
+                # Handle potential generation errors (like rate limits)
+                if final_output_text is None:
+                    error_msg = generation_result.error or "Unknown generation error"
+                    print(f"Error generating final output: {error_msg}")
+                    # Create a fallback response from memory
+                    final_output_text = self._create_fallback_output_from_memory(question, memory)
+                    logprob_content = None
+        except Exception as e:
+            print(f"Unexpected error in generate_final_output: {str(e)}")
+            # Create a fallback response from memory
+            final_output_text = self._create_fallback_output_from_memory(question, memory)
+            logprob_content = None
 
-    def generate_direct_output(self, question: str, image: str, memory: Memory) -> str:
+        memory.add_action(
+            step_count=step_count,
+            tool_name="FinalOutputGenerator",
+            sub_goal="Generate comprehensive final answer",
+            command=None,
+            result=final_output_text,
+            logprob_content=logprob_content
+        )
+
+        return final_output_text
+
+    def generate_direct_output(self, question: str, image: str, memory: Memory, step_count: int) -> str:
         image_info = self.get_image_info(image)
 
-        prompt_generate_final_output = f"""
+        prompt_generate_direct_output = f"""
 Context:
 Query: {question}
 Image: {image_info}
 Initial Analysis:
-{self.query_analysis}
+{self.query_analysis if hasattr(self, 'query_analysis') else 'N/A'}
 Actions Taken:
 {memory.get_actions()}
 
-Please generate the concise output based on the query, image information, initial analysis, and actions taken. Break down the process into clear, logical, and conherent steps. Conclude with a precise and direct answer to the query.
+Please generate the concise output based on the query, image information, initial analysis, and actions taken. Break down the process into clear, logical, and coherent steps. Conclude with a precise and direct answer to the query.
 
 Answer:
 """
-
-        input_data = [prompt_generate_final_output]
+        input_data = [prompt_generate_direct_output]
         if image_info:
             try:
                 with open(image_info["image_path"], 'rb') as file:
@@ -328,8 +404,75 @@ Answer:
                 input_data.append(image_bytes)
             except Exception as e:
                 print(f"Error reading image file: {str(e)}")
+                return f"Error generating direct output: Could not read image {str(e)}"
 
-        final_output = self.llm_engine_mm(input_data)
+        try:
+            # Generate with potential logit capture
+            generation_result: GenerationResult = self.llm_engine_mm.generate(
+                input_data,
+                capture_logits=self.capture_logits_for_outputs
+            )
 
-        return final_output
+            # Check if generation_result is None (indicates a severe error)
+            if generation_result is None:
+                error_msg = "Critical error: generation_result is None. API call likely failed."
+                print(f"Error generating direct output: {error_msg}")
+                # Create a fallback response from memory
+                direct_output_text = self._create_fallback_output_from_memory(question, memory)
+                logprob_content = None
+            else:
+                direct_output_text = generation_result.text
+                logprob_content = generation_result.logprob_content
+
+                # Handle potential generation errors (like rate limits)
+                if direct_output_text is None:
+                    error_msg = generation_result.error or "Unknown generation error"
+                    print(f"Error generating direct output: {error_msg}")
+                    # Create a fallback response from memory
+                    direct_output_text = self._create_fallback_output_from_memory(question, memory)
+                    logprob_content = None
+        except Exception as e:
+            print(f"Unexpected error in generate_direct_output: {str(e)}")
+            # Create a fallback response from memory
+            direct_output_text = self._create_fallback_output_from_memory(question, memory)
+            logprob_content = None
+
+        memory.add_action(
+            step_count=step_count,
+            tool_name="DirectOutputGenerator",
+            sub_goal="Generate concise direct answer",
+            command=None,
+            result=direct_output_text,
+            logprob_content=logprob_content
+        )
+
+        return direct_output_text
+        
+    def _create_fallback_output_from_memory(self, question: str, memory: Memory) -> str:
+        """
+        Creates a fallback output from memory if the API call fails.
+        This ensures we still return something useful to the user.
+        """
+        print("Creating fallback output from memory...")
+        actions = memory.get_actions()
+        
+        # Start with a standard header
+        fallback_output = f"[Fallback Response] Answer to: '{question}'\n\n"
+        
+        # Extract results from memory
+        for step_name, action in actions.items():
+            if action.get('result'):
+                result = action['result']
+                # Handle different result formats
+                if isinstance(result, dict) and 'text' in result:
+                    text_content = result['text']
+                    fallback_output += f"Based on {action.get('tool_name', 'analysis')}: {text_content}\n\n"
+                elif isinstance(result, str):
+                    fallback_output += f"Based on {action.get('tool_name', 'analysis')}: {result}\n\n"
+        
+        # If we couldn't extract anything useful, provide a generic message
+        if len(fallback_output.strip().split('\n')) <= 1:
+            fallback_output += "Unable to generate a direct answer due to system limitations. Please try again later."
+            
+        return fallback_output
     
