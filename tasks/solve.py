@@ -136,6 +136,7 @@ class Solver:
             "query": question,
             "image": image_path,
             "answer": answer,
+            "query_analysis": "",  # Initialize empty, will be populated later
             "outputs": {},
             "validation_results": {}
         }
@@ -359,7 +360,7 @@ class Solver:
                             original_final, logprobs_final, alpha=self.validation_alpha
                         )
                         json_data["outputs"]["validated_final"] = validated_final
-                        json_data["validation_results"]["final_output_atoms"] = [atom.dict() for atom in final_atoms]
+                        json_data["validation_results"]["final_output_atoms"] = [atom.dict_without_logprobs() for atom in final_atoms]
                         if self.verbose:
                             print(f"\n## Validated Final Output (alpha={self.validation_alpha}):")
                             print("#"*50 + f"\n{validated_final}\n" + "#"*50)
@@ -384,7 +385,7 @@ class Solver:
                               original_direct, logprobs_direct, alpha=self.validation_alpha
                           )
                           json_data["outputs"]["validated_direct"] = validated_direct
-                          json_data["validation_results"]["direct_output_atoms"] = [atom.dict() for atom in direct_atoms]
+                          json_data["validation_results"]["direct_output_atoms"] = [atom.dict_without_logprobs() for atom in direct_atoms]
                           if self.verbose:
                               print(f"\n## Validated Direct Output (alpha={self.validation_alpha}):")
                               print("#"*50 + f"\n{validated_direct}\n" + "#"*50)

@@ -14,6 +14,14 @@ class Atom(BaseModel):
     score: Optional[float] = Field(None, description="Confidence score (e.g., mean log probability)")
     logprobs: Optional[List[float]] = Field(None, description="Token log probabilities for the atom")
     valid: bool = Field(True, description="Whether the atom is considered valid after trimming")
+    
+    def dict_without_logprobs(self) -> Dict[str, Any]:
+        """Returns a dictionary representation of the Atom without the logprobs field."""
+        return {
+            "text": self.text,
+            "score": self.score,
+            "valid": self.valid
+        }
 
 class ConformalValidator:
     """
