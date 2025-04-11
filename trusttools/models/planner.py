@@ -14,10 +14,13 @@ class Planner:
         self.llm_engine_mm = ChatOpenAI(
             model_string=llm_engine_name,
             is_multimodal=True,
-            capture_logits=True
+            capture_logits=True,
+            exclude_top_logprobs=True, 
+            exclude_bytes=True
         )
         self.capture_logits_for_outputs = capture_logits_for_outputs
         print(f"Planner initialized with capture_logits_for_outputs={capture_logits_for_outputs}, using model {llm_engine_name}")
+        print(f"Note: Excluding top_logprobs and bytes from captured logits for validation memory efficiency")
         self.toolbox_metadata = toolbox_metadata if toolbox_metadata is not None else {}
         self.available_tools = available_tools if available_tools is not None else []
 
