@@ -28,7 +28,7 @@ mkdir -p $LOG_DIR
 mkdir -p $OUT_DIR # Ensure output directory is also created
 
 # Define the array of specific indices
-indices=($(seq 106 107))
+indices=($(seq 106 106))
 
 # Skip indices if the output file already exists
 new_indices=()
