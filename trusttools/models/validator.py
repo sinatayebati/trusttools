@@ -214,7 +214,7 @@ Merged Paragraph:
     def chunk_and_score_direct(self, response: str, logprob_content: List[Dict]) -> List[Atom]:
         """
         Directly chunks and scores the original response using the logprob content.
-        Uses sentence-based chunking rather than LLM-based atom extraction for reliable mapping.
+        Uses structure-based chunking rather than LLM-based atom extraction for reliable mapping.
         
         Args:
             response: The original response text
@@ -256,76 +256,71 @@ Merged Paragraph:
         print(f"Reconstructed text length: {len(reconstructed_text)}")
         print(f"First 100 chars: {reconstructed_text[:100]}...")
         
-        # Step 3: Chunk the text using multiple strategies
+        # Step 3: Chunk the text using only structure-based chunking for consistency
         import re
         
-        # Try several chunking approaches
-        chunks_from_all_methods = []
+        chunks = []
         
-        # Approach 1: Structure-based chunking (headers, lists, paragraphs)
-        try:
-            print("Using structure-based chunking")
-            # This pattern handles markdown headers and list items
-            structural_pattern = r'(\n#+\s+.*?(?=\n#+|\Z))|\n\d+\.\s+.*?(?=\n\d+\.|\Z)|\n\*\s+.*?(?=\n\*|\Z)'
-            structural_chunks = re.findall(structural_pattern, '\n' + response, re.DOTALL)
-            structural_chunks = [chunk.strip() for chunk in structural_chunks if chunk.strip()]
+        # Start by splitting the text into paragraphs
+        print("Using structure-based chunking")
+        paragraphs = re.split(r'\n\s*\n', response)
+        paragraphs = [p.strip() for p in paragraphs if p.strip()]
+        
+        # Process each paragraph to extract structural elements
+        for paragraph in paragraphs:
+            # Check if the paragraph is a standalone header or title
+            if re.match(r'^#+\s+.+$', paragraph) or re.match(r'^.+\n[=-]+$', paragraph):
+                chunks.append(paragraph)
+                continue
             
-            # If we got some, add them to our chunks
-            if structural_chunks:
-                print(f"Found {len(structural_chunks)} structural chunks (headers, lists)")
-                chunks_from_all_methods.extend(structural_chunks)
-        except Exception as e:
-            print(f"Structure-based chunking failed: {e}")
-        
-        # Approach 2: Paragraph-based chunking
-        try:
-            print("Using paragraph-based chunking")
-            paragraphs = re.split(r'\n\s*\n', response)
-            paragraph_chunks = [p.strip() for p in paragraphs if p.strip()]
+            # Extract numbered steps (like "1. Step description")
+            # This pattern will match full numbered items with all their content
+            numbered_steps = re.findall(r'^\d+\.\s+.+?(?=^\d+\.|\Z)', paragraph, re.MULTILINE | re.DOTALL)
+            if numbered_steps:
+                chunks.extend([step.strip() for step in numbered_steps])
+                continue
             
-            if paragraph_chunks:
-                print(f"Found {len(paragraph_chunks)} paragraphs")
-                chunks_from_all_methods.extend(paragraph_chunks)
-        except Exception as e:
-            print(f"Paragraph-based chunking failed: {e}")
+            # Extract bulleted lists
+            bulleted_items = re.findall(r'^\s*[\*\-•]\s+.+?(?=^\s*[\*\-•]|\Z)', paragraph, re.MULTILINE | re.DOTALL)
+            if bulleted_items:
+                chunks.extend([item.strip() for item in bulleted_items])
+                continue
+            
+            # Extract any bold or emphasized sections (e.g., "**Section title**:")
+            sections = re.split(r'(\*\*[^*]+\*\*:)', paragraph)
+            if len(sections) > 1:
+                current_section = ""
+                for i, section in enumerate(sections):
+                    if i % 2 == 1:  # It's a section header
+                        if current_section:
+                            chunks.append(current_section.strip())
+                        current_section = section
+                    else:  # It's content
+                        current_section += section
+                if current_section:
+                    chunks.append(current_section.strip())
+                continue
+            
+            # If no specific structure was found, use the whole paragraph
+            chunks.append(paragraph)
         
-        # Approach 3: Sentence-based chunking
-        try:
-            print("Using sentence-based chunking")
-            # This pattern handles common sentence endings (.!?)
+        # If we still don't have any chunks, just split into sentences as fallback
+        if not chunks:
+            print("Falling back to simple sentence splitting")
             sentence_pattern = r'(?<=[.!?])\s+|(?<=[.!?])$'
-            
-            # Apply sentence splitting to the paragraphs
-            sentence_chunks = []
-            for paragraph in paragraph_chunks:
-                sentences = re.split(sentence_pattern, paragraph)
-                sentence_chunks.extend([s.strip() for s in sentences if s.strip()])
-            
-            if sentence_chunks:
-                print(f"Found {len(sentence_chunks)} sentences")
-                chunks_from_all_methods.extend(sentence_chunks)
-        except Exception as e:
-            print(f"Sentence-based chunking failed: {e}")
+            chunks = [s.strip() for s in re.split(sentence_pattern, response) if s.strip()]
         
-        # Deduplicate and filter chunks
-        unique_chunks = []
-        seen = set()
-        for chunk in chunks_from_all_methods:
-            if chunk not in seen and len(chunk.strip()) > 0:
-                seen.add(chunk)
-                unique_chunks.append(chunk)
-        
-        # If we still don't have any chunks, use the whole response
-        if not unique_chunks:
+        # If still no chunks, use the whole response
+        if not chunks:
             print("All chunking methods failed, using whole response")
-            unique_chunks = [response]
+            chunks = [response]
         
-        print(f"Final chunked text: {len(unique_chunks)} segments")
+        print(f"Chunked text into {len(chunks)} segments")
         
         # Step 4: Map chunks to token positions and calculate scores
         final_atoms = []
         
-        for chunk in unique_chunks:
+        for chunk in chunks:
             if not chunk.strip():
                 continue
             
@@ -348,7 +343,7 @@ Merged Paragraph:
                         text=chunk,
                         score=score,
                         logprobs=logprobs,
-                        valid=True  # Default to valid, will be updated during trimming
+                        valid=True
                     ))
                     print(f"Mapped chunk: '{chunk[:50]}{'...' if len(chunk) > 50 else ''}', "
                          f"Token count: {len(chunk_tokens)}, Score: {score:.4f}")
@@ -356,35 +351,8 @@ Merged Paragraph:
                     final_atoms.append(Atom(text=chunk, score=None, logprobs=None, valid=True))
                     print(f"No tokens mapped for chunk: '{chunk[:50]}...'")
             else:
-                # Chunk not found directly, use fuzzy matching
-                # Clean both texts for better matching
-                clean_chunk = re.sub(r'\s+', ' ', chunk).strip()
-                clean_reconstructed = re.sub(r'\s+', ' ', reconstructed_text).strip()
-                
-                chunk_start = clean_reconstructed.find(clean_chunk)
-                if chunk_start != -1:
-                    chunk_end = chunk_start + len(clean_chunk)
-                    
-                    # Get overlapping tokens
-                    chunk_tokens = [t for t in token_positions 
-                                   if (t['start'] < chunk_end and t['end'] > chunk_start)]
-                    
-                    if chunk_tokens:
-                        logprobs = [t['logprob'] for t in chunk_tokens]
-                        score = np.mean(logprobs)
-                        final_atoms.append(Atom(
-                            text=chunk, 
-                            score=score,
-                            logprobs=logprobs,
-                            valid=True
-                        ))
-                        print(f"Mapped chunk (fuzzy): '{chunk[:50]}...' Score: {score:.4f}")
-                    else:
-                        final_atoms.append(Atom(text=chunk, score=None, logprobs=None, valid=True))
-                else:
-                    # Last resort: approximate mapping based on position in text
-                    print(f"Could not directly map: '{chunk[:50]}...'")
-                    final_atoms.append(Atom(text=chunk, score=None, logprobs=None, valid=True))
+                print(f"Could not map chunk directly: '{chunk[:50]}...'")
+                final_atoms.append(Atom(text=chunk, score=None, logprobs=None, valid=True))
         
         if not final_atoms:
             # Fallback if chunking fails completely
