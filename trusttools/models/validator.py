@@ -5,8 +5,6 @@ import re
 import string # For normalization
 from typing import List, Dict, Any, Tuple, Optional
 
-# Assuming ChatOpenAI can be imported and configured for logprobs
-# You might need to adjust the import path based on your project structure
 from trusttools.engine.openai import ChatOpenAI, GenerationResult
 from pydantic import BaseModel, Field
 
@@ -69,226 +67,6 @@ Atoms:
             print(f"Error during separation process: {e}")
             return []
 
-    def _normalize_text(self, text: str) -> str:
-        """Simple normalization for mapping."""
-        text = text.lower()
-        text = text.translate(str.maketrans('', '', string.punctuation))
-        text = re.sub(r'\s+', ' ', text).strip()
-        return text
-
-    def score_atoms(self, atom_texts: List[str], logprob_content: List[Dict]) -> List[Atom]:
-        """
-        Scores atoms by mapping them to the provided logprob_content from the original generation.
-        """
-        atoms = []
-        if not logprob_content:
-            print("Warning: No logprob content provided for scoring. Cannot score atoms.")
-            # Return atoms without scores
-            return [Atom(text=text, score=None, logprobs=None) for text in atom_texts]
-
-        # Handle different potential logprob_content formats
-        standardized_logprobs = self._standardize_logprobs(logprob_content)
-        if not standardized_logprobs:
-            print("Warning: Could not standardize logprob content. Using raw format.")
-            standardized_logprobs = logprob_content
-
-        # Reconstruct the original text from logprobs for mapping reference
-        try:
-            original_tokens = [item.get('token', '') for item in standardized_logprobs]
-            original_full_text = "".join(original_tokens)
-            normalized_original_text = self._normalize_text(original_full_text)
-            print(f"Reconstructed original text length: {len(original_full_text)}")
-            print(f"Normalized original text length: {len(normalized_original_text)}")
-            print(f"First 100 chars of original text: {original_full_text[:100]}")
-        except Exception as e:
-            print(f"Error reconstructing text from logprobs: {e}")
-            print(f"Using raw text format. Logprob type: {type(standardized_logprobs)}")
-            original_full_text = "ERROR_RECONSTRUCTING"
-            normalized_original_text = "ERROR_RECONSTRUCTING"
-
-        current_logprob_idx = 0 # Keep track of our position in the logprob_content list
-
-        print(f"Scoring {len(atom_texts)} atoms using provided logprobs...")
-        for i, atom_text in enumerate(atom_texts):
-            print(f"  Mapping atom {i+1}/{len(atom_texts)}: '{atom_text[:60]}...'")
-            normalized_atom = self._normalize_text(atom_text)
-            atom_logprobs = []
-            mapped = False
-
-            if not normalized_atom:
-                 print(f"    Skipping empty normalized atom.")
-                 atoms.append(Atom(text=atom_text, score=None, logprobs=None))
-                 continue
-
-            # --- Simple Sliding Window / Greedy Alignment ---
-            # Try to find the start of the normalized atom in the remaining normalized original text
-            best_match_start_idx = -1
-            try:
-                # Search from the current position onwards
-                search_area = normalized_original_text[current_logprob_idx:]
-                match_pos = search_area.find(normalized_atom)
-                if match_pos != -1:
-                    best_match_start_idx = current_logprob_idx + match_pos
-                    print(f"    Found exact match at position {best_match_start_idx}")
-                # Add fallback search from beginning if not found
-                elif normalized_original_text != "ERROR_RECONSTRUCTING":
-                    print(f"    No match from current position {current_logprob_idx}, searching from beginning...")
-                    match_pos = normalized_original_text.find(normalized_atom)
-                    if match_pos != -1:
-                        best_match_start_idx = match_pos
-                        print(f"    Found atom start at {best_match_start_idx} searching from beginning.")
-                    else:
-                        # Try fuzzy matching as a last resort for important atoms
-                        print(f"    No exact match found, trying fuzzy matching...")
-                        # Basic substring matching - find largest common substring
-                        for window_size in range(min(len(normalized_atom), 20), 4, -1):  # Try decreasing window sizes
-                            atom_start = normalized_atom[:window_size]
-                            if atom_start in normalized_original_text:
-                                match_pos = normalized_original_text.find(atom_start)
-                                best_match_start_idx = match_pos
-                                print(f"    Found fuzzy match with window size {window_size} at position {match_pos}")
-                                break
-            except Exception as find_e:
-                print(f"    Error during string find: {find_e}")
-                best_match_start_idx = -1
-
-            if best_match_start_idx != -1:
-                 print(f"    Potential match found starting around original index {best_match_start_idx}")
-                 # Attempt to align and collect logprobs
-                 # This part is complex: map normalized start index back to original token index
-                 # A simple approximation: use the index directly (might be off due to normalization)
-                 # A better way: iterate original_tokens up to best_match_start_idx char count.
-                 original_char_count = 0
-                 start_token_idx = -1
-                 
-                 # Find token position by counting characters
-                 for idx, token_info in enumerate(standardized_logprobs):
-                     if idx < current_logprob_idx and best_match_start_idx >= current_logprob_idx:
-                         # Don't search before current position unless we found an earlier match
-                         continue
-                         
-                     token_text = token_info.get('token', '')
-                     # Simple direct check: first token starts with beginning of atom
-                     normalized_token = self._normalize_text(token_text)
-                     if normalized_atom.startswith(normalized_token) and normalized_token:
-                         # Found potential start
-                         start_token_idx = idx
-                         print(f"    Mapped start to token index {start_token_idx} (direct match)")
-                         break
-                     
-                     # Character counting approach (less reliable)
-                     original_char_count += len(token_text)
-                     if original_char_count >= best_match_start_idx:
-                         start_token_idx = idx
-                         print(f"    Mapped start to token index {start_token_idx} (char count)")
-                         break
-
-                 if start_token_idx == -1:
-                     # Fall back to estimating position
-                     total_tokens = len(standardized_logprobs)
-                     total_chars = len(original_full_text)
-                     if total_chars > 0:
-                         # Estimate token position using proportional position in text
-                         pos_ratio = best_match_start_idx / total_chars
-                         estimated_token_idx = int(pos_ratio * total_tokens)
-                         # Clamp to valid range
-                         start_token_idx = max(0, min(estimated_token_idx, total_tokens - 1))
-                         print(f"    Estimated token position: {start_token_idx} (fallback)")
-                     else:
-                         # Nothing else worked, use current position
-                         start_token_idx = current_logprob_idx
-                         print(f"    Using current position as fallback: {start_token_idx}")
-
-                 if start_token_idx != -1:
-                     # Greedily consume tokens matching the atom
-                     current_atom_pos = 0
-                     temp_atom_logprobs = []
-                     temp_original_tokens_matched = [] # For debugging
-
-                     for token_idx in range(start_token_idx, len(standardized_logprobs)):
-                         token_info = standardized_logprobs[token_idx]
-                         token_text = token_info.get('token', '')
-                         if 'logprob' in token_info:
-                             logprob = token_info['logprob']
-                         else:
-                             # Try alternative field names if 'logprob' not present
-                             logprob = token_info.get('token_logprob', token_info.get('log_prob', None))
-                             if logprob is None:
-                                 print(f"    Warning: No logprob found for token {token_text}. Keys: {token_info.keys()}")
-                                 logprob = -5.0  # Default value if missing
-
-                         # Try to match token against remaining part of atom
-                         remaining_atom = atom_text[current_atom_pos:]
-                         # Use original atom text for matching length, but allow fuzzy match logic
-                         # Simple check: does the atom *start* with this token (case-insensitive)?
-                         if remaining_atom.lower().startswith(token_text.lower()):
-                             temp_atom_logprobs.append(logprob)
-                             temp_original_tokens_matched.append(token_text)
-                             current_atom_pos += len(token_text)
-                         # Add more flexible matching here if needed (e.g., skipping whitespace)
-                         elif token_text.strip() and remaining_atom.lower().strip().startswith(token_text.lower().strip()):
-                             # Try matching with whitespace removed
-                             temp_atom_logprobs.append(logprob)
-                             temp_original_tokens_matched.append(token_text)
-                             # Estimate how much to advance - length of token + any whitespace
-                             advance = len(token_text)
-                             while current_atom_pos < len(atom_text) and atom_text[current_atom_pos].isspace():
-                                 advance += 1
-                                 current_atom_pos += 1
-                             current_atom_pos += len(token_text.strip())
-                         else:
-                             # This token doesn't match, but allow skipping small tokens (like whitespace)
-                             if len(token_text.strip()) <= 1:
-                                 # Skip tiny tokens and continue
-                                 continue
-                             else:
-                                 # End matching on substantial mismatch
-                                 break
-
-                         if current_atom_pos >= len(atom_text):
-                             # We've matched the whole atom (or close enough)
-                             atom_logprobs = temp_atom_logprobs
-                             mapped = True
-                             print(f"    Successfully mapped atom ending at token index {token_idx}.")
-                             print(f"    Matched tokens: {''.join(temp_original_tokens_matched)}")
-                             # Advance the global index past the matched tokens
-                             current_logprob_idx = token_idx + 1
-                             break
-                     if not mapped:
-                          print(f"    Failed to consume full atom text after finding start.")
-
-            if not mapped:
-                print(f"    Warning: Could not reliably map atom to logprobs.")
-                # Last resort - use statistical mapping if available
-                if len(standardized_logprobs) > 0:
-                    # Use average logprob of all tokens as a statistical estimate
-                    all_logprobs = []
-                    for token_info in standardized_logprobs:
-                        if 'logprob' in token_info:
-                            all_logprobs.append(token_info['logprob'])
-                        elif 'token_logprob' in token_info:
-                            all_logprobs.append(token_info['token_logprob'])
-
-                    if all_logprobs:
-                        avg_logprob = sum(all_logprobs) / len(all_logprobs)
-                        print(f"    Using statistical estimate (avg logprob: {avg_logprob:.4f}) for unmapped atom")
-                        atom_logprobs = [avg_logprob] * (len(atom_text) // 4 + 1)  # Estimate token count
-                atom_logprobs = None
-
-            atom_score = self._calculate_score_from_logprobs(atom_logprobs)
-            atoms.append(Atom(text=atom_text, score=atom_score, logprobs=atom_logprobs)) # Store raw logprobs if needed
-            print(f"    Score: {atom_score}")
-
-        return atoms
-
-    def _calculate_score_from_logprobs(self, logprobs: Optional[List[float]]) -> Optional[float]:
-        """Calculates a score (mean logprob) from log probabilities."""
-        if logprobs is None or len(logprobs) == 0:
-            return None
-        # Using mean log probability. Use np.exp to convert back to probability before averaging?
-        # No, average of logprobs is standard. exp(mean(logprobs)) is geometric mean of probs.
-        score = np.mean(logprobs)
-        return score
 
     def trim_split_conformal(self, atoms: List[Atom], alpha: float) -> List[Atom]:
         """
@@ -373,99 +151,13 @@ Merged Paragraph:
             # Fallback: just join the sentences simply?
             return " ".join(valid_atoms_text)
 
-    def validate(self, response: str, logprob_content: Optional[List[Dict]], alpha: float = 0.1) -> Tuple[str, List[Atom]]:
-        """
-        Validates an LLM response using the separate-score-trim-merge pipeline.
-
-        Args:
-            response: The original LLM response string.
-            logprob_content: The list of logprob dictionaries from the generation step.
-            alpha: The desired significance level for trimming (e.g., 0.1).
-
-        Returns:
-            A tuple containing:
-            - The validated response string.
-            - A list of Atom objects with their scores and validity status.
-        """
-        print("\n--- Starting Conformal Validation ---")
-        print(f"Original Response: {response[:100]}...")
-        print(f"Alpha: {alpha}")
-        print(f"Logprobs provided: {logprob_content is not None} (Length: {len(logprob_content) if logprob_content else 'N/A'})")
-
-        try:
-            # 1. Separate
-            atom_texts = self.separate(response)
-            if not atom_texts:
-                print("Validation failed: Could not separate response into atoms.")
-                return response, [Atom(text=response, valid=True)]  # Return original as valid atom if separation fails
-    
-            # 2. Score using provided logprobs
-            if not logprob_content:
-                print("Validation failed: Logprobs not provided for scoring.")
-                # Keep all atoms as valid if scoring isn't possible
-                atoms_no_score = [Atom(text=t, score=None, logprobs=None, valid=True) for t in atom_texts]
-                # Return the original response but mark atoms for transparency
-                print("Returning original response with all atoms marked as valid.")
-                return response, atoms_no_score
-    
-            atoms_with_scores = self.score_atoms(atom_texts, logprob_content)
-    
-            # Check if scoring produced any valid scores
-            valid_scores_count = sum(1 for atom in atoms_with_scores if atom.score is not None)
-            if valid_scores_count == 0:
-                print(f"Validation warning: Could not score any atoms (likely mapping issue). Keeping original response.")
-                # Mark all atoms as valid
-                for atom in atoms_with_scores: 
-                    atom.valid = True
-                return response, atoms_with_scores  # Return original, atoms list shows scoring attempt
-            
-            print(f"Successfully scored {valid_scores_count}/{len(atoms_with_scores)} atoms")
-    
-            # 3. Trim
-            trimmed_atoms = self.trim_split_conformal(atoms_with_scores, alpha)
-            
-            # Check if we have any valid atoms after trimming
-            valid_atoms_count = sum(1 for atom in trimmed_atoms if atom.valid)
-            if valid_atoms_count == 0:
-                # If no atoms remain valid after trimming, keep at least 50% of the highest scoring atoms
-                print("Warning: No atoms remain valid after trimming. Keeping top 50% of atoms by score.")
-                # Sort atoms by score and keep top half
-                sorted_atoms = sorted(
-                    [a for a in atoms_with_scores if a.score is not None],
-                    key=lambda x: x.score if x.score is not None else float('-inf'),
-                    reverse=True  # Higher scores are better
-                )
-                
-                # Keep at least half the atoms or 3, whichever is greater
-                keep_count = max(len(sorted_atoms) // 2, min(3, len(sorted_atoms)))
-                for i, atom in enumerate(atoms_with_scores):
-                    if i < keep_count and atom.score is not None:
-                        atom.valid = True
-                
-                trimmed_atoms = atoms_with_scores
-                print(f"Adjusted validation to keep {keep_count} highest scoring atoms")
-    
-            # 4. Merge
-            validated_response = self.merge(trimmed_atoms)
-            if not validated_response.strip():
-                print("Warning: Merged response is empty. Falling back to original response.")
-                return response, trimmed_atoms
-    
-            print("--- Conformal Validation Complete ---")
-            print(f"Validated Response: {validated_response[:100]}...")
-    
-            return validated_response, trimmed_atoms
-            
-        except Exception as e:
-            print(f"Error during validation process: {e}")
-            import traceback
-            traceback.print_exc()
-            print("Falling back to original response due to validation error.")
-            return response, [Atom(text=response, valid=True)]  # Return original marked as valid
-
-    def _standardize_logprobs(self, logprob_content: List[Dict]) -> List[Dict]:
+    def _standardize_logprobs(self, logprob_content: List[Dict], keep_top_logprobs: bool = True) -> List[Dict]:
         """
         Standardizes different logprob formats to a common format with 'token' and 'logprob' keys.
+        
+        Args:
+            logprob_content: The list of logprob dictionaries to standardize
+            keep_top_logprobs: Whether to keep the top_logprobs field (defaults to True)
         """
         try:
             if not logprob_content or not isinstance(logprob_content, list):
@@ -504,12 +196,293 @@ Merged Paragraph:
                 else:
                     # If no logprob, use a default value
                     std_item['logprob'] = -5.0
-                    
+                
+                # Conditionally include top_logprobs based on parameter    
+                if keep_top_logprobs and 'top_logprobs' in item:
+                    std_item['top_logprobs'] = item['top_logprobs']
+                
                 standardized.append(std_item)
                 
-            print(f"Standardized {len(standardized)} logprob items")
+            print(f"Standardized {len(standardized)} logprob items" + 
+                  (", excluding top_logprobs and bytes" if not keep_top_logprobs else ""))
             return standardized
             
         except Exception as e:
             print(f"Error standardizing logprobs: {e}")
             return []
+
+    def chunk_and_score_direct(self, response: str, logprob_content: List[Dict]) -> List[Atom]:
+        """
+        Directly chunks and scores the original response using the logprob content.
+        Uses sentence-based chunking rather than LLM-based atom extraction for reliable mapping.
+        
+        Args:
+            response: The original response text
+            logprob_content: List of token-level logprob dictionaries
+            
+        Returns:
+            List of Atom objects with text and scores
+        """
+        if not logprob_content or not response.strip():
+            print("Warning: No logprob content provided or empty response.")
+            return [Atom(text=response, score=None, logprobs=None)]
+        
+        # Step 1: Standardize logprobs format and remove top_logprobs to save memory
+        standardized_logprobs = self._standardize_logprobs(logprob_content, keep_top_logprobs=False)
+        
+        if not standardized_logprobs:
+            print("Warning: Could not standardize logprobs.")
+            return [Atom(text=response, score=None, logprobs=None)]
+        
+        # Step 2: Reconstruct the full text from tokens and create token index
+        reconstructed_text = ""
+        token_positions = []
+        
+        for i, token_info in enumerate(standardized_logprobs):
+            token_text = token_info['token']
+            start_pos = len(reconstructed_text)
+            end_pos = start_pos + len(token_text)
+            
+            token_positions.append({
+                'index': i,
+                'text': token_text,
+                'start': start_pos,
+                'end': end_pos,
+                'logprob': token_info['logprob']
+            })
+            
+            reconstructed_text += token_text
+        
+        print(f"Reconstructed text length: {len(reconstructed_text)}")
+        print(f"First 100 chars: {reconstructed_text[:100]}...")
+        
+        # Step 3: Chunk the text using multiple strategies
+        import re
+        
+        # Try several chunking approaches
+        chunks_from_all_methods = []
+        
+        # Approach 1: Structure-based chunking (headers, lists, paragraphs)
+        try:
+            print("Using structure-based chunking")
+            # This pattern handles markdown headers and list items
+            structural_pattern = r'(\n#+\s+.*?(?=\n#+|\Z))|\n\d+\.\s+.*?(?=\n\d+\.|\Z)|\n\*\s+.*?(?=\n\*|\Z)'
+            structural_chunks = re.findall(structural_pattern, '\n' + response, re.DOTALL)
+            structural_chunks = [chunk.strip() for chunk in structural_chunks if chunk.strip()]
+            
+            # If we got some, add them to our chunks
+            if structural_chunks:
+                print(f"Found {len(structural_chunks)} structural chunks (headers, lists)")
+                chunks_from_all_methods.extend(structural_chunks)
+        except Exception as e:
+            print(f"Structure-based chunking failed: {e}")
+        
+        # Approach 2: Paragraph-based chunking
+        try:
+            print("Using paragraph-based chunking")
+            paragraphs = re.split(r'\n\s*\n', response)
+            paragraph_chunks = [p.strip() for p in paragraphs if p.strip()]
+            
+            if paragraph_chunks:
+                print(f"Found {len(paragraph_chunks)} paragraphs")
+                chunks_from_all_methods.extend(paragraph_chunks)
+        except Exception as e:
+            print(f"Paragraph-based chunking failed: {e}")
+        
+        # Approach 3: Sentence-based chunking
+        try:
+            print("Using sentence-based chunking")
+            # This pattern handles common sentence endings (.!?)
+            sentence_pattern = r'(?<=[.!?])\s+|(?<=[.!?])$'
+            
+            # Apply sentence splitting to the paragraphs
+            sentence_chunks = []
+            for paragraph in paragraph_chunks:
+                sentences = re.split(sentence_pattern, paragraph)
+                sentence_chunks.extend([s.strip() for s in sentences if s.strip()])
+            
+            if sentence_chunks:
+                print(f"Found {len(sentence_chunks)} sentences")
+                chunks_from_all_methods.extend(sentence_chunks)
+        except Exception as e:
+            print(f"Sentence-based chunking failed: {e}")
+        
+        # Deduplicate and filter chunks
+        unique_chunks = []
+        seen = set()
+        for chunk in chunks_from_all_methods:
+            if chunk not in seen and len(chunk.strip()) > 0:
+                seen.add(chunk)
+                unique_chunks.append(chunk)
+        
+        # If we still don't have any chunks, use the whole response
+        if not unique_chunks:
+            print("All chunking methods failed, using whole response")
+            unique_chunks = [response]
+        
+        print(f"Final chunked text: {len(unique_chunks)} segments")
+        
+        # Step 4: Map chunks to token positions and calculate scores
+        final_atoms = []
+        
+        for chunk in unique_chunks:
+            if not chunk.strip():
+                continue
+            
+            # Find this chunk in the original reconstructed text
+            chunk_start = reconstructed_text.find(chunk)
+            
+            if chunk_start != -1:
+                # Direct match found
+                chunk_end = chunk_start + len(chunk)
+                
+                # Get all tokens that overlap with this chunk
+                chunk_tokens = [t for t in token_positions 
+                               if (t['start'] < chunk_end and t['end'] > chunk_start)]
+                
+                if chunk_tokens:
+                    # Calculate score as mean logprob
+                    logprobs = [t['logprob'] for t in chunk_tokens]
+                    score = np.mean(logprobs)
+                    final_atoms.append(Atom(
+                        text=chunk,
+                        score=score,
+                        logprobs=logprobs,
+                        valid=True  # Default to valid, will be updated during trimming
+                    ))
+                    print(f"Mapped chunk: '{chunk[:50]}{'...' if len(chunk) > 50 else ''}', "
+                         f"Token count: {len(chunk_tokens)}, Score: {score:.4f}")
+                else:
+                    final_atoms.append(Atom(text=chunk, score=None, logprobs=None, valid=True))
+                    print(f"No tokens mapped for chunk: '{chunk[:50]}...'")
+            else:
+                # Chunk not found directly, use fuzzy matching
+                # Clean both texts for better matching
+                clean_chunk = re.sub(r'\s+', ' ', chunk).strip()
+                clean_reconstructed = re.sub(r'\s+', ' ', reconstructed_text).strip()
+                
+                chunk_start = clean_reconstructed.find(clean_chunk)
+                if chunk_start != -1:
+                    chunk_end = chunk_start + len(clean_chunk)
+                    
+                    # Get overlapping tokens
+                    chunk_tokens = [t for t in token_positions 
+                                   if (t['start'] < chunk_end and t['end'] > chunk_start)]
+                    
+                    if chunk_tokens:
+                        logprobs = [t['logprob'] for t in chunk_tokens]
+                        score = np.mean(logprobs)
+                        final_atoms.append(Atom(
+                            text=chunk, 
+                            score=score,
+                            logprobs=logprobs,
+                            valid=True
+                        ))
+                        print(f"Mapped chunk (fuzzy): '{chunk[:50]}...' Score: {score:.4f}")
+                    else:
+                        final_atoms.append(Atom(text=chunk, score=None, logprobs=None, valid=True))
+                else:
+                    # Last resort: approximate mapping based on position in text
+                    print(f"Could not directly map: '{chunk[:50]}...'")
+                    final_atoms.append(Atom(text=chunk, score=None, logprobs=None, valid=True))
+        
+        if not final_atoms:
+            # Fallback if chunking fails completely
+            print("Warning: All chunking methods failed. Treating entire response as one chunk.")
+            
+            # Score the entire response
+            all_logprobs = [t['logprob'] for t in token_positions]
+            if all_logprobs:
+                overall_score = np.mean(all_logprobs)
+                return [Atom(text=response, score=overall_score, logprobs=all_logprobs, valid=True)]
+            else:
+                return [Atom(text=response, score=None, logprobs=None, valid=True)]
+        
+        return final_atoms
+
+    def _calculate_score_from_logprobs(self, logprobs: Optional[List[float]]) -> Optional[float]:
+        """Calculates a score (mean logprob) from log probabilities."""
+        if logprobs is None or len(logprobs) == 0:
+            return None
+        # Using mean log probability as the score measure
+        score = np.mean(logprobs)
+        return score
+
+    def validate(self, response: str, logprob_content: Optional[List[Dict]], alpha: float = 0.1) -> Tuple[str, List[Atom]]:
+        """
+        Validates an LLM response using direct sentence chunking and scoring.
+        
+        Args:
+            response: The original LLM response string.
+            logprob_content: The list of logprob dictionaries from the generation step.
+            alpha: The desired significance level for trimming (e.g., 0.1).
+            
+        Returns:
+            A tuple containing:
+            - The validated response string.
+            - A list of Atom objects with their scores and validity status.
+        """
+        print("\n--- Starting Direct Conformal Validation ---")
+        print(f"Original Response: {response[:100]}...")
+        print(f"Alpha: {alpha}")
+        print(f"Logprobs provided: {logprob_content is not None} (Length: {len(logprob_content) if logprob_content else 'N/A'})")
+        
+        try:
+            # Check if we have logprobs to work with
+            if not logprob_content:
+                print("Validation not possible: No logprobs provided.")
+                return response, [Atom(text=response, valid=True)]
+            
+            # 1. Directly chunk and score the response
+            atoms_with_scores = self.chunk_and_score_direct(response, logprob_content)
+            
+            # Check if scoring produced any valid scores
+            valid_scores_count = sum(1 for atom in atoms_with_scores if atom.score is not None)
+            if valid_scores_count == 0:
+                print("Validation warning: Could not score any chunks. Keeping original response.")
+                for atom in atoms_with_scores:
+                    atom.valid = True
+                return response, atoms_with_scores
+            
+            print(f"Successfully scored {valid_scores_count}/{len(atoms_with_scores)} chunks")
+            
+            # 2. Trim low-confidence chunks
+            trimmed_atoms = self.trim_split_conformal(atoms_with_scores, alpha)
+            
+            # Check if we have any valid atoms after trimming
+            valid_atoms_count = sum(1 for atom in trimmed_atoms if atom.valid)
+            if valid_atoms_count == 0:
+                print("Warning: No chunks remain valid after trimming. Keeping top 50% of chunks by score.")
+                # Sort atoms by score and keep top half
+                sorted_atoms = sorted(
+                    [a for a in atoms_with_scores if a.score is not None],
+                    key=lambda x: x.score if x.score is not None else float('-inf'),
+                    reverse=True  # Higher scores are better
+                )
+                
+                # Keep at least half the atoms or 3, whichever is greater
+                keep_count = max(len(sorted_atoms) // 2, min(3, len(sorted_atoms)))
+                for i, atom in enumerate(sorted_atoms):
+                    if i < keep_count:
+                        atom.valid = True
+                
+                trimmed_atoms = atoms_with_scores
+                print(f"Adjusted validation to keep {keep_count} highest scoring chunks")
+            
+            # 3. Merge valid chunks using the existing LLM-based merge method for better coherence
+            validated_response = self.merge(trimmed_atoms)
+            if not validated_response.strip():
+                print("Warning: Merged response is empty. Falling back to original response.")
+                return response, trimmed_atoms
+            
+            print("--- Direct Conformal Validation Complete ---")
+            print(f"Validated Response: {validated_response[:100]}...")
+            
+            return validated_response, trimmed_atoms
+            
+        except Exception as e:
+            print(f"Error during validation process: {e}")
+            import traceback
+            traceback.print_exc()
+            print("Falling back to original response due to validation error.")
+            return response, [Atom(text=response, valid=True)]
