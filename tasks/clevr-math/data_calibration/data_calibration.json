@@ -1,0 +1,2461 @@
+[
+  {
+    "pid": "67",
+    "query": "Subtract 1 balls. How many balls are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000015.png",
+    "answer": 2,
+    "response": "To determine how many balls are left after subtracting 1 from the total number of balls in the image, follow these steps:\n\n1. **Identify the Objects**: The image contains various geometric shapes, including balls (spheres) and other shapes like cubes and cylinders.\n\n2. **Count the Balls**: Based on the analysis, count the total number of balls present in the image.\n\n3. **Perform the Subtraction**: Subtract 1 from the total count of balls.\n\n4. **Provide the Final Answer**: \n\nAssuming there are 3 balls in the image, the calculation would be:\n- Total balls = 3\n- Subtract 1: 3 - 1 = 2\n\nThus, the final answer is:\n\n**2** balls are left.",
+    "atomic_facts": [
+      {
+        "text": "To determine how many balls are left after subtracting 1 from the total number of balls in the image, follow these steps:",
+        "score": -0.16838464033305803,
+        "valid": true
+      },
+      {
+        "text": "1. **Identify the Objects**: The image contains various geometric shapes, including balls (spheres) and other shapes like cubes and cylinders.",
+        "score": -0.24348590357906155,
+        "valid": true
+      },
+      {
+        "text": "2. **Count the Balls**: Based on the analysis, count the total number of balls present in the image.",
+        "score": -0.26013665585910434,
+        "valid": true
+      },
+      {
+        "text": "3. **Perform the Subtraction**: Subtract 1 from the total count of balls.",
+        "score": -0.07315591411447073,
+        "valid": true
+      },
+      {
+        "text": "4. **Provide the Final Answer**:",
+        "score": -0.11344646462657693,
+        "valid": true
+      },
+      {
+        "text": "- Total balls = 3",
+        "score": -0.1536495225530127,
+        "valid": true
+      },
+      {
+        "text": "- Subtract 1: 3 - 1 = 2",
+        "score": -0.11298941027051208,
+        "valid": true
+      },
+      {
+        "text": "Thus, the final answer is:",
+        "score": -0.3036864752232629,
+        "valid": false
+      },
+      {
+        "text": "**2** balls are left.",
+        "score": -0.1870160160195675,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "108",
+    "query": "Subtract all gray blocks. How many blocks are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000024.png",
+    "answer": 2,
+    "response": "To solve the query of how many blocks remain after subtracting all gray blocks, follow these steps:\n\n1. **Identify Total Blocks**: Count all the blocks in the image.\n2. **Identify Gray Blocks**: Count only the gray blocks.\n3. **Perform Subtraction**: Subtract the number of gray blocks from the total count of blocks.\n\n### Steps Breakdown:\n- **Total Blocks**: Let's assume there are 6 blocks in total.\n- **Gray Blocks**: Assume there is 1 gray block.\n\n### Calculation:\n- Total Blocks: 6\n- Gray Blocks: 1\n- Remaining Blocks = Total Blocks - Gray Blocks = 6 - 1 = 5\n\n### Final Answer:\n5 blocks are left after subtracting all gray blocks.",
+    "atomic_facts": [
+      {
+        "text": "To solve the query of how many blocks remain after subtracting all gray blocks, follow these steps:",
+        "score": -0.20027832232773832,
+        "valid": true
+      },
+      {
+        "text": "1. **Identify Total Blocks**: Count all the blocks in the image.",
+        "score": -0.19429493047873692,
+        "valid": true
+      },
+      {
+        "text": "2. **Identify Gray Blocks**: Count only the gray blocks.",
+        "score": -0.17883982579719973,
+        "valid": true
+      },
+      {
+        "text": "3. **Perform Subtraction**: Subtract the number of gray blocks from the total count of blocks.",
+        "score": -0.08930119492549111,
+        "valid": true
+      },
+      {
+        "text": "- **Total Blocks**: Let's assume there are 6 blocks in total.",
+        "score": -0.25809153539012186,
+        "valid": true
+      },
+      {
+        "text": "- **Gray Blocks**: Assume there is 1 gray block.",
+        "score": -0.0652138257888808,
+        "valid": true
+      },
+      {
+        "text": "- Total Blocks: 6",
+        "score": -0.33223437034897074,
+        "valid": false
+      },
+      {
+        "text": "- Gray Blocks: 1",
+        "score": -0.00014632477376371375,
+        "valid": true
+      },
+      {
+        "text": "- Remaining Blocks = Total Blocks - Gray Blocks = 6 - 1 = 5",
+        "score": -0.029857484375241147,
+        "valid": true
+      },
+      {
+        "text": "### Final Answer:\n5 blocks are left after subtracting all gray blocks.",
+        "score": -0.1308660125597574,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "83",
+    "query": "Subtract 1 cubes. How many cubes are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000018.png",
+    "answer": 0,
+    "response": "To solve the query of how many cubes are left after subtracting 1 from the total number of cubes, we can break down the process as follows:\n\n1. **Identify the Total Number of Cubes**: The analysis indicates that there is 1 cube present in the image.\n\n2. **Perform the Subtraction**: We need to subtract 1 from the total number of cubes:\n   \\[\n   1 \\text{ (total cubes)} - 1 = 0 \\text{ (cubes left)}\n   \\]\n\n3. **Final Answer**: After performing the subtraction, the final answer is:\n   \\[\n   \\text{0}\n   \\]\n\nThus, the number of cubes left after subtracting 1 is **0**.",
+    "atomic_facts": [
+      {
+        "text": "To solve the query of how many cubes are left after subtracting 1 from the total number of cubes, we can break down the process as follows:",
+        "score": -0.20653453021202495,
+        "valid": true
+      },
+      {
+        "text": "1. **Identify the Total Number of Cubes**: The analysis indicates that there is 1 cube present in the image.",
+        "score": -0.24203418316382505,
+        "valid": false
+      },
+      {
+        "text": "2. **Perform the Subtraction**: We need to subtract 1 from the total number of cubes:\n   \\[\n   1 \\text{ (total cubes)} - 1 = 0 \\text{ (cubes left)}\n   \\]",
+        "score": -0.12108579245326877,
+        "valid": true
+      },
+      {
+        "text": "3. **Final Answer**: After performing the subtraction, the final answer is:\n   \\[\n   \\text{0}\n   \\]",
+        "score": -0.1890668552830595,
+        "valid": true
+      },
+      {
+        "text": "Thus, the number of cubes left after subtracting 1 is **0**.",
+        "score": -0.14504268870030212,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "90",
+    "query": "Subtract all blue rubber spheres. How many spheres are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000020.png",
+    "answer": 3,
+    "response": "To address the query, we need to follow these steps:\n\n1. **Identify Objects**: Analyze the image to count the number of gray cylinders present.\n2. **Perform Subtraction**: Subtract the identified number of gray cylinders from the total number of spheres.\n\n### Step-by-Step Breakdown:\n\n1. **Object Recognition**: The analysis of the image revealed that there are **no gray cylinders** present.\n2. **Total Spheres**: Since the query specifically mentions subtracting blue rubber spheres, we need to identify how many blue spheres are in the image. However, the analysis does not provide that count directly.\n3. **Subtraction**: Since there are no gray cylinders to subtract, the number of spheres remaining will be the same as the initial count of blue spheres.\n\n### Conclusion:\nGiven that there are no gray cylinders to subtract, the final answer is simply the count of blue spheres. If we assume there are **0 gray cylinders**, the answer remains unchanged.\n\n**Final Answer**: 0 (since no gray cylinders were present to subtract).",
+    "atomic_facts": [
+      {
+        "text": "To address the query, we need to follow these steps:",
+        "score": -0.41397767222163867,
+        "valid": true
+      },
+      {
+        "text": "1. **Identify Objects**: Analyze the image to count the number of gray cylinders present.",
+        "score": -0.2723900092159008,
+        "valid": true
+      },
+      {
+        "text": "2. **Perform Subtraction**: Subtract the identified number of gray cylinders from the total number of spheres.",
+        "score": -0.2015925665152779,
+        "valid": true
+      },
+      {
+        "text": "### Step-by-Step Breakdown:",
+        "score": -0.30868751741945744,
+        "valid": true
+      },
+      {
+        "text": "1. **Object Recognition**: The analysis of the image revealed that there are **no gray cylinders** present.",
+        "score": -0.28813093462757855,
+        "valid": true
+      },
+      {
+        "text": "2. **Total Spheres**: Since the query specifically mentions subtracting blue rubber spheres, we need to identify how many blue spheres are in the image. However, the analysis does not provide that count directly.",
+        "score": -0.498686797552392,
+        "valid": true
+      },
+      {
+        "text": "3. **Subtraction**: Since there are no gray cylinders to subtract, the number of spheres remaining will be the same as the initial count of blue spheres.",
+        "score": -0.38467697768249887,
+        "valid": true
+      },
+      {
+        "text": "### Conclusion:\nGiven that there are no gray cylinders to subtract, the final answer is simply the count of blue spheres. If we assume there are **0 gray cylinders**, the answer remains unchanged.",
+        "score": -0.6034963034757171,
+        "valid": false
+      },
+      {
+        "text": "**Final Answer**: 0 (since no gray cylinders were present to subtract).",
+        "score": -0.37780761040801947,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "76",
+    "query": "Subtract all gray cylinders. How many cylinders are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000017.png",
+    "answer": 5,
+    "response": "To solve the query of how many cylinders are left after subtracting the gray cylinders, we can break down the process as follows:\n\n1. **Count Total Cylinders**: The analysis indicates that there are a total of 6 cylinders in the image.\n2. **Identify Gray Cylinders**: Among these, there is 1 gray cylinder.\n3. **Perform Subtraction**: To find the remaining cylinders, we subtract the number of gray cylinders from the total:\n   - Total cylinders: 6\n   - Gray cylinders: 1\n   - Calculation: \\( 6 - 1 = 5 \\)\n\nThus, the final answer is:\n\n**5** cylinders are left.",
+    "atomic_facts": [
+      {
+        "text": "To solve the query of how many cylinders are left after subtracting the gray cylinders, we can break down the process as follows:",
+        "score": -0.22474432808758138,
+        "valid": true
+      },
+      {
+        "text": "1. **Count Total Cylinders**: The analysis indicates that there are a total of 6 cylinders in the image.",
+        "score": -0.20829414260667364,
+        "valid": true
+      },
+      {
+        "text": "2. **Identify Gray Cylinders**: Among these, there is 1 gray cylinder.",
+        "score": -0.0936929651294641,
+        "valid": true
+      },
+      {
+        "text": "3. **Perform Subtraction**: To find the remaining cylinders, we subtract the number of gray cylinders from the total:\n   - Total cylinders: 6\n   - Gray cylinders: 1\n   - Calculation: \\( 6 - 1 = 5 \\)",
+        "score": -0.11820677728427574,
+        "valid": true
+      },
+      {
+        "text": "Thus, the final answer is:",
+        "score": -0.3116231464462414,
+        "valid": false
+      },
+      {
+        "text": "**5** cylinders are left.",
+        "score": -0.27213736809751154,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "58",
+    "query": "Subtract 1 cubes. How many cubes are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000013.png",
+    "answer": 2,
+    "response": "To solve the query of subtracting 1 cube from a collection of cubes, follow these steps:\n\n1. **Identify the Objects**: The query specifically asks about cubes. We need to count how many cubes are present in the image.\n\n2. **Count the Cubes**: Based on the image provided, identify and count the cubes.\n\n3. **Perform the Subtraction**: Once the total number of cubes is determined, subtract 1 from that count.\n\n4. **Provide the Final Answer**: The result of the subtraction will give the final number of cubes left.\n\nSince I cannot analyze the image directly, I recommend counting the cubes in the image yourself. If you find, for example, that there are 5 cubes, then subtracting 1 would leave you with 4 cubes.\n\n**Final Answer**: Please count the cubes in the image and subtract 1 to find the final number of cubes left.",
+    "atomic_facts": [
+      {
+        "text": "To solve the query of subtracting 1 cube from a collection of cubes, follow these steps:",
+        "score": -0.2648500042792875,
+        "valid": true
+      },
+      {
+        "text": "1. **Identify the Objects**: The query specifically asks about cubes. We need to count how many cubes are present in the image.",
+        "score": -0.35023701719126166,
+        "valid": true
+      },
+      {
+        "text": "2. **Count the Cubes**: Based on the image provided, identify and count the cubes.",
+        "score": -0.4029781054946533,
+        "valid": false
+      },
+      {
+        "text": "3. **Perform the Subtraction**: Once the total number of cubes is determined, subtract 1 from that count.",
+        "score": -0.13152233050198844,
+        "valid": true
+      },
+      {
+        "text": "4. **Provide the Final Answer**: The result of the subtraction will give the final number of cubes left.",
+        "score": -0.26545352930484656,
+        "valid": true
+      },
+      {
+        "text": "Since I cannot analyze the image directly, I recommend counting the cubes in the image yourself. If you find, for example, that there are 5 cubes, then subtracting 1 would leave you with 4 cubes.",
+        "score": -0.3123458711293943,
+        "valid": true
+      },
+      {
+        "text": "**Final Answer**: Please count the cubes in the image and subtract 1 to find the final number of cubes left.",
+        "score": -0.2638538437945385,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "110",
+    "query": "Subtract all cylinders. How many objects are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000024.png",
+    "answer": 4,
+    "response": "To solve the query, we followed these steps:\n\n1. **Identify Objects**: We analyzed the image to count the total number of large shiny blocks and cylinders.\n   - **Large shiny blocks**: 3 (blue, silver, and brown cubes)\n   - **Cylinders**: 2 (purple and yellow cylinders)\n\n2. **Perform Subtraction**: We subtracted the number of cylinders from the total number of blocks:\n   - Total blocks (3) - Cylinders (2) = 1\n\n3. **Final Count**: After the subtraction, we found that there is **1 object left**.\n\n**Final Answer**: 1",
+    "atomic_facts": [
+      {
+        "text": "To solve the query, we followed these steps:",
+        "score": -0.32157288830785546,
+        "valid": false
+      },
+      {
+        "text": "1. **Identify Objects**: We analyzed the image to count the total number of large shiny blocks and cylinders.\n   - **Large shiny blocks**: 3 (blue, silver, and brown cubes)\n   - **Cylinders**: 2 (purple and yellow cylinders)",
+        "score": -0.10657118409115994,
+        "valid": true
+      },
+      {
+        "text": "2. **Perform Subtraction**: We subtracted the number of cylinders from the total number of blocks:\n   - Total blocks (3) - Cylinders (2) = 1",
+        "score": -0.07037629331939704,
+        "valid": true
+      },
+      {
+        "text": "3. **Final Count**: After the subtraction, we found that there is **1 object left**.",
+        "score": -0.1290325251628391,
+        "valid": true
+      },
+      {
+        "text": "**Final Answer**: 1",
+        "score": -0.11689760517029615,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "97",
+    "query": "Subtract 0 blue cylinders. How many objects are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000021.png",
+    "answer": 4,
+    "response": "To solve the query, we follow these steps:\n\n1. **Identify Objects**: The query asks about blue cylinders. Upon analyzing the image, it is determined that there are no blue cylinders present.\n\n2. **Perform the Calculation**: The query specifies to subtract 0 blue cylinders from the total count. Since there are 0 blue cylinders, the calculation is:\n   \\[\n   0 - 0 = 0\n   \\]\n\n3. **Final Answer**: The final answer, representing the number of objects left after the subtraction, is:\n   \\[\n   \\text{0}\n   \\]\n\nThus, the answer to the query is **0**.",
+    "atomic_facts": [
+      {
+        "text": "To solve the query, we follow these steps:",
+        "score": -0.2645770964882104,
+        "valid": true
+      },
+      {
+        "text": "1. **Identify Objects**: The query asks about blue cylinders. Upon analyzing the image, it is determined that there are no blue cylinders present.",
+        "score": -0.307545465501668,
+        "valid": false
+      },
+      {
+        "text": "2. **Perform the Calculation**: The query specifies to subtract 0 blue cylinders from the total count. Since there are 0 blue cylinders, the calculation is:\n   \\[\n   0 - 0 = 0\n   \\]",
+        "score": -0.15301062459073705,
+        "valid": true
+      },
+      {
+        "text": "3. **Final Answer**: The final answer, representing the number of objects left after the subtraction, is:\n   \\[\n   \\text{0}\n   \\]",
+        "score": -0.22342698698141866,
+        "valid": true
+      },
+      {
+        "text": "Thus, the answer to the query is **0**.",
+        "score": -0.16275385272933818,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "101",
+    "query": "Subtract 0 gray cylinders. How many objects are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000022.png",
+    "answer": 5,
+    "response": "To solve the query, we follow these steps:\n\n1. **Identify the Objects**: The image contains a total of five objects, which include various geometric shapes.\n2. **Subtract Gray Cylinders**: The query asks to subtract 0 gray cylinders from the total count. Since subtracting zero does not change the total, the count remains the same.\n3. **Final Count**: Therefore, the total number of objects after the subtraction is still five.\n\n**Final Answer**: 5",
+    "atomic_facts": [
+      {
+        "text": "To solve the query, we follow these steps:",
+        "score": -0.23322620549297426,
+        "valid": true
+      },
+      {
+        "text": "1. **Identify the Objects**: The image contains a total of five objects, which include various geometric shapes.",
+        "score": -0.39366863928475854,
+        "valid": false
+      },
+      {
+        "text": "2. **Subtract Gray Cylinders**: The query asks to subtract 0 gray cylinders from the total count. Since subtracting zero does not change the total, the count remains the same.",
+        "score": -0.24670053502869466,
+        "valid": true
+      },
+      {
+        "text": "3. **Final Count**: Therefore, the total number of objects after the subtraction is still five.",
+        "score": -0.23906447053663474,
+        "valid": true
+      },
+      {
+        "text": "**Final Answer**: 5",
+        "score": -0.07740420806512864,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "59",
+    "query": "Subtract all cylinders. How many objects are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000013.png",
+    "answer": 5,
+    "response": "To solve the query \"Subtract all cylinders. How many objects are left?\" based on the provided image, we can break down the process as follows:\n\n1. **Count Total Objects**: The image contains a total of 8 objects.\n2. **Identify Cylinders**: There are 2 cylinders present in the image.\n3. **Perform Subtraction**: \n   - Total objects: 8\n   - Cylinders: 2\n   - Calculation: \\( 8 - 2 = 6 \\)\n\nThus, after subtracting the cylinders from the total number of objects, the final answer is **6**.",
+    "atomic_facts": [
+      {
+        "text": "To solve the query \"Subtract all cylinders. How many objects are left?\" based on the provided image, we can break down the process as follows:",
+        "score": -0.17502662281172596,
+        "valid": true
+      },
+      {
+        "text": "1. **Count Total Objects**: The image contains a total of 8 objects.",
+        "score": -0.20466129000667146,
+        "valid": false
+      },
+      {
+        "text": "2. **Identify Cylinders**: There are 2 cylinders present in the image.",
+        "score": -0.09631983913008134,
+        "valid": true
+      },
+      {
+        "text": "3. **Perform Subtraction**: \n   - Total objects: 8\n   - Cylinders: 2\n   - Calculation: \\( 8 - 2 = 6 \\)",
+        "score": -0.07823692526574852,
+        "valid": true
+      },
+      {
+        "text": "Thus, after subtracting the cylinders from the total number of objects, the final answer is **6**.",
+        "score": -0.13976930527407336,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "65",
+    "query": "Subtract all shiny spheres. How many spheres are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000015.png",
+    "answer": 1,
+    "response": "To solve the query of how many spheres are left after subtracting all shiny spheres, we can break down the process as follows:\n\n1. **Identify Total Spheres**: In the image, there are a total of 4 spheres:\n   - One gray sphere\n   - One red sphere\n   - One shiny silver sphere\n   - One shiny red sphere\n\n2. **Identify Shiny Spheres**: The shiny spheres identified are:\n   - Shiny silver sphere\n   - Shiny red sphere\n   - Total shiny spheres = 2\n\n3. **Perform Subtraction**: To find the number of spheres left after subtracting the shiny ones:\n   - Total spheres (4) - Shiny spheres (2) = 2 spheres left.\n\n**Final Answer**: 2",
+    "atomic_facts": [
+      {
+        "text": "To solve the query of how many spheres are left after subtracting all shiny spheres, we can break down the process as follows:",
+        "score": -0.19444206241876844,
+        "valid": false
+      },
+      {
+        "text": "1. **Identify Total Spheres**: In the image, there are a total of 4 spheres:\n   - One gray sphere\n   - One red sphere\n   - One shiny silver sphere\n   - One shiny red sphere",
+        "score": -0.0816889232999721,
+        "valid": true
+      },
+      {
+        "text": "2. **Identify Shiny Spheres**: The shiny spheres identified are:\n   - Shiny silver sphere\n   - Shiny red sphere\n   - Total shiny spheres = 2",
+        "score": -0.11069432797659648,
+        "valid": true
+      },
+      {
+        "text": "3. **Perform Subtraction**: To find the number of spheres left after subtracting the shiny ones:\n   - Total spheres (4) - Shiny spheres (2) = 2 spheres left.",
+        "score": -0.0912544666419232,
+        "valid": true
+      },
+      {
+        "text": "**Final Answer**: 2",
+        "score": -0.12289875336133653,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "93",
+    "query": "Subtract all balls. How many objects are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000020.png",
+    "answer": 5,
+    "response": "To solve the query of how many objects remain after subtracting all balls from the image, we can break down the process as follows:\n\n1. **Identify Total Objects**: The analysis indicates that there are a total of 8 objects in the image.\n2. **Identify Balls**: Among these objects, there are 4 balls.\n3. **Perform Subtraction**: To find the number of remaining objects after subtracting the balls, we calculate:\n   \\[\n   \\text{Remaining Objects} = \\text{Total Objects} - \\text{Number of Balls} = 8 - 4 = 4\n   \\]\n\nThus, the final answer to the query is:\n\n**4**",
+    "atomic_facts": [
+      {
+        "text": "To solve the query of how many objects remain after subtracting all balls from the image, we can break down the process as follows:",
+        "score": -0.17898572362048104,
+        "valid": true
+      },
+      {
+        "text": "1. **Identify Total Objects**: The analysis indicates that there are a total of 8 objects in the image.",
+        "score": -0.19085078011010617,
+        "valid": true
+      },
+      {
+        "text": "2. **Identify Balls**: Among these objects, there are 4 balls.",
+        "score": -0.13010626935798253,
+        "valid": true
+      },
+      {
+        "text": "3. **Perform Subtraction**: To find the number of remaining objects after subtracting the balls, we calculate:\n   \\[\n   \\text{Remaining Objects} = \\text{Total Objects} - \\text{Number of Balls} = 8 - 4 = 4\n   \\]",
+        "score": -0.07408517342344181,
+        "valid": true
+      },
+      {
+        "text": "Thus, the final answer to the query is:",
+        "score": -0.21627120599387126,
+        "valid": false
+      },
+      {
+        "text": "**4**",
+        "score": -0.04100943938829005,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "53",
+    "query": "Subtract 1 blocks. How many blocks are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000012.png",
+    "answer": 0,
+    "response": "To solve the query, we follow these steps:\n\n1. **Identify the Number of Blocks**: The image shows a total of 3 blocks.\n2. **Perform the Subtraction**: The query asks to subtract 1 block from the total. \n   - Calculation: \\(3 - 1 = 2\\)\n3. **Provide the Final Answer**: The final count of blocks after subtraction is 2.\n\n**Final Answer**: 2",
+    "atomic_facts": [
+      {
+        "text": "To solve the query, we follow these steps:",
+        "score": -0.23255318043957232,
+        "valid": false
+      },
+      {
+        "text": "1. **Identify the Number of Blocks**: The image shows a total of 3 blocks.",
+        "score": -0.0991813091801248,
+        "valid": true
+      },
+      {
+        "text": "2. **Perform the Subtraction**: The query asks to subtract 1 block from the total. \n   - Calculation: \\(3 - 1 = 2\\)",
+        "score": -0.16228094778293686,
+        "valid": true
+      },
+      {
+        "text": "3. **Provide the Final Answer**: The final count of blocks after subtraction is 2.",
+        "score": -0.11952961154474906,
+        "valid": true
+      },
+      {
+        "text": "**Final Answer**: 2",
+        "score": -0.09044503316456647,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "77",
+    "query": "Subtract 1 cubes. How many cubes are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000017.png",
+    "answer": 0,
+    "response": "To solve the query of how many cubes are left after subtracting 1 from the initial count, we can break down the process as follows:\n\n1. **Identify the Initial Count**: The image was analyzed, and it was determined that there is 1 cube present.\n\n2. **Perform the Subtraction**: We subtract 1 from the initial count of cubes:\n   \\[\n   1 - 1 = 0\n   \\]\n\n3. **Final Answer**: After the subtraction, the final count of cubes is 0.\n\nTherefore, the answer to the query is:\n\n**0**",
+    "atomic_facts": [
+      {
+        "text": "To solve the query of how many cubes are left after subtracting 1 from the initial count, we can break down the process as follows:",
+        "score": -0.1908109203806987,
+        "valid": true
+      },
+      {
+        "text": "1. **Identify the Initial Count**: The image was analyzed, and it was determined that there is 1 cube present.",
+        "score": -0.2513223950320305,
+        "valid": false
+      },
+      {
+        "text": "2. **Perform the Subtraction**: We subtract 1 from the initial count of cubes:\n   \\[\n   1 - 1 = 0\n   \\]",
+        "score": -0.10070747872033475,
+        "valid": true
+      },
+      {
+        "text": "3. **Final Answer**: After the subtraction, the final count of cubes is 0.",
+        "score": -0.15452650549268582,
+        "valid": true
+      },
+      {
+        "text": "Therefore, the answer to the query is:",
+        "score": -0.23862583186061986,
+        "valid": true
+      },
+      {
+        "text": "**0**",
+        "score": -0.020772170818721254,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "87",
+    "query": "Subtract all yellow blocks. How many blocks are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000019.png",
+    "answer": 2,
+    "response": "To solve the query of how many blocks remain after subtracting all yellow blocks, we can break down the process as follows:\n\n1. **Identify Yellow Blocks**: Analyze the image to count the number of yellow blocks present.\n2. **Count Total Blocks**: Determine the total number of blocks in the image.\n3. **Perform Subtraction**: Subtract the number of yellow blocks from the total number of blocks.\n4. **Provide Final Count**: State the number of blocks left after the subtraction.\n\n### Steps Taken:\n- **Yellow Blocks Count**: 1 yellow block identified.\n- **Total Blocks Count**: 4 blocks in total.\n- **Calculation**: \n  - Total blocks: 4\n  - Yellow blocks: 1\n  - Remaining blocks: 4 - 1 = 3\n\n### Conclusion:\nThere are **3 blocks left** after subtracting the yellow blocks.",
+    "atomic_facts": [
+      {
+        "text": "To solve the query of how many blocks remain after subtracting all yellow blocks, we can break down the process as follows:",
+        "score": -0.2145070221230958,
+        "valid": true
+      },
+      {
+        "text": "1. **Identify Yellow Blocks**: Analyze the image to count the number of yellow blocks present.",
+        "score": -0.22563510937454795,
+        "valid": true
+      },
+      {
+        "text": "2. **Count Total Blocks**: Determine the total number of blocks in the image.",
+        "score": -0.0883402892303143,
+        "valid": true
+      },
+      {
+        "text": "3. **Perform Subtraction**: Subtract the number of yellow blocks from the total number of blocks.",
+        "score": -0.05833764947688022,
+        "valid": true
+      },
+      {
+        "text": "4. **Provide Final Count**: State the number of blocks left after the subtraction.",
+        "score": -0.2386139714590677,
+        "valid": false
+      },
+      {
+        "text": "- **Yellow Blocks Count**: 1 yellow block identified.",
+        "score": -0.31652399996199587,
+        "valid": false
+      },
+      {
+        "text": "- **Total Blocks Count**: 4 blocks in total.",
+        "score": -0.09988742225042503,
+        "valid": true
+      },
+      {
+        "text": "- **Calculation**:",
+        "score": -0.14703709021778194,
+        "valid": true
+      },
+      {
+        "text": "- Total blocks: 4",
+        "score": -0.1093182291017835,
+        "valid": true
+      },
+      {
+        "text": "- Yellow blocks: 1",
+        "score": -0.0002824692816526901,
+        "valid": true
+      },
+      {
+        "text": "- Remaining blocks: 4 - 1 = 3",
+        "score": -0.12644328472157204,
+        "valid": true
+      },
+      {
+        "text": "### Conclusion:\nThere are **3 blocks left** after subtracting the yellow blocks.",
+        "score": -0.13029610485037743,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "91",
+    "query": "Subtract all cyan spheres. How many spheres are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000020.png",
+    "answer": 3,
+    "response": "To answer the query \"Subtract all cyan spheres. How many spheres are left?\" based on the provided image analysis, we can break down the process as follows:\n\n1. **Identify Objects**: The image contains various geometric shapes, including spheres and cylinders. The specific focus is on identifying cyan spheres.\n\n2. **Count Cyan Spheres**: According to the analysis, there are no gray cylinders present in the image. However, we need to focus on the cyan spheres.\n\n3. **Perform Subtraction**: Since the query asks to subtract all cyan spheres, we need to determine how many cyan spheres are present. If there are any, we would subtract that number from the total count of spheres.\n\n4. **Final Count**: If there are no cyan spheres, the total number of spheres remaining would be the initial count of spheres minus zero.\n\nBased on the analysis, if there are no cyan spheres identified, the final answer is:\n\n**Answer: 0**",
+    "atomic_facts": [
+      {
+        "text": "To answer the query \"Subtract all cyan spheres. How many spheres are left?\" based on the provided image analysis, we can break down the process as follows:",
+        "score": -0.2656619105436704,
+        "valid": true
+      },
+      {
+        "text": "1. **Identify Objects**: The image contains various geometric shapes, including spheres and cylinders. The specific focus is on identifying cyan spheres.",
+        "score": -0.3587415851089385,
+        "valid": true
+      },
+      {
+        "text": "2. **Count Cyan Spheres**: According to the analysis, there are no gray cylinders present in the image. However, we need to focus on the cyan spheres.",
+        "score": -0.3364988944674061,
+        "valid": true
+      },
+      {
+        "text": "3. **Perform Subtraction**: Since the query asks to subtract all cyan spheres, we need to determine how many cyan spheres are present. If there are any, we would subtract that number from the total count of spheres.",
+        "score": -0.32018064014824094,
+        "valid": true
+      },
+      {
+        "text": "4. **Final Count**: If there are no cyan spheres, the total number of spheres remaining would be the initial count of spheres minus zero.",
+        "score": -0.3600636045749752,
+        "valid": true
+      },
+      {
+        "text": "Based on the analysis, if there are no cyan spheres identified, the final answer is:",
+        "score": -0.5066769177331784,
+        "valid": false
+      },
+      {
+        "text": "**Answer: 0**",
+        "score": -0.18753918979200535,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "94",
+    "query": "Subtract 0 gray cylinders. How many objects are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000020.png",
+    "answer": 9,
+    "response": "To answer the query, we follow these steps:\n\n1. **Identify Objects**: The task is to count the number of gray cylinders in the provided image.\n2. **Analyze the Image**: The analysis indicates that there are no gray cylinders present in the image.\n3. **Perform the Calculation**: Since there are 0 gray cylinders, subtracting 0 from this count results in:\n   \\[\n   0 - 0 = 0\n   \\]\n\n**Final Answer**: 0",
+    "atomic_facts": [
+      {
+        "text": "To answer the query, we follow these steps:",
+        "score": -0.3951248385070357,
+        "valid": false
+      },
+      {
+        "text": "1. **Identify Objects**: The task is to count the number of gray cylinders in the provided image.",
+        "score": -0.24044074556328032,
+        "valid": true
+      },
+      {
+        "text": "2. **Analyze the Image**: The analysis indicates that there are no gray cylinders present in the image.",
+        "score": -0.2658526716083584,
+        "valid": true
+      },
+      {
+        "text": "3. **Perform the Calculation**: Since there are 0 gray cylinders, subtracting 0 from this count results in:\n   \\[\n   0 - 0 = 0\n   \\]",
+        "score": -0.15815507913935228,
+        "valid": true
+      },
+      {
+        "text": "**Final Answer**: 0",
+        "score": -0.1687255174868239,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "61",
+    "query": "Subtract all brown cylinders. How many cylinders are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000014.png",
+    "answer": 1,
+    "response": "To solve the query, we follow these steps:\n\n1. **Identify Objects**: The image contains three cylinders: one green, one brown, and one purple.\n2. **Count Brown Cylinders**: There is 1 brown cylinder in the image.\n3. **Perform Subtraction**: The query asks to subtract the count of brown cylinders from the total number of cylinders. \n   - Total cylinders = 3\n   - Brown cylinders = 1\n   - Calculation: 3 (total) - 1 (brown) = 2 cylinders left.\n\n**Final Answer**: 2",
+    "atomic_facts": [
+      {
+        "text": "To solve the query, we follow these steps:",
+        "score": -0.36502448858809655,
+        "valid": false
+      },
+      {
+        "text": "1. **Identify Objects**: The image contains three cylinders: one green, one brown, and one purple.",
+        "score": -0.12832075160906697,
+        "valid": true
+      },
+      {
+        "text": "2. **Count Brown Cylinders**: There is 1 brown cylinder in the image.",
+        "score": -0.07447785213683669,
+        "valid": true
+      },
+      {
+        "text": "3. **Perform Subtraction**: The query asks to subtract the count of brown cylinders from the total number of cylinders. \n   - Total cylinders = 3\n   - Brown cylinders = 1\n   - Calculation: 3 (total) - 1 (brown) = 2 cylinders left.",
+        "score": -0.1429799866109159,
+        "valid": true
+      },
+      {
+        "text": "**Final Answer**: 2",
+        "score": -0.15880450129015702,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "78",
+    "query": "Subtract all spheres. How many objects are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000017.png",
+    "answer": 7,
+    "response": "To solve the query of how many objects remain after subtracting all spheres from the image, we can break down the process as follows:\n\n1. **Total Number of Objects**: The analysis identified a total of 11 objects in the image.\n2. **Number of Spheres**: Out of these, 4 objects are spheres.\n\nNow, we perform the subtraction:\n\n- **Calculation**: \n  \\[\n  \\text{Total objects} - \\text{Spheres} = 11 - 4 = 7\n  \\]\n\nThus, after subtracting the spheres, there are **7 objects left**.\n\n**Final Answer**: 7",
+    "atomic_facts": [
+      {
+        "text": "To solve the query of how many objects remain after subtracting all spheres from the image, we can break down the process as follows:",
+        "score": -0.1616405761343458,
+        "valid": true
+      },
+      {
+        "text": "1. **Total Number of Objects**: The analysis identified a total of 11 objects in the image.",
+        "score": -0.24459726116527297,
+        "valid": false
+      },
+      {
+        "text": "2. **Number of Spheres**: Out of these, 4 objects are spheres.",
+        "score": -0.23163109568985132,
+        "valid": true
+      },
+      {
+        "text": "Now, we perform the subtraction:",
+        "score": -0.173599488405411,
+        "valid": true
+      },
+      {
+        "text": "- **Calculation**: \n  \\[\n  \\text{Total objects} - \\text{Spheres} = 11 - 4 = 7\n  \\]",
+        "score": -0.11501881482740196,
+        "valid": true
+      },
+      {
+        "text": "Thus, after subtracting the spheres, there are **7 objects left**.",
+        "score": -0.11571158135526272,
+        "valid": true
+      },
+      {
+        "text": "**Final Answer**: 7",
+        "score": -0.03966496926901592,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "92",
+    "query": "Subtract 3 spheres. How many spheres are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000020.png",
+    "answer": 1,
+    "response": "To solve the query of how many spheres are left after subtracting 3 from the total number of spheres, follow these steps:\n\n1. **Identify the Total Number of Spheres**: Count the number of spheres present in the image.\n2. **Perform the Subtraction**: Subtract 3 from the total count of spheres.\n3. **Provide the Final Answer**: Present the result as an integer.\n\nSince I cannot analyze the image directly, please count the spheres in the image. Once you have that count, subtract 3 from it to find out how many spheres are left.\n\nIf you need further assistance, feel free to ask!",
+    "atomic_facts": [
+      {
+        "text": "To solve the query of how many spheres are left after subtracting 3 from the total number of spheres, follow these steps:",
+        "score": -0.18701895047132666,
+        "valid": true
+      },
+      {
+        "text": "1. **Identify the Total Number of Spheres**: Count the number of spheres present in the image.",
+        "score": -0.21355766141176827,
+        "valid": true
+      },
+      {
+        "text": "2. **Perform the Subtraction**: Subtract 3 from the total count of spheres.",
+        "score": -0.10943713841572844,
+        "valid": true
+      },
+      {
+        "text": "3. **Provide the Final Answer**: Present the result as an integer.",
+        "score": -0.09380603431001333,
+        "valid": true
+      },
+      {
+        "text": "Since I cannot analyze the image directly, please count the spheres in the image. Once you have that count, subtract 3 from it to find out how many spheres are left.",
+        "score": -0.22501809723750435,
+        "valid": true
+      },
+      {
+        "text": "If you need further assistance, feel free to ask!",
+        "score": -0.25498561113437807,
+        "valid": false
+      }
+    ]
+  },
+  {
+    "pid": "104",
+    "query": "Subtract 2 cylinders. How many cylinders are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000023.png",
+    "answer": 0,
+    "response": "To solve the query of subtracting 2 cylinders from a collection, we can follow these steps:\n\n1. **Count the Cylinders**: Analyze the image to determine how many cylinders are present.\n2. **Perform the Subtraction**: Subtract 2 from the total count of cylinders.\n3. **Provide the Final Answer**: State the result as an integer.\n\nBased on the analysis, there are 3 cylinders in the image. \n\nNow, subtracting 2 from 3 gives us:\n\n\\[ 3 - 2 = 1 \\]\n\nThus, the final answer is:\n\n**1**",
+    "atomic_facts": [
+      {
+        "text": "To solve the query of subtracting 2 cylinders from a collection, we can follow these steps:",
+        "score": -0.29162701274617575,
+        "valid": false
+      },
+      {
+        "text": "1. **Count the Cylinders**: Analyze the image to determine how many cylinders are present.",
+        "score": -0.16452130288869,
+        "valid": true
+      },
+      {
+        "text": "2. **Perform the Subtraction**: Subtract 2 from the total count of cylinders.",
+        "score": -0.09545970907647643,
+        "valid": true
+      },
+      {
+        "text": "3. **Provide the Final Answer**: State the result as an integer.",
+        "score": -0.18604692696962388,
+        "valid": true
+      },
+      {
+        "text": "Based on the analysis, there are 3 cylinders in the image.",
+        "score": -0.2163842059609351,
+        "valid": true
+      },
+      {
+        "text": "Now, subtracting 2 from 3 gives us:",
+        "score": -0.2844061688822694,
+        "valid": true
+      },
+      {
+        "text": "\\[ 3 - 2 = 1 \\]",
+        "score": -0.05889562195649618,
+        "valid": true
+      },
+      {
+        "text": "Thus, the final answer is:",
+        "score": -0.15858435256398348,
+        "valid": true
+      },
+      {
+        "text": "**1**",
+        "score": -0.09472924732835963,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "71",
+    "query": "Subtract 1 cylinders. How many cylinders are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000016.png",
+    "answer": 1,
+    "response": "To solve the query, we follow these steps:\n\n1. **Identify Objects**: The image contains two cylinders (one red and one yellow) and one blue sphere.\n2. **Count the Cylinders**: There are 2 cylinders in total.\n3. **Perform the Subtraction**: The query asks to subtract 1 cylinder from the total count of cylinders. \n\n   \\[\n   2 \\text{ cylinders} - 1 = 1 \\text{ cylinder}\n   \\]\n\n4. **Final Answer**: The number of cylinders left after the subtraction is **1**.\n\n**Answer**: 1",
+    "atomic_facts": [
+      {
+        "text": "To solve the query, we follow these steps:",
+        "score": -0.2519791345432168,
+        "valid": true
+      },
+      {
+        "text": "1. **Identify Objects**: The image contains two cylinders (one red and one yellow) and one blue sphere.",
+        "score": -0.1208540045039778,
+        "valid": true
+      },
+      {
+        "text": "2. **Count the Cylinders**: There are 2 cylinders in total.",
+        "score": -0.12475746857635987,
+        "valid": true
+      },
+      {
+        "text": "3. **Perform the Subtraction**: The query asks to subtract 1 cylinder from the total count of cylinders.",
+        "score": -0.19042884907066457,
+        "valid": true
+      },
+      {
+        "text": "\\[\n   2 \\text{ cylinders} - 1 = 1 \\text{ cylinder}\n   \\]",
+        "score": -0.07939567181346163,
+        "valid": true
+      },
+      {
+        "text": "4. **Final Answer**: The number of cylinders left after the subtraction is **1**.",
+        "score": -0.11895864347970075,
+        "valid": true
+      },
+      {
+        "text": "**Answer**: 1",
+        "score": -0.3155549883176505,
+        "valid": false
+      }
+    ]
+  },
+  {
+    "pid": "80",
+    "query": "Subtract all brown balls. How many were subtracted if there are1brown balls left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000018.png",
+    "answer": 1,
+    "response": "To determine how many brown balls were subtracted, we can follow these steps:\n\n1. **Initial Count**: The analysis indicates that there were originally 3 brown balls.\n2. **Remaining Count**: It is given that there is 1 brown ball left.\n3. **Subtraction Calculation**: To find out how many brown balls were subtracted, we subtract the remaining count from the initial count:\n   \\[\n   \\text{Subtracted} = \\text{Initial Count} - \\text{Remaining Count} = 3 - 1 = 2\n   \\]\n\nThus, the final answer is:\n\n**2**",
+    "atomic_facts": [
+      {
+        "text": "To determine how many brown balls were subtracted, we can follow these steps:",
+        "score": -0.2091021624904874,
+        "valid": true
+      },
+      {
+        "text": "1. **Initial Count**: The analysis indicates that there were originally 3 brown balls.",
+        "score": -0.36780995982001896,
+        "valid": false
+      },
+      {
+        "text": "2. **Remaining Count**: It is given that there is 1 brown ball left.",
+        "score": -0.1516355256651991,
+        "valid": true
+      },
+      {
+        "text": "3. **Subtraction Calculation**: To find out how many brown balls were subtracted, we subtract the remaining count from the initial count:\n   \\[\n   \\text{Subtracted} = \\text{Initial Count} - \\text{Remaining Count} = 3 - 1 = 2\n   \\]",
+        "score": -0.09068653914440651,
+        "valid": true
+      },
+      {
+        "text": "Thus, the final answer is:",
+        "score": -0.2941495269807482,
+        "valid": true
+      },
+      {
+        "text": "**2**",
+        "score": -0.061677469309264175,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "105",
+    "query": "Subtract all cubes. How many objects are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000023.png",
+    "answer": 7,
+    "response": "To solve the query \"Subtract all cubes. How many objects are left?\" we can break down the process as follows:\n\n1. **Count Total Objects**: Analyze the image to determine the total number of objects present.\n2. **Identify Yellow Blocks**: Check how many yellow blocks (cubes) are in the image.\n3. **Perform Subtraction**: Subtract the number of yellow blocks from the total count of objects.\n4. **Provide Final Answer**: Present the final count as an integer.\n\n### Steps Taken:\n- **Total Objects Counted**: There are 10 objects in the image.\n- **Yellow Blocks**: There are 0 yellow blocks to subtract.\n\n### Calculation:\n- Total Objects: 10\n- Yellow Blocks: 0\n- Final Count = 10 - 0 = 10\n\n### Conclusion:\nThe final answer is **10**.",
+    "atomic_facts": [
+      {
+        "text": "To solve the query \"Subtract all cubes. How many objects are left?\" we can break down the process as follows:",
+        "score": -0.1798085659831982,
+        "valid": true
+      },
+      {
+        "text": "1. **Count Total Objects**: Analyze the image to determine the total number of objects present.",
+        "score": -0.19342506726354713,
+        "valid": true
+      },
+      {
+        "text": "2. **Identify Yellow Blocks**: Check how many yellow blocks (cubes) are in the image.",
+        "score": -0.23081752128456337,
+        "valid": true
+      },
+      {
+        "text": "3. **Perform Subtraction**: Subtract the number of yellow blocks from the total count of objects.",
+        "score": -0.09393564710764869,
+        "valid": true
+      },
+      {
+        "text": "4. **Provide Final Answer**: Present the final count as an integer.",
+        "score": -0.1445219880719506,
+        "valid": true
+      },
+      {
+        "text": "- **Total Objects Counted**: There are 10 objects in the image.",
+        "score": -0.19619076837101174,
+        "valid": true
+      },
+      {
+        "text": "- **Yellow Blocks**: There are 0 yellow blocks to subtract.",
+        "score": -0.14682564919430283,
+        "valid": true
+      },
+      {
+        "text": "- Total Objects: 10",
+        "score": -0.2715162523308147,
+        "valid": false
+      },
+      {
+        "text": "- Yellow Blocks: 0",
+        "score": -0.12298713754005537,
+        "valid": true
+      },
+      {
+        "text": "- Final Count = 10 - 0 = 10",
+        "score": -0.14437792812643835,
+        "valid": true
+      },
+      {
+        "text": "### Conclusion:\nThe final answer is **10**.",
+        "score": -0.08124223876141266,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "107",
+    "query": "Subtract all large shiny blocks. How many blocks are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000024.png",
+    "answer": 1,
+    "response": "To solve the query of how many blocks remain after subtracting all large shiny blocks from the total, we can break down the process as follows:\n\n1. **Total Number of Blocks**: The analysis determined that there are 6 blocks in total in the image.\n2. **Large Shiny Blocks**: It was identified that there are 2 large shiny blocks.\n\nNow, we perform the subtraction:\n\n\\[\n6 \\text{ (total blocks)} - 2 \\text{ (large shiny blocks)} = 4\n\\]\n\nThus, the final answer is:\n\n**4 blocks left.**",
+    "atomic_facts": [
+      {
+        "text": "To solve the query of how many blocks remain after subtracting all large shiny blocks from the total, we can break down the process as follows:",
+        "score": -0.23083626793290227,
+        "valid": true
+      },
+      {
+        "text": "1. **Total Number of Blocks**: The analysis determined that there are 6 blocks in total in the image.",
+        "score": -0.29116006872261774,
+        "valid": false
+      },
+      {
+        "text": "2. **Large Shiny Blocks**: It was identified that there are 2 large shiny blocks.",
+        "score": -0.10225476727556713,
+        "valid": true
+      },
+      {
+        "text": "Now, we perform the subtraction:",
+        "score": -0.1409405590186777,
+        "valid": true
+      },
+      {
+        "text": "\\[\n6 \\text{ (total blocks)} - 2 \\text{ (large shiny blocks)} = 4\n\\]",
+        "score": -0.012193752398178818,
+        "valid": true
+      },
+      {
+        "text": "Thus, the final answer is:",
+        "score": -0.24636794834428397,
+        "valid": true
+      },
+      {
+        "text": "**4 blocks left.**",
+        "score": -0.04165371298950049,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "75",
+    "query": "Subtract all big balls. How many balls are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000017.png",
+    "answer": 1,
+    "response": "To solve the query \"Subtract all big balls. How many balls are left?\", we can break down the process as follows:\n\n1. **Identify the Objects**: The image contains various geometric shapes, including big balls.\n\n2. **Count the Big Balls**: According to the analysis, there are 2 big balls in the image.\n\n3. **Perform the Subtraction**: Since the query asks to subtract all big balls, we subtract 2 from the total number of big balls:\n   - Initial count of big balls: 2\n   - Subtracting all big balls: 2 - 2 = 0\n\n4. **Final Count**: After the subtraction, there are 0 big balls left.\n\n**Final Answer**: 0",
+    "atomic_facts": [
+      {
+        "text": "To solve the query \"Subtract all big balls. How many balls are left?\", we can break down the process as follows:",
+        "score": -0.15793769421460183,
+        "valid": true
+      },
+      {
+        "text": "1. **Identify the Objects**: The image contains various geometric shapes, including big balls.",
+        "score": -0.3171677909711817,
+        "valid": false
+      },
+      {
+        "text": "2. **Count the Big Balls**: According to the analysis, there are 2 big balls in the image.",
+        "score": -0.12277605412578889,
+        "valid": true
+      },
+      {
+        "text": "3. **Perform the Subtraction**: Since the query asks to subtract all big balls, we subtract 2 from the total number of big balls:\n   - Initial count of big balls: 2\n   - Subtracting all big balls: 2 - 2 = 0",
+        "score": -0.15822755895530036,
+        "valid": true
+      },
+      {
+        "text": "4. **Final Count**: After the subtraction, there are 0 big balls left.",
+        "score": -0.14466134009601722,
+        "valid": true
+      },
+      {
+        "text": "**Final Answer**: 0",
+        "score": -0.20804207294913266,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "60",
+    "query": "Subtract 0 green balls. How many objects are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000013.png",
+    "answer": 7,
+    "response": "To solve the query of how many objects are left after subtracting 0 green balls, we can break down the process as follows:\n\n1. **Identify the Total Number of Objects**: The analysis indicates that there are 8 objects in the image.\n\n2. **Count the Green Balls**: The analysis confirms that there are no green balls in the image.\n\n3. **Perform the Subtraction**: Since we are subtracting 0 green balls from the total count of 8 objects, the calculation is:\n   \\[\n   8 - 0 = 8\n   \\]\n\n4. **Final Answer**: After performing the subtraction, the total number of objects remaining is 8.\n\nThus, the final answer to the query is:\n\n**8**",
+    "atomic_facts": [
+      {
+        "text": "To solve the query of how many objects are left after subtracting 0 green balls, we can break down the process as follows:",
+        "score": -0.1903758699507568,
+        "valid": true
+      },
+      {
+        "text": "1. **Identify the Total Number of Objects**: The analysis indicates that there are 8 objects in the image.",
+        "score": -0.33626421779358634,
+        "valid": false
+      },
+      {
+        "text": "2. **Count the Green Balls**: The analysis confirms that there are no green balls in the image.",
+        "score": -0.1648479773985385,
+        "valid": true
+      },
+      {
+        "text": "3. **Perform the Subtraction**: Since we are subtracting 0 green balls from the total count of 8 objects, the calculation is:\n   \\[\n   8 - 0 = 8\n   \\]",
+        "score": -0.11027370060241931,
+        "valid": true
+      },
+      {
+        "text": "4. **Final Answer**: After performing the subtraction, the total number of objects remaining is 8.",
+        "score": -0.23761483973707567,
+        "valid": true
+      },
+      {
+        "text": "Thus, the final answer to the query is:",
+        "score": -0.2893538808228186,
+        "valid": true
+      },
+      {
+        "text": "**8**",
+        "score": -0.0034165711840614676,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "72",
+    "query": "Subtract all spheres. How many objects are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000016.png",
+    "answer": 2,
+    "response": "To solve the query \"Subtract all spheres. How many objects are left?\", we can follow these steps:\n\n1. **Identify Objects**: In the image, there are three objects: one blue sphere, one red cylinder, and one yellow cylinder.\n\n2. **Count the Spheres**: The query specifically asks to subtract green spheres. However, there are no green spheres present in the image.\n\n3. **Perform the Subtraction**: Since there are 0 green spheres to subtract, we do not remove any objects from the total count.\n\n4. **Calculate Remaining Objects**: The total number of objects in the image is 3 (1 blue sphere + 1 red cylinder + 1 yellow cylinder). Since we subtract 0, the count remains the same.\n\n5. **Final Count**: Therefore, the final answer is 3.\n\n**Answer**: 3",
+    "atomic_facts": [
+      {
+        "text": "To solve the query \"Subtract all spheres. How many objects are left?\", we can follow these steps:",
+        "score": -0.15095365742132774,
+        "valid": true
+      },
+      {
+        "text": "1. **Identify Objects**: In the image, there are three objects: one blue sphere, one red cylinder, and one yellow cylinder.",
+        "score": -0.1800144999131659,
+        "valid": true
+      },
+      {
+        "text": "2. **Count the Spheres**: The query specifically asks to subtract green spheres. However, there are no green spheres present in the image.",
+        "score": -0.2445117704196188,
+        "valid": false
+      },
+      {
+        "text": "3. **Perform the Subtraction**: Since there are 0 green spheres to subtract, we do not remove any objects from the total count.",
+        "score": -0.16589902179382912,
+        "valid": true
+      },
+      {
+        "text": "4. **Calculate Remaining Objects**: The total number of objects in the image is 3 (1 blue sphere + 1 red cylinder + 1 yellow cylinder). Since we subtract 0, the count remains the same.",
+        "score": -0.159312412317173,
+        "valid": true
+      },
+      {
+        "text": "5. **Final Count**: Therefore, the final answer is 3.",
+        "score": -0.2379782675133688,
+        "valid": true
+      },
+      {
+        "text": "**Answer**: 3",
+        "score": -0.14245656814767926,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "86",
+    "query": "Subtract all green metallic blocks. How many blocks are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000019.png",
+    "answer": 2,
+    "response": "To determine how many blocks are left after subtracting all green metallic blocks from the total, follow these steps:\n\n1. **Count Total Blocks**: There are 4 blocks in total.\n2. **Identify Green Metallic Blocks**: There is 1 green metallic block.\n3. **Perform Subtraction**: \n   - Total blocks: 4\n   - Green metallic blocks: 1\n   - Calculation: 4 - 1 = 3\n\n**Final Answer**: There are 3 blocks left.",
+    "atomic_facts": [
+      {
+        "text": "To determine how many blocks are left after subtracting all green metallic blocks from the total, follow these steps:",
+        "score": -0.16216619478941266,
+        "valid": true
+      },
+      {
+        "text": "1. **Count Total Blocks**: There are 4 blocks in total.",
+        "score": -0.21193930559081764,
+        "valid": false
+      },
+      {
+        "text": "2. **Identify Green Metallic Blocks**: There is 1 green metallic block.",
+        "score": -0.011301986351989346,
+        "valid": true
+      },
+      {
+        "text": "3. **Perform Subtraction**: \n   - Total blocks: 4\n   - Green metallic blocks: 1\n   - Calculation: 4 - 1 = 3",
+        "score": -0.06817205499718614,
+        "valid": true
+      },
+      {
+        "text": "**Final Answer**: There are 3 blocks left.",
+        "score": -0.09184252841077978,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "79",
+    "query": "Subtract 0 cyan spheres. How many objects are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000017.png",
+    "answer": 10,
+    "response": "To solve the query, we follow these steps:\n\n1. **Identify the Objects**: The query involves subtracting 0 cyan spheres from a collection of objects. The image contains various geometric shapes, including cubes and spheres.\n\n2. **Count the Objects**: Using the analysis, we determined that there is 1 cube in the image.\n\n3. **Perform the Subtraction**: Since we are subtracting 0 cyan spheres, the count of objects remains unchanged. Therefore, we still have 1 cube.\n\n4. **Final Answer**: The final count of objects after the operation is 1.\n\n**Conclusion**: The final answer is **1**.",
+    "atomic_facts": [
+      {
+        "text": "To solve the query, we follow these steps:",
+        "score": -0.24803357999189757,
+        "valid": true
+      },
+      {
+        "text": "1. **Identify the Objects**: The query involves subtracting 0 cyan spheres from a collection of objects. The image contains various geometric shapes, including cubes and spheres.",
+        "score": -0.4479788936304784,
+        "valid": false
+      },
+      {
+        "text": "2. **Count the Objects**: Using the analysis, we determined that there is 1 cube in the image.",
+        "score": -0.3009276587660447,
+        "valid": true
+      },
+      {
+        "text": "3. **Perform the Subtraction**: Since we are subtracting 0 cyan spheres, the count of objects remains unchanged. Therefore, we still have 1 cube.",
+        "score": -0.25226229400699857,
+        "valid": true
+      },
+      {
+        "text": "4. **Final Answer**: The final count of objects after the operation is 1.",
+        "score": -0.24933183253429697,
+        "valid": true
+      },
+      {
+        "text": "**Conclusion**: The final answer is **1**.",
+        "score": -0.15389640196182577,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "57",
+    "query": "Subtract all purple blocks. How many blocks are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000013.png",
+    "answer": 2,
+    "response": "To determine how many blocks are left after subtracting the purple blocks from the total, we can follow these steps:\n\n1. **Count the Total Blocks**: \n   - In the image, there are a total of 8 blocks, which include various shapes and colors.\n\n2. **Identify Purple Blocks**: \n   - There is 1 purple block in the image.\n\n3. **Perform the Subtraction**: \n   - Total blocks (8) - Purple blocks (1) = 7 blocks left.\n\nThus, the final answer is **7**.",
+    "atomic_facts": [
+      {
+        "text": "To determine how many blocks are left after subtracting the purple blocks from the total, we can follow these steps:",
+        "score": -0.19655216661395453,
+        "valid": true
+      },
+      {
+        "text": "1. **Count the Total Blocks**: \n   - In the image, there are a total of 8 blocks, which include various shapes and colors.",
+        "score": -0.27501552487166947,
+        "valid": true
+      },
+      {
+        "text": "2. **Identify Purple Blocks**: \n   - There is 1 purple block in the image.",
+        "score": -0.12875326273622467,
+        "valid": true
+      },
+      {
+        "text": "3. **Perform the Subtraction**: \n   - Total blocks (8) - Purple blocks (1) = 7 blocks left.",
+        "score": -0.033575923930926434,
+        "valid": true
+      },
+      {
+        "text": "Thus, the final answer is **7**.",
+        "score": -0.29860826967372844,
+        "valid": false
+      }
+    ]
+  },
+  {
+    "pid": "73",
+    "query": "Subtract 0 green spheres. How many objects are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000016.png",
+    "answer": 3,
+    "response": "To solve the query, we follow these steps:\n\n1. **Identify Objects**: The image contains three objects: a blue sphere, a red cylinder, and a yellow cylinder. There are no green spheres present.\n\n2. **Confirm the Query**: The query asks to subtract 0 green spheres from the total number of objects. Since there are 0 green spheres, we do not subtract anything.\n\n3. **Final Count**: The total number of objects remains unchanged. Therefore, the count of objects is still 3.\n\n**Final Answer**: 3",
+    "atomic_facts": [
+      {
+        "text": "To solve the query, we follow these steps:",
+        "score": -0.21548487818799913,
+        "valid": true
+      },
+      {
+        "text": "1. **Identify Objects**: The image contains three objects: a blue sphere, a red cylinder, and a yellow cylinder. There are no green spheres present.",
+        "score": -0.09948878914076388,
+        "valid": true
+      },
+      {
+        "text": "2. **Confirm the Query**: The query asks to subtract 0 green spheres from the total number of objects. Since there are 0 green spheres, we do not subtract anything.",
+        "score": -0.2211676685117658,
+        "valid": true
+      },
+      {
+        "text": "3. **Final Count**: The total number of objects remains unchanged. Therefore, the count of objects is still 3.",
+        "score": -0.31857288306351106,
+        "valid": false
+      },
+      {
+        "text": "**Final Answer**: 3",
+        "score": -0.2731296693422597,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "55",
+    "query": "Subtract 0 cyan cylinders. How many objects are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000012.png",
+    "answer": 3,
+    "response": "To solve the query \"Subtract 0 cyan cylinders. How many objects are left?\" based on the provided image and analysis, we can break down the process as follows:\n\n1. **Identify the Objects**: The image contains three objects:\n   - One gold cylinder\n   - One purple cylinder\n   - One red cube\n\n2. **Understand the Query**: The query asks to subtract 0 cyan cylinders from the total number of objects. Since subtracting zero does not change the count, the total remains the same.\n\n3. **Perform the Calculation**: \n   - Initial count of objects = 3 (gold cylinder + purple cylinder + red cube)\n   - Subtracting 0 cyan cylinders: 3 - 0 = 3\n\n4. **Final Count**: After the operation, the number of objects left is still 3.\n\n**Conclusion**: The final answer to the query is **3**.",
+    "atomic_facts": [
+      {
+        "text": "To solve the query \"Subtract 0 cyan cylinders. How many objects are left?\" based on the provided image and analysis, we can break down the process as follows:",
+        "score": -0.17987967667484467,
+        "valid": true
+      },
+      {
+        "text": "1. **Identify the Objects**: The image contains three objects:\n   - One gold cylinder\n   - One purple cylinder\n   - One red cube",
+        "score": -0.14702494278797698,
+        "valid": true
+      },
+      {
+        "text": "2. **Understand the Query**: The query asks to subtract 0 cyan cylinders from the total number of objects. Since subtracting zero does not change the count, the total remains the same.",
+        "score": -0.20982771641272677,
+        "valid": true
+      },
+      {
+        "text": "3. **Perform the Calculation**: \n   - Initial count of objects = 3 (gold cylinder + purple cylinder + red cube)\n   - Subtracting 0 cyan cylinders: 3 - 0 = 3",
+        "score": -0.13870321973015642,
+        "valid": true
+      },
+      {
+        "text": "4. **Final Count**: After the operation, the number of objects left is still 3.",
+        "score": -0.21485670614527494,
+        "valid": false
+      },
+      {
+        "text": "**Conclusion**: The final answer to the query is **3**.",
+        "score": -0.11004117760458029,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "62",
+    "query": "Subtract 1 cylinders. How many cylinders are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000014.png",
+    "answer": 1,
+    "response": "To solve the query, we followed these steps:\n\n1. **Identify the Objects**: We analyzed the image to count the number of cylinders present.\n2. **Count the Cylinders**: The analysis revealed that there are 2 cylinders in the image.\n3. **Perform the Subtraction**: The query asked to subtract 1 from the count of cylinders. Therefore, we calculated:\n   \\[\n   2 \\text{ (cylinders)} - 1 = 1\n   \\]\n\n**Final Answer**: There is 1 cylinder left after the subtraction.",
+    "atomic_facts": [
+      {
+        "text": "To solve the query, we followed these steps:",
+        "score": -0.2825374921376351,
+        "valid": false
+      },
+      {
+        "text": "1. **Identify the Objects**: We analyzed the image to count the number of cylinders present.",
+        "score": -0.19170334910575093,
+        "valid": true
+      },
+      {
+        "text": "2. **Count the Cylinders**: The analysis revealed that there are 2 cylinders in the image.",
+        "score": -0.10463207638206352,
+        "valid": true
+      },
+      {
+        "text": "3. **Perform the Subtraction**: The query asked to subtract 1 from the count of cylinders. Therefore, we calculated:\n   \\[\n   2 \\text{ (cylinders)} - 1 = 1\n   \\]",
+        "score": -0.19529625566818365,
+        "valid": true
+      },
+      {
+        "text": "**Final Answer**: There is 1 cylinder left after the subtraction.",
+        "score": -0.19776572628820002,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "66",
+    "query": "Subtract all gray balls. How many balls are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000015.png",
+    "answer": 2,
+    "response": "To determine how many balls are left after subtracting all gray balls from the total, follow these steps:\n\n1. **Identify the Objects**: \n   - Count the gray balls: 1\n   - Count the red balls: 2\n   - Total balls: 1 (gray) + 2 (red) = 3\n\n2. **Perform the Subtraction**:\n   - Total balls: 3\n   - Gray balls: 1\n   - Remaining balls after subtraction: 3 - 1 = 2\n\n**Final Answer**: 2 balls are left after subtracting the gray balls.",
+    "atomic_facts": [
+      {
+        "text": "To determine how many balls are left after subtracting all gray balls from the total, follow these steps:",
+        "score": -0.13789714726356447,
+        "valid": true
+      },
+      {
+        "text": "1. **Identify the Objects**: \n   - Count the gray balls: 1\n   - Count the red balls: 2\n   - Total balls: 1 (gray) + 2 (red) = 3",
+        "score": -0.15491115862868612,
+        "valid": false
+      },
+      {
+        "text": "2. **Perform the Subtraction**:\n   - Total balls: 3\n   - Gray balls: 1\n   - Remaining balls after subtraction: 3 - 1 = 2",
+        "score": -0.09252157379444022,
+        "valid": true
+      },
+      {
+        "text": "**Final Answer**: 2 balls are left after subtracting the gray balls.",
+        "score": -0.10637653902442507,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "68",
+    "query": "Subtract all cylinders. How many objects are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000015.png",
+    "answer": 5,
+    "response": "To solve the query \"Subtract all cylinders. How many objects are left?\" based on the provided image analysis, we can break down the process as follows:\n\n1. **Identify Total Objects**: The image contains a total of 6 objects:\n   - 3 spheres\n   - 1 cube\n   - 2 cylinders\n\n2. **Subtract Cylinders**: We need to subtract the 2 cylinders from the total count of objects:\n   - Total objects: 6\n   - Cylinders: 2\n   - Remaining objects = Total objects - Cylinders = 6 - 2 = 4\n\n3. **Final Count**: After subtracting the cylinders, we are left with 4 objects (3 spheres and 1 cube).\n\n**Final Answer**: 4",
+    "atomic_facts": [
+      {
+        "text": "To solve the query \"Subtract all cylinders. How many objects are left?\" based on the provided image analysis, we can break down the process as follows:",
+        "score": -0.19231155540602862,
+        "valid": true
+      },
+      {
+        "text": "1. **Identify Total Objects**: The image contains a total of 6 objects:\n   - 3 spheres\n   - 1 cube\n   - 2 cylinders",
+        "score": -0.09213268222889448,
+        "valid": true
+      },
+      {
+        "text": "2. **Subtract Cylinders**: We need to subtract the 2 cylinders from the total count of objects:\n   - Total objects: 6\n   - Cylinders: 2\n   - Remaining objects = Total objects - Cylinders = 6 - 2 = 4",
+        "score": -0.12795506595897435,
+        "valid": true
+      },
+      {
+        "text": "3. **Final Count**: After subtracting the cylinders, we are left with 4 objects (3 spheres and 1 cube).",
+        "score": -0.11315914087564646,
+        "valid": true
+      },
+      {
+        "text": "**Final Answer**: 4",
+        "score": -0.1923921115741629,
+        "valid": false
+      }
+    ]
+  },
+  {
+    "pid": "99",
+    "query": "Subtract 1 cylinders. How many cylinders are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000022.png",
+    "answer": 0,
+    "response": "To solve the query, we followed these steps:\n\n1. **Identify Objects**: We analyzed the image to count the number of gray cylinders present.\n2. **Count Gray Cylinders**: The analysis revealed that there are no gray cylinders in the image.\n3. **Perform Subtraction**: Since the count of gray cylinders is 0, we subtract 1 from this count:  \n   \\( 0 - 1 = -1 \\).\n\nThus, the final answer to the query is:\n\n**-1**.",
+    "atomic_facts": [
+      {
+        "text": "To solve the query, we followed these steps:",
+        "score": -0.3587335942895152,
+        "valid": false
+      },
+      {
+        "text": "1. **Identify Objects**: We analyzed the image to count the number of gray cylinders present.",
+        "score": -0.20592829861206496,
+        "valid": true
+      },
+      {
+        "text": "2. **Count Gray Cylinders**: The analysis revealed that there are no gray cylinders in the image.",
+        "score": -0.09842387763238557,
+        "valid": true
+      },
+      {
+        "text": "3. **Perform Subtraction**: Since the count of gray cylinders is 0, we subtract 1 from this count:  \n   \\( 0 - 1 = -1 \\).",
+        "score": -0.14454561876858663,
+        "valid": true
+      },
+      {
+        "text": "Thus, the final answer to the query is:",
+        "score": -0.18075846388619538,
+        "valid": true
+      },
+      {
+        "text": "**-1**.",
+        "score": -0.2289010339649394,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "103",
+    "query": "Subtract all blue spheres. How many spheres are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000023.png",
+    "answer": 4,
+    "response": "To solve the query, we follow these steps:\n\n1. **Count Total Spheres**: The image contains a total of 8 spheres.\n2. **Identify Blue Spheres**: Among these, there are 2 blue spheres.\n3. **Perform Subtraction**: Subtract the number of blue spheres from the total number of spheres:\n   - Total spheres: 8\n   - Blue spheres: 2\n   - Calculation: \\( 8 - 2 = 6 \\)\n\nThus, the final answer is:\n\n**6** spheres left.",
+    "atomic_facts": [
+      {
+        "text": "To solve the query, we follow these steps:",
+        "score": -0.32514048348530195,
+        "valid": false
+      },
+      {
+        "text": "1. **Count Total Spheres**: The image contains a total of 8 spheres.",
+        "score": -0.17989763543693016,
+        "valid": true
+      },
+      {
+        "text": "2. **Identify Blue Spheres**: Among these, there are 2 blue spheres.",
+        "score": -0.08522470030803295,
+        "valid": true
+      },
+      {
+        "text": "3. **Perform Subtraction**: Subtract the number of blue spheres from the total number of spheres:\n   - Total spheres: 8\n   - Blue spheres: 2\n   - Calculation: \\( 8 - 2 = 6 \\)",
+        "score": -0.07231132046635506,
+        "valid": true
+      },
+      {
+        "text": "Thus, the final answer is:",
+        "score": -0.3081591275386667,
+        "valid": true
+      },
+      {
+        "text": "**6** spheres left.",
+        "score": -0.20160589243945046,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "84",
+    "query": "Subtract all blocks. How many objects are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000018.png",
+    "answer": 5,
+    "response": "To determine how many objects are left after subtracting all but one brown ball, we can follow these steps:\n\n1. **Identify the Objects**: The image contains three golden balls and no brown balls.\n2. **Initial Count**: Since there are no brown balls, the count of brown balls is 0.\n3. **Subtraction**: The query states to subtract all but one brown ball. Since there are no brown balls, the result of the subtraction is:\n   - Initial count of brown balls (0) - (0 - 1) = 0\n\n**Final Answer**: 0 objects are left.",
+    "atomic_facts": [
+      {
+        "text": "To determine how many objects are left after subtracting all but one brown ball, we can follow these steps:",
+        "score": -0.24181741924585315,
+        "valid": true
+      },
+      {
+        "text": "1. **Identify the Objects**: The image contains three golden balls and no brown balls.",
+        "score": -0.4065141739503911,
+        "valid": false
+      },
+      {
+        "text": "2. **Initial Count**: Since there are no brown balls, the count of brown balls is 0.",
+        "score": -0.25569031219181865,
+        "valid": true
+      },
+      {
+        "text": "3. **Subtraction**: The query states to subtract all but one brown ball. Since there are no brown balls, the result of the subtraction is:\n   - Initial count of brown balls (0) - (0 - 1) = 0",
+        "score": -0.31394208411177477,
+        "valid": true
+      },
+      {
+        "text": "**Final Answer**: 0 objects are left.",
+        "score": -0.22097585108771123,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "82",
+    "query": "Subtract all red cylinders. How many cylinders are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000018.png",
+    "answer": 2,
+    "response": "To determine how many cylinders are left after subtracting the red cylinders from the total, we can follow these steps:\n\n1. **Count the Total Cylinders**: The image contains three cylinders: one red, one teal, and one gold.\n\n2. **Identify the Red Cylinders**: There is one red cylinder present.\n\n3. **Perform the Subtraction**: \n   - Total cylinders: 3\n   - Red cylinders: 1\n   - Calculation: 3 - 1 = 2\n\n4. **Conclusion**: After subtracting the red cylinder, there are 2 cylinders left.\n\n**Final Answer**: 2",
+    "atomic_facts": [
+      {
+        "text": "To determine how many cylinders are left after subtracting the red cylinders from the total, we can follow these steps:",
+        "score": -0.17794547652461104,
+        "valid": true
+      },
+      {
+        "text": "1. **Count the Total Cylinders**: The image contains three cylinders: one red, one teal, and one gold.",
+        "score": -0.22727508023709,
+        "valid": false
+      },
+      {
+        "text": "2. **Identify the Red Cylinders**: There is one red cylinder present.",
+        "score": -0.11702976308602248,
+        "valid": true
+      },
+      {
+        "text": "3. **Perform the Subtraction**: \n   - Total cylinders: 3\n   - Red cylinders: 1\n   - Calculation: 3 - 1 = 2",
+        "score": -0.07472341641246884,
+        "valid": true
+      },
+      {
+        "text": "4. **Conclusion**: After subtracting the red cylinder, there are 2 cylinders left.",
+        "score": -0.07749421198947744,
+        "valid": true
+      },
+      {
+        "text": "**Final Answer**: 2",
+        "score": -0.018785048601442002,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "63",
+    "query": "Subtract all cubes. How many objects are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000014.png",
+    "answer": 2,
+    "response": "To solve the query \"Subtract all cubes. How many objects are left?\" we can break down the process as follows:\n\n1. **Count Total Objects**: The analysis indicates that there are a total of three objects in the image: one green cylinder, one purple cube, and one brown cylinder.\n\n2. **Identify Cyan Blocks**: The analysis confirms that there are no cyan blocks present in the image.\n\n3. **Perform Subtraction**: Since the query asks to subtract all cubes (which in this case is just the purple cube), we subtract one object (the purple cube) from the total count of three objects.\n\n4. **Calculate Remaining Objects**: \n   - Total objects: 3\n   - Subtracting the purple cube: 3 - 1 = 2\n\n5. **Final Count**: After subtracting the purple cube, there are 2 objects left.\n\n**Final Answer**: 2",
+    "atomic_facts": [
+      {
+        "text": "To solve the query \"Subtract all cubes. How many objects are left?\" we can break down the process as follows:",
+        "score": -0.19415511603013336,
+        "valid": true
+      },
+      {
+        "text": "1. **Count Total Objects**: The analysis indicates that there are a total of three objects in the image: one green cylinder, one purple cube, and one brown cylinder.",
+        "score": -0.18133798922565506,
+        "valid": true
+      },
+      {
+        "text": "2. **Identify Cyan Blocks**: The analysis confirms that there are no cyan blocks present in the image.",
+        "score": -0.18710757734098654,
+        "valid": true
+      },
+      {
+        "text": "3. **Perform Subtraction**: Since the query asks to subtract all cubes (which in this case is just the purple cube), we subtract one object (the purple cube) from the total count of three objects.",
+        "score": -0.3206781126676271,
+        "valid": false
+      },
+      {
+        "text": "4. **Calculate Remaining Objects**: \n   - Total objects: 3\n   - Subtracting the purple cube: 3 - 1 = 2",
+        "score": -0.13762733038602656,
+        "valid": true
+      },
+      {
+        "text": "5. **Final Count**: After subtracting the purple cube, there are 2 objects left.",
+        "score": -0.2767243904254753,
+        "valid": true
+      },
+      {
+        "text": "**Final Answer**: 2",
+        "score": -0.22588696001730568,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "85",
+    "query": "Subtract 0 green balls. How many objects are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000018.png",
+    "answer": 6,
+    "response": "To determine how many objects are left after subtracting 0 green balls, we followed these steps:\n\n1. **Initial Query**: The question asked to subtract 0 green balls from a total number of balls.\n2. **Image Analysis**: The image was analyzed, revealing that there are 3 gold balls present.\n3. **Counting**: The total number of balls identified was 3, all of which are gold.\n4. **Subtraction**: Since we are subtracting 0 green balls, the calculation is:\n   \\[\n   3 - 0 = 3\n   \\]\n5. **Final Count**: After the subtraction, the total number of objects left remains 3.\n\n**Conclusion**: The final answer is **3**.",
+    "atomic_facts": [
+      {
+        "text": "To determine how many objects are left after subtracting 0 green balls, we followed these steps:",
+        "score": -0.192631909188065,
+        "valid": true
+      },
+      {
+        "text": "1. **Initial Query**: The question asked to subtract 0 green balls from a total number of balls.",
+        "score": -0.33616162244755327,
+        "valid": true
+      },
+      {
+        "text": "2. **Image Analysis**: The image was analyzed, revealing that there are 3 gold balls present.",
+        "score": -0.27002924209856166,
+        "valid": true
+      },
+      {
+        "text": "3. **Counting**: The total number of balls identified was 3, all of which are gold.",
+        "score": -0.41794773122345674,
+        "valid": false
+      },
+      {
+        "text": "4. **Subtraction**: Since we are subtracting 0 green balls, the calculation is:\n   \\[\n   3 - 0 = 3\n   \\]",
+        "score": -0.13502513185216886,
+        "valid": true
+      },
+      {
+        "text": "5. **Final Count**: After the subtraction, the total number of objects left remains 3.",
+        "score": -0.21545438735916195,
+        "valid": true
+      },
+      {
+        "text": "**Conclusion**: The final answer is **3**.",
+        "score": -0.11627849845050757,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "109",
+    "query": "Subtract 1 cylinders. How many cylinders are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000024.png",
+    "answer": 1,
+    "response": "To solve the query, we followed these steps:\n\n1. **Identify Objects**: We analyzed the image to count the number of large shiny blocks present.\n2. **Count the Blocks**: The analysis revealed that there are 3 large shiny blocks in the image.\n3. **Perform Subtraction**: We then subtracted 1 from the total count of blocks: \n   \\[\n   3 - 1 = 2\n   \\]\n\n**Final Answer**: There are 2 cylinders left.",
+    "atomic_facts": [
+      {
+        "text": "To solve the query, we followed these steps:",
+        "score": -0.2976619194523664,
+        "valid": false
+      },
+      {
+        "text": "1. **Identify Objects**: We analyzed the image to count the number of large shiny blocks present.",
+        "score": -0.21947474227048197,
+        "valid": true
+      },
+      {
+        "text": "2. **Count the Blocks**: The analysis revealed that there are 3 large shiny blocks in the image.",
+        "score": -0.18093356417195386,
+        "valid": true
+      },
+      {
+        "text": "3. **Perform Subtraction**: We then subtracted 1 from the total count of blocks: \n   \\[\n   3 - 1 = 2\n   \\]",
+        "score": -0.1263270250681871,
+        "valid": true
+      },
+      {
+        "text": "**Final Answer**: There are 2 cylinders left.",
+        "score": -0.1521751443723526,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "88",
+    "query": "Subtract all cylinders. How many objects are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000019.png",
+    "answer": 3,
+    "response": "To solve the query of how many objects remain after subtracting all cylinders from the image, we can break down the process as follows:\n\n1. **Initial Count**: The image contains a total of four objects: one cylinder and three cubes.\n2. **Identify the Cylinder**: There is one cylinder present in the image.\n3. **Subtract the Cylinder**: After removing the cylinder from the total count, we are left with the three cubes.\n4. **Final Count**: Therefore, the number of objects remaining after subtracting the cylinder is three.\n\n**Final Answer**: 3",
+    "atomic_facts": [
+      {
+        "text": "To solve the query of how many objects remain after subtracting all cylinders from the image, we can break down the process as follows:",
+        "score": -0.14903611635198408,
+        "valid": true
+      },
+      {
+        "text": "1. **Initial Count**: The image contains a total of four objects: one cylinder and three cubes.",
+        "score": -0.25009147759166434,
+        "valid": false
+      },
+      {
+        "text": "2. **Identify the Cylinder**: There is one cylinder present in the image.",
+        "score": -0.23090431487526744,
+        "valid": true
+      },
+      {
+        "text": "3. **Subtract the Cylinder**: After removing the cylinder from the total count, we are left with the three cubes.",
+        "score": -0.1645889058453463,
+        "valid": true
+      },
+      {
+        "text": "4. **Final Count**: Therefore, the number of objects remaining after subtracting the cylinder is three.",
+        "score": -0.12927408449087868,
+        "valid": true
+      },
+      {
+        "text": "**Final Answer**: 3",
+        "score": -0.06444504546154153,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "56",
+    "query": "Subtract all big cubes. How many cubes are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000013.png",
+    "answer": 2,
+    "response": "To solve the query \"Subtract all big cubes. How many cubes are left?\" based on the provided image, we can follow these steps:\n\n1. **Identify Total Cubes**: Count all the cubes in the image.\n   - There are 5 cubes: \n     - 1 large purple cube\n     - 1 large red cube\n     - 1 medium gray cube\n     - 1 small teal cube\n     - 1 small red cube\n\n2. **Identify Big Cubes**: Determine which cubes are considered \"big.\"\n   - The big cubes identified are:\n     - 1 large purple cube\n     - 1 large red cube\n\n3. **Perform the Subtraction**: Subtract the number of big cubes from the total number of cubes.\n   - Total cubes: 5\n   - Big cubes: 2 (purple and red)\n   - Calculation: 5 (total cubes) - 2 (big cubes) = 3 cubes left.\n\n**Final Answer**: There are **3 cubes left** after subtracting all big cubes.",
+    "atomic_facts": [
+      {
+        "text": "To solve the query \"Subtract all big cubes. How many cubes are left?\" based on the provided image, we can follow these steps:",
+        "score": -0.17247732189316675,
+        "valid": false
+      },
+      {
+        "text": "1. **Identify Total Cubes**: Count all the cubes in the image.\n   - There are 5 cubes: \n     - 1 large purple cube\n     - 1 large red cube\n     - 1 medium gray cube\n     - 1 small teal cube\n     - 1 small red cube",
+        "score": -0.11591297337009879,
+        "valid": true
+      },
+      {
+        "text": "2. **Identify Big Cubes**: Determine which cubes are considered \"big.\"\n   - The big cubes identified are:\n     - 1 large purple cube\n     - 1 large red cube",
+        "score": -0.06641291589752356,
+        "valid": true
+      },
+      {
+        "text": "3. **Perform the Subtraction**: Subtract the number of big cubes from the total number of cubes.\n   - Total cubes: 5\n   - Big cubes: 2 (purple and red)\n   - Calculation: 5 (total cubes) - 2 (big cubes) = 3 cubes left.",
+        "score": -0.09172537058432428,
+        "valid": true
+      },
+      {
+        "text": "**Final Answer**: There are **3 cubes left** after subtracting all big cubes.",
+        "score": -0.07335359517294573,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "102",
+    "query": "Subtract all red matte spheres. How many spheres are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000023.png",
+    "answer": 4,
+    "response": "To solve the query of how many spheres remain after subtracting the red matte spheres, we can break down the process as follows:\n\n1. **Count Total Spheres**: There are 5 spheres in total in the image.\n2. **Identify Red Matte Spheres**: There is 1 red matte sphere present.\n\nNow, we perform the subtraction:\n\n\\[\n5 \\text{ (total spheres)} - 1 \\text{ (red matte sphere)} = 4\n\\]\n\nThus, the final count of spheres remaining is **4**.",
+    "atomic_facts": [
+      {
+        "text": "To solve the query of how many spheres remain after subtracting the red matte spheres, we can break down the process as follows:",
+        "score": -0.21062194419366384,
+        "valid": false
+      },
+      {
+        "text": "1. **Count Total Spheres**: There are 5 spheres in total in the image.",
+        "score": -0.2000362022854226,
+        "valid": true
+      },
+      {
+        "text": "2. **Identify Red Matte Spheres**: There is 1 red matte sphere present.",
+        "score": -0.08000430194134592,
+        "valid": true
+      },
+      {
+        "text": "Now, we perform the subtraction:",
+        "score": -0.13626590612953546,
+        "valid": true
+      },
+      {
+        "text": "\\[\n5 \\text{ (total spheres)} - 1 \\text{ (red matte sphere)} = 4\n\\]",
+        "score": -0.009720939811074388,
+        "valid": true
+      },
+      {
+        "text": "Thus, the final count of spheres remaining is **4**.",
+        "score": -0.1592588035263571,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "51",
+    "query": "Subtract all cylinders. How many objects are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000011.png",
+    "answer": 3,
+    "response": "To solve the query of how many objects remain after subtracting all cylinders from the image, we can break down the process as follows:\n\n1. **Identify Total Objects**: The image contains a total of 5 objects.\n2. **Identify Cylinders**: Among these objects, there are 2 cylinders.\n3. **Perform Subtraction**: To find the remaining objects, subtract the number of cylinders from the total:\n   - Total objects: 5\n   - Cylinders: 2\n   - Remaining objects = 5 - 2 = 3\n\nThus, the final answer is:\n\n**3**",
+    "atomic_facts": [
+      {
+        "text": "To solve the query of how many objects remain after subtracting all cylinders from the image, we can break down the process as follows:",
+        "score": -0.1961008876825353,
+        "valid": true
+      },
+      {
+        "text": "1. **Identify Total Objects**: The image contains a total of 5 objects.",
+        "score": -0.14929101402170394,
+        "valid": true
+      },
+      {
+        "text": "2. **Identify Cylinders**: Among these objects, there are 2 cylinders.",
+        "score": -0.08214672512554937,
+        "valid": true
+      },
+      {
+        "text": "3. **Perform Subtraction**: To find the remaining objects, subtract the number of cylinders from the total:\n   - Total objects: 5\n   - Cylinders: 2\n   - Remaining objects = 5 - 2 = 3",
+        "score": -0.09856290838047463,
+        "valid": true
+      },
+      {
+        "text": "Thus, the final answer is:",
+        "score": -0.356439314954514,
+        "valid": false
+      },
+      {
+        "text": "**3**",
+        "score": -0.0024378291564062238,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "54",
+    "query": "Subtract all cylinders. How many objects are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000012.png",
+    "answer": 1,
+    "response": "To solve the query \"Subtract all cylinders. How many objects are left?\" based on the provided image and analysis, we can break down the process as follows:\n\n1. **Identify Objects**: \n   - The image contains:\n     - 2 cylinders (gold and purple)\n     - 1 block (red)\n\n2. **Perform the Calculation**:\n   - Start with the number of blocks: 1\n   - Subtract the number of cylinders: 2\n   - Calculation: \\( 1 \\text{ (block)} - 2 \\text{ (cylinders)} = -1 \\)\n\n3. **Interpret the Result**:\n   - The result of -1 indicates that after subtracting the cylinders from the blocks, there are no objects left, and the count cannot be negative in this context.\n\n4. **Final Answer**:\n   - Since we cannot have a negative number of objects, we conclude that there are **0 objects left**.\n\nThus, the final answer to the query is:\n\n**0**",
+    "atomic_facts": [
+      {
+        "text": "To solve the query \"Subtract all cylinders. How many objects are left?\" based on the provided image and analysis, we can break down the process as follows:",
+        "score": -0.16868076609734528,
+        "valid": true
+      },
+      {
+        "text": "1. **Identify Objects**: \n   - The image contains:\n     - 2 cylinders (gold and purple)\n     - 1 block (red)",
+        "score": -0.14628668475490025,
+        "valid": true
+      },
+      {
+        "text": "2. **Perform the Calculation**:\n   - Start with the number of blocks: 1\n   - Subtract the number of cylinders: 2\n   - Calculation: \\( 1 \\text{ (block)} - 2 \\text{ (cylinders)} = -1 \\)",
+        "score": -0.109279944670267,
+        "valid": true
+      },
+      {
+        "text": "3. **Interpret the Result**:\n   - The result of -1 indicates that after subtracting the cylinders from the blocks, there are no objects left, and the count cannot be negative in this context.",
+        "score": -0.2828834334373645,
+        "valid": false
+      },
+      {
+        "text": "4. **Final Answer**:\n   - Since we cannot have a negative number of objects, we conclude that there are **0 objects left**.",
+        "score": -0.27787822573527593,
+        "valid": true
+      },
+      {
+        "text": "Thus, the final answer to the query is:",
+        "score": -0.27404065080336293,
+        "valid": true
+      },
+      {
+        "text": "**0**",
+        "score": -0.02435671107377857,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "64",
+    "query": "Subtract 0 cyan blocks. How many objects are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000014.png",
+    "answer": 3,
+    "response": "To solve the query, we follow these steps:\n\n1. **Identify Total Objects**: The analysis indicates that there are a total of three objects in the image.\n2. **Identify Cyan Blocks**: The analysis confirms that none of the objects are cyan; they are green, purple, and brown.\n3. **Perform the Subtraction**: The query asks to subtract 0 cyan blocks from the total. Since subtracting zero does not change the count, the total remains the same.\n\n**Final Calculation**:\n- Total objects = 3\n- Subtracting 0 cyan blocks = 3 - 0 = 3\n\n**Final Answer**: 3",
+    "atomic_facts": [
+      {
+        "text": "To solve the query, we follow these steps:",
+        "score": -0.3125733181776013,
+        "valid": false
+      },
+      {
+        "text": "1. **Identify Total Objects**: The analysis indicates that there are a total of three objects in the image.",
+        "score": -0.24319654724588516,
+        "valid": true
+      },
+      {
+        "text": "2. **Identify Cyan Blocks**: The analysis confirms that none of the objects are cyan; they are green, purple, and brown.",
+        "score": -0.19264787124723273,
+        "valid": true
+      },
+      {
+        "text": "3. **Perform the Subtraction**: The query asks to subtract 0 cyan blocks from the total. Since subtracting zero does not change the count, the total remains the same.",
+        "score": -0.15291147654244502,
+        "valid": true
+      },
+      {
+        "text": "- Total objects = 3",
+        "score": -0.15311435964667908,
+        "valid": true
+      },
+      {
+        "text": "- Subtracting 0 cyan blocks = 3 - 0 = 3",
+        "score": -0.04607803831790721,
+        "valid": true
+      },
+      {
+        "text": "**Final Answer**: 3",
+        "score": -0.14631983231481627,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "96",
+    "query": "Subtract 1 cylinders. How many cylinders are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000021.png",
+    "answer": 1,
+    "response": "To solve the query, we follow these steps:\n\n1. **Identify the Objects**: The image contains various geometric shapes, but specifically, we need to identify blue cylinders.\n2. **Count the Blue Cylinders**: Upon analysis, there are 0 blue cylinders present in the image.\n3. **Perform the Subtraction**: The query asks to subtract 1 from the number of blue cylinders. Since there are 0 blue cylinders, the calculation is:\n   \\[\n   0 - 1 = -1\n   \\]\n\nThus, the final answer to the query is:\n\n**Answer: -1**",
+    "atomic_facts": [
+      {
+        "text": "To solve the query, we follow these steps:",
+        "score": -0.30640330629830714,
+        "valid": true
+      },
+      {
+        "text": "1. **Identify the Objects**: The image contains various geometric shapes, but specifically, we need to identify blue cylinders.",
+        "score": -0.31770561550861204,
+        "valid": false
+      },
+      {
+        "text": "2. **Count the Blue Cylinders**: Upon analysis, there are 0 blue cylinders present in the image.",
+        "score": -0.18703445016967576,
+        "valid": true
+      },
+      {
+        "text": "3. **Perform the Subtraction**: The query asks to subtract 1 from the number of blue cylinders. Since there are 0 blue cylinders, the calculation is:\n   \\[\n   0 - 1 = -1\n   \\]",
+        "score": -0.0841350540978843,
+        "valid": true
+      },
+      {
+        "text": "Thus, the final answer to the query is:",
+        "score": -0.1900188638086547,
+        "valid": true
+      },
+      {
+        "text": "**Answer: -1**",
+        "score": -0.1572602465755987,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "89",
+    "query": "Subtract 0 yellow spheres. How many objects are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000019.png",
+    "answer": 4,
+    "response": "To solve the query of subtracting 0 yellow spheres from the image, we can follow these steps:\n\n1. **Initial Count**: The image contains a total of four objects.\n2. **Identify Yellow Objects**: Since the query specifies subtracting 0 yellow spheres, we note that no yellow objects need to be removed.\n3. **Final Count**: After subtracting 0 yellow spheres, the total number of objects remains unchanged.\n\nThus, the final answer is:\n\n**4**",
+    "atomic_facts": [
+      {
+        "text": "To solve the query of subtracting 0 yellow spheres from the image, we can follow these steps:",
+        "score": -0.25871623131229643,
+        "valid": true
+      },
+      {
+        "text": "1. **Initial Count**: The image contains a total of four objects.",
+        "score": -0.2954758331927678,
+        "valid": false
+      },
+      {
+        "text": "2. **Identify Yellow Objects**: Since the query specifies subtracting 0 yellow spheres, we note that no yellow objects need to be removed.",
+        "score": -0.22282683910798368,
+        "valid": true
+      },
+      {
+        "text": "3. **Final Count**: After subtracting 0 yellow spheres, the total number of objects remains unchanged.",
+        "score": -0.1717395223990242,
+        "valid": true
+      },
+      {
+        "text": "Thus, the final answer is:",
+        "score": -0.20456062488457455,
+        "valid": true
+      },
+      {
+        "text": "**4**",
+        "score": -0.0036038521211594343,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "100",
+    "query": "Subtract all cylinders. How many objects are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000022.png",
+    "answer": 4,
+    "response": "To solve the query of how many objects remain after subtracting all cylinders from the image, we can break down the process as follows:\n\n1. **Identify Total Objects**: The image contains a total of 5 objects:\n   - Green cube\n   - Blue sphere\n   - Yellow cube\n   - Cyan cylinder\n   - Brown sphere\n\n2. **Identify Cylinders**: Among these objects, there is 1 cylinder (the cyan one).\n\n3. **Perform Calculation**: \n   - Total objects: 5\n   - Cylinders: 1\n   - Remaining objects = Total objects - Cylinders = 5 - 1 = 4\n\n4. **Final Answer**: There are 4 objects left after subtracting the cylinders.\n\n**Conclusion**: The final answer is **4**.",
+    "atomic_facts": [
+      {
+        "text": "To solve the query of how many objects remain after subtracting all cylinders from the image, we can break down the process as follows:",
+        "score": -0.16564736561786553,
+        "valid": false
+      },
+      {
+        "text": "1. **Identify Total Objects**: The image contains a total of 5 objects:\n   - Green cube\n   - Blue sphere\n   - Yellow cube\n   - Cyan cylinder\n   - Brown sphere",
+        "score": -0.07185380559772489,
+        "valid": true
+      },
+      {
+        "text": "2. **Identify Cylinders**: Among these objects, there is 1 cylinder (the cyan one).",
+        "score": -0.08662614246634348,
+        "valid": true
+      },
+      {
+        "text": "3. **Perform Calculation**: \n   - Total objects: 5\n   - Cylinders: 1\n   - Remaining objects = Total objects - Cylinders = 5 - 1 = 4",
+        "score": -0.0897645670747975,
+        "valid": true
+      },
+      {
+        "text": "4. **Final Answer**: There are 4 objects left after subtracting the cylinders.",
+        "score": -0.13609843874575003,
+        "valid": true
+      },
+      {
+        "text": "**Conclusion**: The final answer is **4**.",
+        "score": -0.09151350535345652,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "106",
+    "query": "Subtract 0 yellow blocks. How many objects are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000023.png",
+    "answer": 9,
+    "response": "To solve the query, we follow these steps:\n\n1. **Count the Total Objects**: The analysis indicates that there are a total of 10 objects in the image.\n  \n2. **Subtract Yellow Blocks**: The query specifies to subtract 0 yellow blocks. Since subtracting zero does not change the total, we still have 10 objects.\n\n3. **Final Calculation**: \n   - Total objects = 10\n   - Subtracting 0 yellow blocks = 10 - 0 = 10\n\n**Final Answer**: 10",
+    "atomic_facts": [
+      {
+        "text": "To solve the query, we follow these steps:",
+        "score": -0.23545021564641502,
+        "valid": false
+      },
+      {
+        "text": "1. **Count the Total Objects**: The analysis indicates that there are a total of 10 objects in the image.",
+        "score": -0.20162220365251415,
+        "valid": true
+      },
+      {
+        "text": "2. **Subtract Yellow Blocks**: The query specifies to subtract 0 yellow blocks. Since subtracting zero does not change the total, we still have 10 objects.",
+        "score": -0.17347968195776753,
+        "valid": true
+      },
+      {
+        "text": "3. **Final Calculation**: \n   - Total objects = 10\n   - Subtracting 0 yellow blocks = 10 - 0 = 10",
+        "score": -0.11126379517029088,
+        "valid": true
+      },
+      {
+        "text": "**Final Answer**: 10",
+        "score": -0.16474275834911264,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "98",
+    "query": "Subtract all green cubes. How many cubes are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000022.png",
+    "answer": 1,
+    "response": "To solve the query \"Subtract all green cubes. How many cubes are left?\" we can break down the process as follows:\n\n1. **Identify Total Cubes**: In the image, there are a total of 5 cubes of various colors.\n2. **Identify Green Cubes**: Among these, there is 1 green cube.\n3. **Perform Subtraction**: To find out how many cubes are left after subtracting the green cubes:\n   - Total cubes: 5\n   - Green cubes: 1\n   - Calculation: \\(5 - 1 = 4\\)\n\n**Final Answer**: There are 4 cubes left.",
+    "atomic_facts": [
+      {
+        "text": "To solve the query \"Subtract all green cubes. How many cubes are left?\" we can break down the process as follows:",
+        "score": -0.21215551819109293,
+        "valid": false
+      },
+      {
+        "text": "1. **Identify Total Cubes**: In the image, there are a total of 5 cubes of various colors.",
+        "score": -0.17134111908142358,
+        "valid": true
+      },
+      {
+        "text": "2. **Identify Green Cubes**: Among these, there is 1 green cube.",
+        "score": -0.09596973757287754,
+        "valid": true
+      },
+      {
+        "text": "3. **Perform Subtraction**: To find out how many cubes are left after subtracting the green cubes:\n   - Total cubes: 5\n   - Green cubes: 1\n   - Calculation: \\(5 - 1 = 4\\)",
+        "score": -0.09989303305000632,
+        "valid": true
+      },
+      {
+        "text": "**Final Answer**: There are 4 cubes left.",
+        "score": -0.15211598076616303,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "74",
+    "query": "Subtract all brown cylinders. How many were subtracted if there are1brown cylinders left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000017.png",
+    "answer": 2,
+    "response": "To solve the query, we need to follow these steps:\n\n1. **Identify the Number of Brown Cylinders**: The analysis indicates that there is 1 brown cylinder in the image.\n\n2. **Subtract the Brown Cylinders**: The query asks how many were subtracted if there is 1 brown cylinder left. Since we started with 1 brown cylinder and there is still 1 left, we can conclude that 0 brown cylinders were subtracted.\n\n3. **Final Calculation**: \n   - Initial count of brown cylinders: 1\n   - Remaining count of brown cylinders: 1\n   - Subtracted count = Initial count - Remaining count = 1 - 1 = 0\n\n**Final Answer**: 0",
+    "atomic_facts": [
+      {
+        "text": "To solve the query, we need to follow these steps:",
+        "score": -0.2778745100998397,
+        "valid": false
+      },
+      {
+        "text": "1. **Identify the Number of Brown Cylinders**: The analysis indicates that there is 1 brown cylinder in the image.",
+        "score": -0.2411376780557974,
+        "valid": true
+      },
+      {
+        "text": "2. **Subtract the Brown Cylinders**: The query asks how many were subtracted if there is 1 brown cylinder left. Since we started with 1 brown cylinder and there is still 1 left, we can conclude that 0 brown cylinders were subtracted.",
+        "score": -0.24980955419548587,
+        "valid": true
+      },
+      {
+        "text": "3. **Final Calculation**: \n   - Initial count of brown cylinders: 1\n   - Remaining count of brown cylinders: 1\n   - Subtracted count = Initial count - Remaining count = 1 - 1 = 0",
+        "score": -0.1221577052837469,
+        "valid": true
+      },
+      {
+        "text": "**Final Answer**: 0",
+        "score": -0.21392655197955232,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "81",
+    "query": "Subtract all small cyan rubber cylinders. How many cylinders are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000018.png",
+    "answer": 2,
+    "response": "To determine how many small cyan rubber cylinders are left after subtraction, we can follow these steps:\n\n1. **Identify the Total Count**: The image analysis indicates that there is a total of **1 small cyan rubber cylinder** present.\n\n2. **Perform the Subtraction**: The query asks to subtract all small cyan rubber cylinders. Since there is **1 small cyan rubber cylinder**, we subtract this from the total.\n\n3. **Calculate the Remaining Count**: \n   - Total cylinders before subtraction: **1**\n   - Subtracting the small cyan rubber cylinder: **1 - 1 = 0**\n\nThus, after subtracting all small cyan rubber cylinders, the final count of cylinders left is **0**. \n\n**Final Answer**: 0",
+    "atomic_facts": [
+      {
+        "text": "To determine how many small cyan rubber cylinders are left after subtraction, we can follow these steps:",
+        "score": -0.20680482743119535,
+        "valid": true
+      },
+      {
+        "text": "1. **Identify the Total Count**: The image analysis indicates that there is a total of **1 small cyan rubber cylinder** present.",
+        "score": -0.36793430129434973,
+        "valid": false
+      },
+      {
+        "text": "2. **Perform the Subtraction**: The query asks to subtract all small cyan rubber cylinders. Since there is **1 small cyan rubber cylinder**, we subtract this from the total.",
+        "score": -0.20205188415990494,
+        "valid": true
+      },
+      {
+        "text": "3. **Calculate the Remaining Count**: \n   - Total cylinders before subtraction: **1**\n   - Subtracting the small cyan rubber cylinder: **1 - 1 = 0**",
+        "score": -0.15966453297205305,
+        "valid": true
+      },
+      {
+        "text": "Thus, after subtracting all small cyan rubber cylinders, the final count of cylinders left is **0**.",
+        "score": -0.15368304341870373,
+        "valid": true
+      },
+      {
+        "text": "**Final Answer**: 0",
+        "score": -0.09690794104689562,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "50",
+    "query": "Subtract 1 cylinders. How many cylinders are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000011.png",
+    "answer": 1,
+    "response": "To solve the query, we follow these steps:\n\n1. **Identify the Number of Cylinders**: The analysis of the image indicates that there are 2 cylinders present.\n2. **Perform the Subtraction**: We need to subtract 1 from the total number of cylinders. \n\n   Calculation: \n   \\[\n   2 \\text{ cylinders} - 1 = 1 \\text{ cylinder}\n   \\]\n\n3. **Final Answer**: The number of cylinders left after the subtraction is **1**.\n\nThus, the final answer is **1**.",
+    "atomic_facts": [
+      {
+        "text": "To solve the query, we follow these steps:",
+        "score": -0.3144705510465428,
+        "valid": true
+      },
+      {
+        "text": "1. **Identify the Number of Cylinders**: The analysis of the image indicates that there are 2 cylinders present.",
+        "score": -0.26287103169969667,
+        "valid": true
+      },
+      {
+        "text": "2. **Perform the Subtraction**: We need to subtract 1 from the total number of cylinders.",
+        "score": -0.22976398858733854,
+        "valid": true
+      },
+      {
+        "text": "Calculation: \n   \\[\n   2 \\text{ cylinders} - 1 = 1 \\text{ cylinder}\n   \\]",
+        "score": -0.10212381901263713,
+        "valid": true
+      },
+      {
+        "text": "3. **Final Answer**: The number of cylinders left after the subtraction is **1**.",
+        "score": -0.14058373798235024,
+        "valid": true
+      },
+      {
+        "text": "Thus, the final answer is **1**.",
+        "score": -0.33779057316169203,
+        "valid": false
+      }
+    ]
+  },
+  {
+    "pid": "69",
+    "query": "Subtract 1 gray spheres. How many objects are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000015.png",
+    "answer": 5,
+    "response": "To solve the query of subtracting 1 gray sphere from a collection of objects in the image, we can break down the process as follows:\n\n1. **Identify Objects**: Analyze the image to count the number of gray spheres present.\n2. **Count Gray Spheres**: In this case, there is 1 gray sphere identified in the image.\n3. **Perform Subtraction**: Subtract 1 from the count of gray spheres: \n   - \\(1 - 1 = 0\\)\n4. **Final Count**: After the subtraction, the total number of objects left is 0.\n\n**Final Answer**: 0",
+    "atomic_facts": [
+      {
+        "text": "To solve the query of subtracting 1 gray sphere from a collection of objects in the image, we can break down the process as follows:",
+        "score": -0.20446687528409327,
+        "valid": true
+      },
+      {
+        "text": "1. **Identify Objects**: Analyze the image to count the number of gray spheres present.",
+        "score": -0.13357625572371035,
+        "valid": true
+      },
+      {
+        "text": "2. **Count Gray Spheres**: In this case, there is 1 gray sphere identified in the image.",
+        "score": -0.2080753561180959,
+        "valid": false
+      },
+      {
+        "text": "3. **Perform Subtraction**: Subtract 1 from the count of gray spheres: \n   - \\(1 - 1 = 0\\)",
+        "score": -0.16238908123607088,
+        "valid": true
+      },
+      {
+        "text": "4. **Final Count**: After the subtraction, the total number of objects left is 0.",
+        "score": -0.1932410550693768,
+        "valid": true
+      },
+      {
+        "text": "**Final Answer**: 0",
+        "score": -0.15474436955360155,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "95",
+    "query": "Subtract all brown blocks. How many blocks are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000021.png",
+    "answer": 1,
+    "response": "To solve the query, we follow these steps:\n\n1. **Identify Total Blocks**: The image contains a total of 4 blocks.\n2. **Identify Brown Blocks**: There is 1 brown block present.\n3. **Perform Subtraction**: We subtract the number of brown blocks from the total number of blocks:\n   - Total blocks: 4\n   - Brown blocks: 1\n   - Calculation: \\( 4 - 1 = 3 \\)\n\nThus, the final answer is:\n\n**3 blocks left.**",
+    "atomic_facts": [
+      {
+        "text": "To solve the query, we follow these steps:",
+        "score": -0.33341805094387383,
+        "valid": false
+      },
+      {
+        "text": "1. **Identify Total Blocks**: The image contains a total of 4 blocks.",
+        "score": -0.17607391422779983,
+        "valid": true
+      },
+      {
+        "text": "2. **Identify Brown Blocks**: There is 1 brown block present.",
+        "score": -0.11298087930885625,
+        "valid": true
+      },
+      {
+        "text": "3. **Perform Subtraction**: We subtract the number of brown blocks from the total number of blocks:\n   - Total blocks: 4\n   - Brown blocks: 1\n   - Calculation: \\( 4 - 1 = 3 \\)",
+        "score": -0.07741226777117506,
+        "valid": true
+      },
+      {
+        "text": "Thus, the final answer is:",
+        "score": -0.32709721179503504,
+        "valid": true
+      },
+      {
+        "text": "**3 blocks left.**",
+        "score": -0.17092969881070985,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "70",
+    "query": "Subtract all brown cylinders. How many cylinders are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000016.png",
+    "answer": 1,
+    "response": "To solve the query, we follow these steps:\n\n1. **Identify Objects**: In the image, we have three objects: one brown (gold) cylinder, one red cylinder, and one blue sphere.\n\n2. **Count Total Cylinders**: There are a total of 2 cylinders (1 brown and 1 red).\n\n3. **Subtract Brown Cylinders**: We need to subtract the number of brown cylinders from the total count:\n   - Total cylinders: 2\n   - Brown cylinders: 1\n\n4. **Perform the Calculation**: \n   - 2 (total cylinders) - 1 (brown cylinder) = 1\n\nThus, the final answer is:\n\n**1**",
+    "atomic_facts": [
+      {
+        "text": "To solve the query, we follow these steps:",
+        "score": -0.2941824080131482,
+        "valid": true
+      },
+      {
+        "text": "1. **Identify Objects**: In the image, we have three objects: one brown (gold) cylinder, one red cylinder, and one blue sphere.",
+        "score": -0.19965661392649414,
+        "valid": true
+      },
+      {
+        "text": "2. **Count Total Cylinders**: There are a total of 2 cylinders (1 brown and 1 red).",
+        "score": -0.11238556300863763,
+        "valid": true
+      },
+      {
+        "text": "3. **Subtract Brown Cylinders**: We need to subtract the number of brown cylinders from the total count:\n   - Total cylinders: 2\n   - Brown cylinders: 1",
+        "score": -0.10493311109226436,
+        "valid": true
+      },
+      {
+        "text": "4. **Perform the Calculation**: \n   - 2 (total cylinders) - 1 (brown cylinder) = 1",
+        "score": -0.12124288526693024,
+        "valid": true
+      },
+      {
+        "text": "Thus, the final answer is:",
+        "score": -0.3312057426232319,
+        "valid": false
+      },
+      {
+        "text": "**1**",
+        "score": -0.028829785995185375,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "pid": "52",
+    "query": "Subtract 0 green cylinders. How many objects are left? Please provide the final answer as an integer.",
+    "image": "/home/sina/projects/octotools/tasks/clevr-math/data/images/CLEVR_val_000011.png",
+    "answer": 5,
+    "response": "To solve the query, we follow these steps:\n\n1. **Identify Total Objects**: The image contains a total of 5 objects.\n2. **Identify Green Cylinders**: There are 2 cylinders in the image.\n3. **Perform Subtraction**: The query asks to subtract 0 green cylinders from the total count of objects. \n\n   - Total objects: 5\n   - Subtracting 0 cylinders: 5 - 0 = 5\n\n4. **Final Count**: The final count of objects remaining is 5.\n\n**Answer**: 5",
+    "atomic_facts": [
+      {
+        "text": "To solve the query, we follow these steps:",
+        "score": -0.26481124705751424,
+        "valid": true
+      },
+      {
+        "text": "1. **Identify Total Objects**: The image contains a total of 5 objects.",
+        "score": -0.09775339718056683,
+        "valid": true
+      },
+      {
+        "text": "2. **Identify Green Cylinders**: There are 2 cylinders in the image.",
+        "score": -0.10478049909379274,
+        "valid": true
+      },
+      {
+        "text": "3. **Perform Subtraction**: The query asks to subtract 0 green cylinders from the total count of objects.",
+        "score": -0.1954012101080025,
+        "valid": true
+      },
+      {
+        "text": "- Total objects: 5",
+        "score": -0.46348865901514574,
+        "valid": false
+      },
+      {
+        "text": "- Subtracting 0 cylinders: 5 - 0 = 5",
+        "score": -0.1675126145061867,
+        "valid": true
+      },
+      {
+        "text": "4. **Final Count**: The final count of objects remaining is 5.",
+        "score": -0.27152300923540573,
+        "valid": true
+      },
+      {
+        "text": "**Answer**: 5",
+        "score": -0.18895707997631916,
+        "valid": true
+      }
+    ]
+  }
+]
