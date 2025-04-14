@@ -178,3 +178,4 @@ cache/
 tool_cache/
 
 logits_*.json
+combine_json_files.py
