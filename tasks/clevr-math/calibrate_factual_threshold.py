@@ -28,12 +28,6 @@ Description:
   the (1-alpha) quantile. This threshold is stored in a .npz file
   for later usage:
      'threshold' => <computed numeric threshold>
-
-Reference:
-  The approach loosely follows "conformal factual" from your code references.
-  Typically, you'd keep or discard an entire LLM response based on whether its
-  "badness" is above or below this threshold. For chunk-level filtering, you
-  could adapt the logic similarly.
 """
 
 import argparse
