@@ -8,7 +8,7 @@ PROJECT_DIR="./"
 LABEL="trusttools_validated"
 
 THREADS=2
-TASK="clevr-math"
+TASK="medlfqa"
 DATA_FILE="$TASK/data/data.json"
 LOG_DIR="$TASK/logs/$LABEL"
 OUT_DIR="$TASK/results/$LABEL"

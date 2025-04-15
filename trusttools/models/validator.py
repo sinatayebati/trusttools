@@ -27,17 +27,28 @@ class ConformalValidator:
     scoring their confidence using log probabilities provided from the generation step,
     trimming uncertain claims via split conformal prediction, and merging the valid claims back.
     """
-    def __init__(self, llm_engine_name: str):
+    def __init__(self, llm_engine_name: str, threshold_file: Optional[str] = None):
         """
         Initializes the ConformalValidator. Only needs a standard engine for separation/merging.
 
         Args:
             llm_engine_name: The name of the LLM engine to use for non-scoring tasks.
+            threshold_file: Optional path to a .npz file containing a pre-calibrated conformal threshold.
         """
         self.llm_engine_name = llm_engine_name
         # Standard engine for tasks not requiring logprobs (separation, merging)
         self.llm_engine = ChatOpenAI(model_string=llm_engine_name, is_multimodal=False, capture_logits=False)
         print(f"Initialized ConformalValidator with engine: {llm_engine_name} (for separation/merging)")
+        
+        # Load pre-calibrated threshold if provided
+        self.calibrated_threshold = None
+        if threshold_file:
+            try:
+                threshold_data = np.load(threshold_file)
+                self.calibrated_threshold = float(threshold_data['threshold'])
+                print(f"Loaded pre-calibrated threshold: {self.calibrated_threshold} from {threshold_file}")
+            except Exception as e:
+                print(f"Warning: Failed to load threshold from {threshold_file}: {e}")
 
     def separate(self, response: str) -> List[str]:
         """
@@ -75,8 +86,9 @@ Atoms:
 
     def trim_split_conformal(self, atoms: List[Atom], alpha: float) -> List[Atom]:
         """
-        Trims atoms using Split Conformal Prediction with a fixed threshold
-        derived from the current batch's scores.
+        Trims atoms using Split Conformal Prediction based on either:
+        1. A pre-calibrated threshold loaded from file (preferred)
+        2. A batch-computed threshold if no pre-calibrated threshold is available
 
         Args:
             atoms: List of Atom objects with scores.
@@ -90,31 +102,34 @@ Atoms:
             return []
 
         # Filter out atoms without a valid score for threshold calculation
-        valid_scores = [atom.score for atom in atoms if atom.score is not None]
+        valid_atoms = [atom for atom in atoms if atom.score is not None]
 
-        if not valid_scores:
+        if not valid_atoms:
             print("Warning: No valid scores found for trimming. Marking all atoms as invalid.")
             for atom in atoms:
                 atom.valid = False
             return atoms
 
-        # Calculate the threshold: the alpha-quantile of scores.
-        # Higher logprob scores are better. We want to keep scores >= threshold.
-        valid_scores_float = [float(s) for s in valid_scores]
-        threshold = np.quantile(valid_scores_float, alpha) # Low scores are trimmed
-        print(f"  Calculated threshold (alpha={alpha} quantile): {threshold} ({len(valid_scores_float)} scores)")
-
+        # Use pre-calibrated threshold
+        print(f"Using pre-calibrated threshold: {self.calibrated_threshold}")
+        threshold = self.calibrated_threshold
+        
+        # When using the pre-calibrated threshold, we need to invert the scores
+        # because the threshold was calibrated on inverted scores (higher = worse)
         trimmed_atoms = []
         kept_count = 0
         for atom in atoms:
-            if atom.score is None or float(atom.score) < threshold:
+            if atom.score is None:
                 atom.valid = False
             else:
-                atom.valid = True
-                kept_count += 1
+                # Invert the score (since higher inverted scores = worse)
+                inverted_score = -float(atom.score)
+                # Valid if inverted score is BELOW threshold (less bad)
+                atom.valid = inverted_score <= threshold
+                if atom.valid:
+                    kept_count += 1
             trimmed_atoms.append(atom)
-            # print(f"  Atom: '{atom.text[:60]}...' Score: {atom.score}, Valid: {atom.valid}") # Verbose
-
+        
         print(f"Trimming complete. Kept {kept_count}/{len(atoms)} atoms.")
         return trimmed_atoms
 
