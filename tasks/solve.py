@@ -440,6 +440,7 @@ def parse_arguments():
     parser.add_argument("--local_llm_endpoint", default=None, help="Endpoint URL for local LLM (e.g., http://localhost:8000/v1). Defaults to env var or localhost.")
     parser.add_argument("--capture_logits", action='store_true', help="Capture and save logits to file (for debugging). Validation enables capture for specific steps regardless.")
     parser.add_argument("--logits_dir", default=None, help="Directory to save captured logits JSON files.")
+    parser.add_argument("--conformal_threshold_file", default=None, help="Path to conformal threshold .npz file for factual validation.")
     return parser.parse_args()
 
 
@@ -472,7 +473,8 @@ def main(args):
 
     # Instantiate Validator
     validator = ConformalValidator(
-        llm_engine_name=args.llm_engine_name
+        llm_engine_name=args.llm_engine_name,
+        threshold_file=args.conformal_threshold_file
     )
 
     # Instantiate Solver
