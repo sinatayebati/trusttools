@@ -21,6 +21,9 @@ ENABLED_TOOLS="Generalist_Solution_Generator_Tool"
 
 # Set the desired alpha for validation
 VALIDATION_ALPHA=0.1
+
+# Path to the pre-calibrated conformal threshold file
+THRESHOLD_FILE="$TASK/conformal_threshold.npz"
 ############
 
 cd $PROJECT_DIR
@@ -28,7 +31,7 @@ mkdir -p $LOG_DIR
 mkdir -p $OUT_DIR # Ensure output directory is also created
 
 # Define the array of specific indices
-indices=($(seq 50 55))
+indices=($(seq 83 83))
 
 # Skip indices if the output file already exists
 new_indices=()
@@ -50,7 +53,8 @@ else
     run_task() {
         local i=$1
         local alpha=$2 # Pass alpha as an argument
-        echo "Running task for index $i with validation alpha $alpha"
+        local threshold_file=$3 # Pass threshold file as an argument
+        echo "Running task for index $i with validation alpha $alpha and threshold file $threshold_file"
         python solve.py \
         --index $i \
         --task $TASK \
@@ -60,6 +64,7 @@ else
         --output_json_dir $OUT_DIR \
         --output_types "direct,validated_direct" \
         --validation_alpha $alpha \
+        --conformal_threshold_file $threshold_file \
         --enabled_tools "$ENABLED_TOOLS" \
         --max_time 300 \
         --verbose False \
@@ -70,12 +75,12 @@ else
 
     # Export the function and variables so they can be used by parallel
     export -f run_task
-    export TASK DATA_FILE LOG_DIR OUT_DIR CACHE_DIR LLM ENABLED_TOOLS VALIDATION_ALPHA
+    export TASK DATA_FILE LOG_DIR OUT_DIR CACHE_DIR LLM ENABLED_TOOLS VALIDATION_ALPHA THRESHOLD_FILE
 
     # Run the tasks in parallel using GNU Parallel
     echo "Starting parallel execution..."
-    # Pass VALIDATION_ALPHA to each task
-    parallel -j $THREADS run_task {1} $VALIDATION_ALPHA ::: "${indices[@]}"
+    # Pass VALIDATION_ALPHA and THRESHOLD_FILE to each task
+    parallel -j $THREADS run_task {1} $VALIDATION_ALPHA $THRESHOLD_FILE ::: "${indices[@]}"
     echo "All tasks completed."
 fi
 
