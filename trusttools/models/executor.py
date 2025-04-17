@@ -128,7 +128,7 @@ Reason: The command should process multiple items in a single execution, not sep
 Remember: Your <command> field MUST be valid Python code including any necessary data preparation steps and one or more `execution = tool.execute(` calls, without any additional explanatory text. The format `execution = tool.execute` must be strictly followed, and the last line must begin with `execution = tool.execute` to capture the final output.
 """
 
-        llm_generate_tool_command = ChatOpenAI(model_string=self.llm_engine_name, is_multimodal=False)
+        llm_generate_tool_command = ChatOpenAI(model_string=self.llm_engine_name, is_multimodal=False, enable_cache=False)
         tool_command = llm_generate_tool_command(prompt_generate_tool_command, response_format=ToolCommand)
 
         return tool_command

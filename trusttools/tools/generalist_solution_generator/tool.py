@@ -62,7 +62,8 @@ class Generalist_Solution_Generator_Tool(BaseTool):
             is_multimodal=multimodal,
             use_local_model=self.use_local_model,
             capture_logits=self.capture_logits,
-            logits_dir=self.logits_dir
+            logits_dir=self.logits_dir,
+            enable_cache=False
         )
 
         try:

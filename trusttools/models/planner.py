@@ -10,13 +10,14 @@ from trusttools.models.formatters import QueryAnalysis, NextStep, MemoryVerifica
 class Planner:
     def __init__(self, llm_engine_name: str, toolbox_metadata: dict = None, available_tools: List = None, capture_logits_for_outputs: bool = False):
         self.llm_engine_name = llm_engine_name
-        self.llm_engine = ChatOpenAI(model_string=llm_engine_name, is_multimodal=False, capture_logits=False)
+        self.llm_engine = ChatOpenAI(model_string=llm_engine_name, is_multimodal=False, capture_logits=False, enable_cache=False)
         self.llm_engine_mm = ChatOpenAI(
             model_string=llm_engine_name,
             is_multimodal=True,
             capture_logits=True,
             exclude_top_logprobs=True, 
-            exclude_bytes=True
+            exclude_bytes=True,
+            enable_cache=False
         )
         self.capture_logits_for_outputs = capture_logits_for_outputs
         print(f"Planner initialized with capture_logits_for_outputs={capture_logits_for_outputs}, using model {llm_engine_name}")

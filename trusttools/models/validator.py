@@ -37,7 +37,7 @@ class ConformalValidator:
         """
         self.llm_engine_name = llm_engine_name
         # Standard engine for tasks not requiring logprobs (separation, merging)
-        self.llm_engine = ChatOpenAI(model_string=llm_engine_name, is_multimodal=False, capture_logits=False)
+        self.llm_engine = ChatOpenAI(model_string=llm_engine_name, is_multimodal=False, capture_logits=False, enable_cache=False)
         print(f"Initialized ConformalValidator with engine: {llm_engine_name} (for separation/merging)")
         
         # Load pre-calibrated threshold if provided
@@ -285,37 +285,63 @@ Merged Paragraph:
                 chunks.append(paragraph)
                 continue
             
-            # Extract numbered steps (like "1. Step description")
-            # This pattern will match full numbered items with all their content
-            numbered_steps = re.findall(r'^\d+\.\s+.+?(?=^\d+\.|\Z)', paragraph, re.MULTILINE | re.DOTALL)
-            if numbered_steps:
-                chunks.extend([step.strip() for step in numbered_steps])
-                continue
+            # Split the paragraph into sentences
+            # This regex handles common sentence endings while avoiding splitting on abbreviations, decimal numbers, etc.
+            sentence_pattern = r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?|\!)\s+'
+            sentences = re.split(sentence_pattern, paragraph)
             
-            # Extract bulleted lists
-            bulleted_items = re.findall(r'^\s*[\*\-•]\s+.+?(?=^\s*[\*\-•]|\Z)', paragraph, re.MULTILINE | re.DOTALL)
-            if bulleted_items:
-                chunks.extend([item.strip() for item in bulleted_items])
-                continue
+            # Process sentences, handling edge cases
+            current_chunk = ""
+            for sentence in sentences:
+                sentence = sentence.strip()
+                if not sentence:
+                    continue
+                
+                # For longer sentences, try to split them further at logical break points
+                sub_sentences = []
+                if len(sentence.split()) > 15:
+                    # Split on conjunctions and transition phrases
+                    conjunction_pattern = r'\s+(?:and|but|or|however|therefore|thus|additionally|moreover|furthermore|consequently|as a result),\s+'
+                    sub_sentences = re.split(conjunction_pattern, sentence)
+                    
+                    # Also try to split on semicolons and certain comma patterns
+                    if len(sub_sentences) <= 1:
+                        clause_pattern = r'(?:;\s+|\s*,\s+(?:which|who|where|when|because|although|while|if|unless|since|as)\s+)'
+                        fragments = []
+                        for sub in sub_sentences:
+                            fragments.extend(re.split(clause_pattern, sub))
+                        sub_sentences = fragments
+                
+                # If we couldn't split further, keep the original sentence
+                if not sub_sentences or (len(sub_sentences) == 1 and sub_sentences[0] == sentence):
+                    sub_sentences = [sentence]
+                
+                # Process each sub-sentence
+                for sub_sentence in sub_sentences:
+                    sub_sentence = sub_sentence.strip()
+                    if not sub_sentence:
+                        continue
+                    
+                    # If sentence is very short, combine with previous sentence
+                    if len(sub_sentence.split()) <= 3 and current_chunk:
+                        current_chunk += " " + sub_sentence
+                    # If the current chunk is getting too long or we're at a major logical break,
+                    # finalize it and start a new one
+                    elif current_chunk and (len(current_chunk.split()) + len(sub_sentence.split()) > 25 or 
+                                           sub_sentence.startswith(("Therefore", "Thus", "Consequently", "In conclusion", "As a result"))):
+                        chunks.append(current_chunk.strip())
+                        current_chunk = sub_sentence
+                    # Otherwise add to current chunk
+                    else:
+                        if current_chunk:
+                            current_chunk += " " + sub_sentence
+                        else:
+                            current_chunk = sub_sentence
             
-            # Extract any bold or emphasized sections (e.g., "**Section title**:")
-            sections = re.split(r'(\*\*[^*]+\*\*:)', paragraph)
-            if len(sections) > 1:
-                current_section = ""
-                for i, section in enumerate(sections):
-                    if i % 2 == 1:  # It's a section header
-                        if current_section:
-                            chunks.append(current_section.strip())
-                        current_section = section
-                    else:  # It's content
-                        current_section += section
-                if current_section:
-                    chunks.append(current_section.strip())
-                continue
+            # If we still have a current chunk, add it to the chunks
+            if current_chunk:
+                chunks.append(current_chunk.strip())
             
-            # If no specific structure was found, use the whole paragraph
-            chunks.append(paragraph)
-        
         # If we still don't have any chunks, just split into sentences as fallback
         if not chunks:
             print("Falling back to simple sentence splitting")

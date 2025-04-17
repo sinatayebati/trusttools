@@ -56,7 +56,7 @@ class ChatOpenAI(EngineLM, CachedEngine):
         model_string=None,
         system_prompt=DEFAULT_SYSTEM_PROMPT,
         is_multimodal: bool=False,
-        enable_cache: bool=True,
+        enable_cache: bool=False,
         use_local_model: bool=False,
         local_model_endpoint: str=None,
         capture_logits: bool=False,
