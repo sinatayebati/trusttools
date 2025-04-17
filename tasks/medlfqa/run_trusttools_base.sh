@@ -31,7 +31,7 @@ mkdir -p $LOG_DIR
 mkdir -p $OUT_DIR # Ensure output directory is also created
 
 # Define the array of specific indices
-indices=($(seq 90 100))
+indices=($(seq 4800 4830))
 
 # Skip indices if the output file already exists
 new_indices=()

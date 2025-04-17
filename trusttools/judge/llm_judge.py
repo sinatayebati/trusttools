@@ -40,8 +40,9 @@ Your task is to evaluate if each of the following text segments is a valid respo
 QUERY: "{query}"
 
 For each text segment, evaluate if it is:
-1. Factually accurate and scientifically sound based on established knowledge in the {self.domain} field
+1. Factually correct and scientifically sound based on established knowledge in the {self.domain} field
 2. Directly relevant to the query
+3. Necessary to answer the query
 
 TEXT SEGMENTS:
 """
