@@ -14,7 +14,7 @@ LOG_DIR="$TASK/logs/$LABEL"
 OUT_DIR="$TASK/results/$LABEL"
 CACHE_DIR="$TASK/cache"
 
-LLM="gpt-4o-mini"
+LLM="gpt-4.1-nano"
 
 # Keep tools the same, unless validation requires specific tools (unlikely)
 ENABLED_TOOLS="Generalist_Solution_Generator_Tool"
@@ -31,7 +31,7 @@ mkdir -p $LOG_DIR
 mkdir -p $OUT_DIR # Ensure output directory is also created
 
 # Define the array of specific indices
-indices=($(seq 96 96))
+indices=($(seq 90 100))
 
 # Skip indices if the output file already exists
 new_indices=()
