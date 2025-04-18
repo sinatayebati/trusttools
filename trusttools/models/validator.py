@@ -9,36 +9,32 @@ from pydantic import BaseModel, Field
 class Atom(BaseModel):
     """Represents a single atomic claim extracted from a response."""
     text: str
-    score: Optional[float] = Field(None, description="Confidence score (e.g., mean log probability)")
-    logprobs: Optional[List[float]] = Field(None, description="Token log probabilities for the atom")
-    valid: bool = Field(True, description="Whether the atom is considered valid after trimming")
+    score_logprobs: Optional[float] = Field(None, description="Mean log probability score for this atom")
+    score_selfeval: Optional[float] = Field(None, description="Self-evaluation score (0-1) for factuality")
+    valid: Optional[bool] = Field(None, description="Whether the atom is considered valid after evaluation")
     
     def dict_without_logprobs(self) -> Dict[str, Any]:
-        """Returns a dictionary representation of the Atom without the logprobs field."""
+        """Returns a dictionary representation of the Atom without internal logprobs."""
         return {
-            "text": self.text,
-            "score": self.score,
+            "sub_claim": self.text,
+            "score_logprobs": self.score_logprobs,
+            "score_selfeval": self.score_selfeval,
             "valid": self.valid
         }
 
 class ConformalValidator:
-    """
-    Validates LLM responses by separating them into atomic claims,
-    scoring their confidence using log probabilities provided from the generation step,
-    trimming uncertain claims via split conformal prediction, and merging the valid claims back.
-    """
     def __init__(self, llm_engine_name: str, threshold_file: Optional[str] = None):
         """
-        Initializes the ConformalValidator. Only needs a standard engine for separation/merging.
+        Initializes the ConformalValidator.
 
         Args:
-            llm_engine_name: The name of the LLM engine to use for non-scoring tasks.
+            llm_engine_name: The name of the LLM engine to use for LLM-based validation tasks.
             threshold_file: Optional path to a .npz file containing a pre-calibrated conformal threshold.
         """
         self.llm_engine_name = llm_engine_name
-        # Standard engine for tasks not requiring logprobs (separation, merging)
-        self.llm_engine = ChatOpenAI(model_string=llm_engine_name, is_multimodal=False, capture_logits=False)
-        print(f"Initialized ConformalValidator with engine: {llm_engine_name} (for separation/merging)")
+        # Standard engine for validation tasks (NOT multimodal)
+        self.llm_engine = ChatOpenAI(model_string=llm_engine_name, is_multimodal=False, capture_logits=True)
+        print(f"Initialized ConformalValidator with engine: {llm_engine_name}")
         
         # Load pre-calibrated threshold if provided
         self.calibrated_threshold = None
@@ -50,39 +46,176 @@ class ConformalValidator:
             except Exception as e:
                 print(f"Warning: Failed to load threshold from {threshold_file}: {e}")
 
-    def separate(self, response: str) -> List[str]:
+    def extract_subclaims(self, query: str, query_analysis: str, response: str, enable_annotation: bool = False) -> List[Atom]:
         """
-        Separates a response into atomic claims using an LLM.
+        Extracts sub-claims from the response using an LLM, scores them, and optionally validates them.
+        Uses a structured generation approach with markers to accurately compute logprobs.
+        
+        Args:
+            query: The original user query
+            query_analysis: The query analysis from the agent
+            response: The agent's response to validate
+            enable_annotation: Whether to enable LLM-based annotation/validation
+            
+        Returns:
+            List of Atom objects with text and scores
         """
-        if not response or not response.strip():
-            return []
+        print("Extracting sub-claims from response using LLM with marker-based scoring...")
+        
+        try:    
+            # Create prompt for LLM to extract sub-claims with structured markers
+            # Prepare the valid tag section separately to avoid f-string backslash issues
+            valid_tag_section = ""
+            if enable_annotation:
+                valid_tag_section = """<valid>
+[true/false based on factuality, relevance, and necessity for answering the query]
+</valid>"""
+            
+            extraction_prompt = f"""
+You are an expert factual claim analyzer. Given a user query, query analysis, and an agent response, break down the response into a set of small, independent, and self-contained sub-claims.
 
-        prompt = f"""
-Analyze the following text. Break it down into the smallest possible factual statements (atoms) that retain the original meaning. Each atom should be a distinct, self-contained claim. Do not add any interpretation or new information. List each atom on a new line, starting with '- '.
+IMPORTANT: You must follow this exact format to output each sub-claim:
 
-Text:
+<claim>
+[The atomic statement extracted from the response]
+</claim>
+<score>
+[A self-evaluation score between 0.0 and 1.0 for factuality and relevance. Be critical and use the full range from 0.0 to 1.0, where 0.0 means completely incorrect or irrelevant, and 1.0 means perfectly factual and relevant. Most claims should fall somewhere in between.]
+</score>
+{valid_tag_section}
+
+USER QUERY:
+{query}
+
+QUERY ANALYSIS:
+{query_analysis}
+
+AGENT RESPONSE:
 {response}
 
-Atoms:
+Instructions:
+- Break down the response into the smallest meaningful sub-claims
+- Ensure each sub-claim is a standalone, factual statement
+- Evaluate each sub-claim independently and critically
+- Use the full scoring range (0.0-1.0), not just high scores
+- Be thorough in identifying all factual claims in the response
+- Place each sub-claim within the exact marker tags as shown above
+
+Begin extracting sub-claims now:
+
 """
-        try:
-            # Use the standard engine call (no logprobs needed here)
-            separation_result_obj: GenerationResult = self.llm_engine(prompt)
-            separation_result = separation_result_obj.text
 
-            if separation_result is None:
-                 print(f"Error during separation LLM call: {separation_result_obj.error}")
-                 return []
-
-            # Extract lines starting with '- '
-            atoms = [line.strip()[2:].strip() for line in separation_result.strip().split('\n') if line.strip().startswith('- ')]
-            atoms = [atom for atom in atoms if atom]
-            print(f"Separator extracted {len(atoms)} atoms.")
+            # Generate claims with LLM - IMPORTANT: Pass string, not a list to avoid multimodal processing
+            try:
+                # Use direct string input instead of list to avoid multimodal processing
+                extraction_result: GenerationResult = self.llm_engine.generate(
+                    extraction_prompt,  # Direct string, not wrapped in list [extraction_prompt]
+                    capture_logits=True
+                )
+            except Exception as e:
+                print(f"Error in LLM generation: {str(e)}")
+                # Try fallback with __call__ method which handles strings differently
+                try:
+                    extraction_result = self.llm_engine(extraction_prompt)
+                except Exception as inner_e:
+                    print(f"Fallback also failed: {str(inner_e)}")
+                    # Return a default atom if everything fails
+                    return [Atom(text=response, score_logprobs=None, score_selfeval=0.5, valid=True)]
+            
+            if extraction_result.text is None:
+                print(f"Error during sub-claim extraction: {extraction_result.error}")
+                # Ensure we return a valid atom with default values
+                return [Atom(text=response, score_logprobs=None, score_selfeval=0.5, valid=True)]
+            
+            generated_text = extraction_result.text
+            logprobs_data = extraction_result.logprob_content
+            
+            if not logprobs_data:
+                print("Warning: No logprobs captured during generation")
+            
+            # Extract claims and scores using regex
+            # Create pattern for the exact structure we specified in the prompt
+            claim_pattern = r'<claim>\s*(.*?)\s*</claim>\s*<score>\s*([\d\.]+)\s*</score>(?:\s*<valid>\s*(true|false)\s*</valid>)?'
+            claims_matches = re.findall(claim_pattern, generated_text, re.DOTALL)
+            
+            if not claims_matches:
+                print("Failed to extract structured claims from LLM response. Using original response as single claim.")
+                return [Atom(text=response, score_logprobs=None, score_selfeval=None, valid=True)]
+            
+            # Calculate token positions for each claim to compute mean logprobs
+            atoms = []
+            token_index = 0
+            
+            # Extract token logprobs from the logprobs data
+            token_logprobs = []
+            if logprobs_data:
+                # Modern format: each item has 'token' and 'logprob' fields
+                if isinstance(logprobs_data, list) and logprobs_data and isinstance(logprobs_data[0], dict):
+                    token_logprobs = [item.get('logprob') for item in logprobs_data if 'logprob' in item]
+                # Legacy format: flat list of logprobs
+                elif isinstance(logprobs_data, dict) and 'token_logprobs' in logprobs_data:
+                    token_logprobs = logprobs_data['token_logprobs']
+            
+            # Process claims and compute per-claim logprobs
+            for claim_text, score_text, valid_text in claims_matches:
+                # Parse self-evaluation score
+                try:
+                    score_selfeval = float(score_text.strip())
+                except ValueError:
+                    score_selfeval = None  # Default to None if we can't parse
+                
+                # Only set valid field if annotation is enabled
+                valid = None
+                if enable_annotation and valid_text:
+                    valid = valid_text.strip().lower() == 'true'
+                
+                # Find the position of this claim in the generated text to calculate claim-specific logprobs
+                claim_with_tags = f"<claim>\n{claim_text}\n</claim>"
+                claim_start_idx = generated_text.find(claim_with_tags)
+                claim_end_idx = claim_start_idx + len(claim_with_tags) if claim_start_idx >= 0 else -1
+                
+                # Calculate claim-specific logprob if we can find the claim in the text
+                claim_logprob = None
+                if claim_start_idx >= 0 and logprobs_data and isinstance(logprobs_data, list):
+                    # Get tokens that correspond to this claim
+                    claim_tokens = []
+                    token_text = ""
+                    for token_info in logprobs_data:
+                        if 'token' in token_info and 'logprob' in token_info:
+                            token_text += token_info['token']
+                            # If we're within the claim text bounds
+                            if token_text.find(claim_text) >= 0:
+                                claim_tokens.append(token_info['logprob'])
+                    
+                    # Calculate mean logprob for this specific claim
+                    if claim_tokens:
+                        claim_logprob = sum(lp for lp in claim_tokens if lp is not None) / len(claim_tokens)
+                
+                atoms.append(Atom(
+                    text=claim_text.strip(),
+                    score_logprobs=claim_logprob,
+                    score_selfeval=score_selfeval,
+                    valid=valid
+                ))
+            
+            print(f"Extracted {len(atoms)} sub-claims from response")
+            
+            # Only use global stats as fallback if per-claim logprobs weren't calculated
+            if token_logprobs:
+                claims_missing_logprobs = [atom for atom in atoms if atom.score_logprobs is None]
+                if claims_missing_logprobs:
+                    global_mean_logprob = sum(lp for lp in token_logprobs if lp is not None) / sum(1 for lp in token_logprobs if lp is not None)
+                    for atom in claims_missing_logprobs:
+                        atom.score_logprobs = global_mean_logprob
+            
             return atoms
+            
         except Exception as e:
-            print(f"Error during separation process: {e}")
-            return []
-
+            print(f"Error during sub-claim extraction: {e}")
+            import traceback
+            traceback.print_exc()
+            # Return a fallback atom with the original response
+            return [Atom(text=response, score_logprobs=None, score_selfeval=0.5, valid=True)]
 
     def trim_split_conformal(self, atoms: List[Atom], alpha: float) -> List[Atom]:
         """
@@ -101,8 +234,13 @@ Atoms:
         if not atoms:
             return []
 
+        # Check if validation is already done
+        if all(atom.valid is not None for atom in atoms):
+            print("Atoms already validated, skipping conformal inference")
+            return atoms
+
         # Filter out atoms without a valid score for threshold calculation
-        valid_atoms = [atom for atom in atoms if atom.score is not None]
+        valid_atoms = [atom for atom in atoms if atom.score_logprobs is not None]
 
         if not valid_atoms:
             print("Warning: No valid scores found for trimming. Marking all atoms as invalid.")
@@ -110,25 +248,39 @@ Atoms:
                 atom.valid = False
             return atoms
 
-        # Use pre-calibrated threshold
-        print(f"Using pre-calibrated threshold: {self.calibrated_threshold}")
-        threshold = self.calibrated_threshold
-        
-        # When using the pre-calibrated threshold, we need to invert the scores
-        # because the threshold was calibrated on inverted scores (higher = worse)
-        trimmed_atoms = []
-        kept_count = 0
-        for atom in atoms:
-            if atom.score is None:
-                atom.valid = False
-            else:
-                # Invert the score (since higher inverted scores = worse)
-                inverted_score = -float(atom.score)
-                # Valid if inverted score is BELOW threshold (less bad)
-                atom.valid = inverted_score <= threshold
+        # Use pre-calibrated threshold if available
+        if self.calibrated_threshold is not None:
+            print(f"Using pre-calibrated threshold: {self.calibrated_threshold}")
+            threshold = self.calibrated_threshold
+            
+            # When using the pre-calibrated threshold, we need to invert the scores
+            # because the threshold was calibrated on inverted scores (higher = worse)
+            trimmed_atoms = []
+            kept_count = 0
+            for atom in atoms:
+                if atom.score_logprobs is None:
+                    atom.valid = False
+                else:
+                    inverted_score = -float(atom.score_logprobs)
+                    # Valid if inverted score is BELOW threshold (less bad)
+                    atom.valid = inverted_score <= threshold
+                    if atom.valid:
+                        kept_count += 1
+                trimmed_atoms.append(atom)
+        else:
+            # Fallback: Use self-evaluation scores if available
+            print("No calibrated threshold available. Using self-evaluation scores for filtering.")
+            kept_count = 0
+            for atom in atoms:
+                if atom.score_selfeval is not None:
+                    atom.valid = atom.score_selfeval >= 0.5  # Simple threshold on self-evaluation
+                else:
+                    atom.valid = True  # Keep by default if no scores
+                
                 if atom.valid:
                     kept_count += 1
-            trimmed_atoms.append(atom)
+            
+            trimmed_atoms = atoms
         
         print(f"Trimming complete. Kept {kept_count}/{len(atoms)} atoms.")
         return trimmed_atoms
@@ -168,300 +320,68 @@ Merged Paragraph:
             print(f"Error during merging process: {e}")
             return " ".join(valid_atoms_text)
 
-    def _standardize_logprobs(self, logprob_content: List[Dict], keep_top_logprobs: bool = True) -> List[Dict]:
+    def validate(self, response: str, query: str, query_analysis: str, 
+                 enable_annotation: bool = False, alpha: float = 0.1) -> Tuple[str, List[Atom]]:
         """
-        Standardizes different logprob formats to a common format with 'token' and 'logprob' keys.
+        Validates an agent response using LLM-based claim extraction and evaluation.
         
         Args:
-            logprob_content: The list of logprob dictionaries to standardize
-            keep_top_logprobs: Whether to keep the top_logprobs field (defaults to True)
-        """
-        try:
-            if not logprob_content or not isinstance(logprob_content, list):
-                print(f"Invalid logprob_content format: {type(logprob_content)}")
-                return []
-                
-            print(f"Standardizing logprobs format. Item count: {len(logprob_content)}")
-            if len(logprob_content) > 0:
-                print(f"First item keys: {list(logprob_content[0].keys()) if isinstance(logprob_content[0], dict) else 'not a dict'}")
-                
-            standardized = []
-            
-            for item in logprob_content:
-                if not isinstance(item, dict):
-                    print(f"Warning: Expected dict in logprob_content, got {type(item)}")
-                    continue
-                    
-                std_item = {}
-                
-                if 'token' in item:
-                    std_item['token'] = item['token']
-                elif 'text' in item:
-                    std_item['token'] = item['text']
-                else:
-                    std_item['token'] = ''
-                    
-                if 'logprob' in item:
-                    std_item['logprob'] = item['logprob']
-                elif 'token_logprob' in item:
-                    std_item['logprob'] = item['token_logprob']
-                elif 'log_prob' in item: 
-                    std_item['logprob'] = item['log_prob']
-                else:
-                    std_item['logprob'] = -5.0
-                  
-                if keep_top_logprobs and 'top_logprobs' in item:
-                    std_item['top_logprobs'] = item['top_logprobs']
-                
-                standardized.append(std_item)
-                
-            print(f"Standardized {len(standardized)} logprob items" + 
-                  (", excluding top_logprobs and bytes" if not keep_top_logprobs else ""))
-            return standardized
-            
-        except Exception as e:
-            print(f"Error standardizing logprobs: {e}")
-            return []
-
-    def chunk_and_score_direct(self, response: str, logprob_content: List[Dict]) -> List[Atom]:
-        """
-        Directly chunks and scores the original response using the logprob content.
-        Uses structure-based chunking rather than LLM-based atom extraction for reliable mapping.
-        
-        Args:
-            response: The original response text
-            logprob_content: List of token-level logprob dictionaries
-            
-        Returns:
-            List of Atom objects with text and scores
-        """
-        if not logprob_content or not response.strip():
-            print("Warning: No logprob content provided or empty response.")
-            return [Atom(text=response, score=None, logprobs=None)]
-        
-        # Step 1: Standardize logprobs format and remove top_logprobs to save memory
-        standardized_logprobs = self._standardize_logprobs(logprob_content, keep_top_logprobs=False)
-        
-        if not standardized_logprobs:
-            print("Warning: Could not standardize logprobs.")
-            return [Atom(text=response, score=None, logprobs=None)]
-        
-        # Step 2: Reconstruct the full text from tokens and create token index
-        reconstructed_text = ""
-        token_positions = []
-        
-        for i, token_info in enumerate(standardized_logprobs):
-            token_text = token_info['token']
-            start_pos = len(reconstructed_text)
-            end_pos = start_pos + len(token_text)
-            
-            token_positions.append({
-                'index': i,
-                'text': token_text,
-                'start': start_pos,
-                'end': end_pos,
-                'logprob': token_info['logprob']
-            })
-            
-            reconstructed_text += token_text
-        
-        print(f"Reconstructed text length: {len(reconstructed_text)}")
-        print(f"First 100 chars: {reconstructed_text[:100]}...")
-        
-        # Step 3: Chunk the text using only structure-based chunking for consistency
-        import re
-        
-        chunks = []
-        
-        # Start by splitting the text into paragraphs
-        print("Using structure-based chunking")
-        paragraphs = re.split(r'\n\s*\n', response)
-        paragraphs = [p.strip() for p in paragraphs if p.strip()]
-        
-        # Process each paragraph to extract structural elements
-        for paragraph in paragraphs:
-            # Check if the paragraph is a standalone header or title
-            if re.match(r'^#+\s+.+$', paragraph) or re.match(r'^.+\n[=-]+$', paragraph):
-                chunks.append(paragraph)
-                continue
-            
-            # Extract numbered steps (like "1. Step description")
-            # This pattern will match full numbered items with all their content
-            numbered_steps = re.findall(r'^\d+\.\s+.+?(?=^\d+\.|\Z)', paragraph, re.MULTILINE | re.DOTALL)
-            if numbered_steps:
-                chunks.extend([step.strip() for step in numbered_steps])
-                continue
-            
-            # Extract bulleted lists
-            bulleted_items = re.findall(r'^\s*[\*\-•]\s+.+?(?=^\s*[\*\-•]|\Z)', paragraph, re.MULTILINE | re.DOTALL)
-            if bulleted_items:
-                chunks.extend([item.strip() for item in bulleted_items])
-                continue
-            
-            # Extract any bold or emphasized sections (e.g., "**Section title**:")
-            sections = re.split(r'(\*\*[^*]+\*\*:)', paragraph)
-            if len(sections) > 1:
-                current_section = ""
-                for i, section in enumerate(sections):
-                    if i % 2 == 1:  # It's a section header
-                        if current_section:
-                            chunks.append(current_section.strip())
-                        current_section = section
-                    else:  # It's content
-                        current_section += section
-                if current_section:
-                    chunks.append(current_section.strip())
-                continue
-            
-            # If no specific structure was found, use the whole paragraph
-            chunks.append(paragraph)
-        
-        # If we still don't have any chunks, just split into sentences as fallback
-        if not chunks:
-            print("Falling back to simple sentence splitting")
-            sentence_pattern = r'(?<=[.!?])\s+|(?<=[.!?])$'
-            chunks = [s.strip() for s in re.split(sentence_pattern, response) if s.strip()]
-        
-        # If still no chunks, use the whole response
-        if not chunks:
-            print("All chunking methods failed, using whole response")
-            chunks = [response]
-        
-        print(f"Chunked text into {len(chunks)} segments")
-        
-        # Step 4: Map chunks to token positions and calculate scores
-        final_atoms = []
-        
-        for chunk in chunks:
-            if not chunk.strip():
-                continue
-            
-            # Find this chunk in the original reconstructed text
-            chunk_start = reconstructed_text.find(chunk)
-            
-            if chunk_start != -1:
-                # Direct match found
-                chunk_end = chunk_start + len(chunk)
-                
-                # Get all tokens that overlap with this chunk
-                chunk_tokens = [t for t in token_positions 
-                               if (t['start'] < chunk_end and t['end'] > chunk_start)]
-                
-                if chunk_tokens:
-                    # Calculate score as mean logprob
-                    logprobs = [t['logprob'] for t in chunk_tokens]
-                    score = np.mean(logprobs)
-                    final_atoms.append(Atom(
-                        text=chunk,
-                        score=score,
-                        logprobs=logprobs,
-                        valid=True
-                    ))
-                    print(f"Mapped chunk: '{chunk[:50]}{'...' if len(chunk) > 50 else ''}', "
-                         f"Token count: {len(chunk_tokens)}, Score: {score:.4f}")
-                else:
-                    final_atoms.append(Atom(text=chunk, score=None, logprobs=None, valid=True))
-                    print(f"No tokens mapped for chunk: '{chunk[:50]}...'")
-            else:
-                print(f"Could not map chunk directly: '{chunk[:50]}...'")
-                final_atoms.append(Atom(text=chunk, score=None, logprobs=None, valid=True))
-        
-        if not final_atoms:
-            print("Warning: All chunking methods failed. Treating entire response as one chunk.")
-            
-            # Score the entire response
-            all_logprobs = [t['logprob'] for t in token_positions]
-            if all_logprobs:
-                overall_score = np.mean(all_logprobs)
-                return [Atom(text=response, score=overall_score, logprobs=all_logprobs, valid=True)]
-            else:
-                return [Atom(text=response, score=None, logprobs=None, valid=True)]
-        
-        return final_atoms
-
-    def _calculate_score_from_logprobs(self, logprobs: Optional[List[float]]) -> Optional[float]:
-        """Calculates a score (mean logprob) from log probabilities."""
-        if logprobs is None or len(logprobs) == 0:
-            return None
-        # Using mean log probability as the score measure
-        score = np.mean(logprobs)
-        return score
-
-    def validate(self, response: str, logprob_content: Optional[List[Dict]], alpha: float = 0.1) -> Tuple[str, List[Atom]]:
-        """
-        Validates an LLM response using direct sentence chunking and scoring.
-        
-        Args:
-            response: The original LLM response string.
-            logprob_content: The list of logprob dictionaries from the generation step.
-            alpha: The desired significance level for trimming (e.g., 0.1).
+            response: The original agent response.
+            query: The original user query.
+            query_analysis: The query analysis from the agent.
+            enable_annotation: Whether to enable LLM-based validation.
+            alpha: The significance level for conformal trimming.
             
         Returns:
             A tuple containing:
             - The validated response string.
-            - A list of Atom objects with their scores and validity status.
+            - A list of Atom objects with their validation status.
         """
-        print("\n--- Starting Direct Conformal Validation ---")
+        print("\n--- Starting LLM-based Validation ---")
         print(f"Original Response: {response[:100]}...")
         print(f"Alpha: {alpha}")
-        print(f"Logprobs provided: {logprob_content is not None} (Length: {len(logprob_content) if logprob_content else 'N/A'})")
+        print(f"Annotation enabled: {enable_annotation}")
         
         try:
-            # Check if we have logprobs to work with
-            if not logprob_content:
-                print("Validation not possible: No logprobs provided.")
-                return response, [Atom(text=response, valid=True)]
+            # 1. Extract and score sub-claims using LLM
+            atoms = self.extract_subclaims(query, query_analysis, response, enable_annotation)
             
-            # 1. Directly chunk and score the response
-            atoms_with_scores = self.chunk_and_score_direct(response, logprob_content)
+            # 2. Apply trimming if annotation was not enabled
+            if not enable_annotation:
+                atoms = self.trim_split_conformal(atoms, alpha)
             
-            # Check if scoring produced any valid scores
-            valid_scores_count = sum(1 for atom in atoms_with_scores if atom.score is not None)
-            if valid_scores_count == 0:
-                print("Validation warning: Could not score any chunks. Keeping original response.")
-                for atom in atoms_with_scores:
-                    atom.valid = True
-                return response, atoms_with_scores
-            
-            print(f"Successfully scored {valid_scores_count}/{len(atoms_with_scores)} chunks")
-            
-            # 2. Trim low-confidence chunks
-            trimmed_atoms = self.trim_split_conformal(atoms_with_scores, alpha)
-            
-            # Check if we have any valid atoms after trimming
-            valid_atoms_count = sum(1 for atom in trimmed_atoms if atom.valid)
+            # 3. Merge valid atoms
+            valid_atoms_count = sum(1 for atom in atoms if atom.valid)
             if valid_atoms_count == 0:
-                print("Warning: No chunks remain valid after trimming. Keeping top 50% of chunks by score.")
-                # Sort atoms by score and keep top half
-                sorted_atoms = sorted(
-                    [a for a in atoms_with_scores if a.score is not None],
-                    key=lambda x: x.score if x.score is not None else float('-inf'),
-                    reverse=True  # Higher scores are better
-                )
-                
-                # Keep at least half the atoms or 3, whichever is greater
-                keep_count = max(len(sorted_atoms) // 2, min(3, len(sorted_atoms)))
-                for i, atom in enumerate(sorted_atoms):
-                    if i < keep_count:
-                        atom.valid = True
-                
-                trimmed_atoms = atoms_with_scores
-                print(f"Adjusted validation to keep {keep_count} highest scoring chunks")
+                print("Warning: No atoms remain valid after evaluation. Keeping original response.")
+                # Even if no atoms are valid, return the atoms with the original response
+                # Also ensure every atom has the required fields
+                for atom in atoms:
+                    if atom.valid is None:
+                        atom.valid = False
+                    if atom.score_selfeval is None:
+                        atom.score_selfeval = 0.0
+                return response, atoms
             
-            # 3. Merge valid chunks using the existing LLM-based merge method for better coherence
-            validated_response = self.merge(trimmed_atoms)
+            validated_response = self.merge(atoms)
             if not validated_response.strip():
                 print("Warning: Merged response is empty. Falling back to original response.")
-                return response, trimmed_atoms
+                return response, atoms
             
-            print("--- Direct Conformal Validation Complete ---")
+            print("--- LLM-based Validation Complete ---")
             print(f"Validated Response: {validated_response[:100]}...")
             
-            return validated_response, trimmed_atoms
+            return validated_response, atoms
             
         except Exception as e:
             print(f"Error during validation process: {e}")
             import traceback
             traceback.print_exc()
             print("Falling back to original response due to validation error.")
-            return response, [Atom(text=response, valid=True)]
+            # Create a valid atom with default values instead of returning None
+            return response, [Atom(
+                text=response, 
+                score_logprobs=None, 
+                score_selfeval=0.5, 
+                valid=True
+            )]
