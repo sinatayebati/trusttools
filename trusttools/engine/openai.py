@@ -31,13 +31,13 @@ class DefaultFormat(BaseModel):
     response: str
 
 # Define global constants for structured models
-OPENAI_STRUCTURED_MODELS = ['gpt-4o', 'gpt-4o-2024-08-06','gpt-4o-mini',  'gpt-4o-mini-2024-07-18']
+OPENAI_STRUCTURED_MODELS = ['gpt-4o','gpt-4o-mini', 'gpt-4.1-mini', 'gpt-4.1-nano']
 
 # Add constant for local models
 LOCAL_MODELS = ['meta-llama/Llama-3.2-3B-Instruct', 'meta-llama/Llama-3.2-11B-Vision-Instruct']
 
 # Default models for each environment
-DEFAULT_API_MODEL = "gpt-4o-mini"
+DEFAULT_API_MODEL = "gpt-4.1-nano"
 DEFAULT_LOCAL_MODEL = "meta-llama/Llama-3.2-3B-Instruct"
 
 # Add a simple structure for the return value when capturing logits
@@ -56,7 +56,7 @@ class ChatOpenAI(EngineLM, CachedEngine):
         model_string=None,
         system_prompt=DEFAULT_SYSTEM_PROMPT,
         is_multimodal: bool=False,
-        enable_cache: bool=True,
+        enable_cache: bool=False,
         use_local_model: bool=False,
         local_model_endpoint: str=None,
         capture_logits: bool=False,
@@ -263,14 +263,12 @@ class ChatOpenAI(EngineLM, CachedEngine):
                     completion_args_structured = {
                         "model": self.model_string, "messages": messages,
                         "temperature": temperature, "max_tokens": max_tokens, "top_p": top_p,
-                        # Ask model to output JSON matching the Pydantic schema
                         "response_format": {"type": "json_object"} 
                     }
-                    # Add schema to prompt for better results with manual parsing fallback
                     schema_json = json.dumps(response_format.model_json_schema(), indent=2)
                     messages[-1]["content"] += f"\n\nPlease format your response as a JSON object matching this Pydantic schema:\n```json\n{schema_json}\n```"
 
-                    completion_args_structured["messages"] = messages # Update messages
+                    completion_args_structured["messages"] = messages
 
                     response = self.client.chat.completions.create(**completion_args_structured)
                     raw_json_text = response.choices[0].message.content
@@ -280,8 +278,6 @@ class ChatOpenAI(EngineLM, CachedEngine):
                     except (json.JSONDecodeError, TypeError, ValueError) as parse_error:
                         print(f"Error parsing structured response manually: {parse_error}")
                         print(f"Raw response: {raw_json_text}")
-                        # Decide how to handle parse errors - raise, return None, return error object?
-                        # For now, let's return an error within GenerationResult structure for consistency
                         return GenerationResult(error="parsing_error", error_details={"message": str(parse_error), "raw_text": raw_json_text})
 
 
@@ -294,7 +290,6 @@ class ChatOpenAI(EngineLM, CachedEngine):
             except Exception as e:
                 error_msg = f"Error generating structured response ({response_format.__name__}): {str(e)}"
                 print(error_msg)
-                # Return None to indicate failure to get structured object
                 return None
 
         # --- Plain Text Response Handling (response_format is None) ---
@@ -328,13 +323,12 @@ class ChatOpenAI(EngineLM, CachedEngine):
                 "top_p": top_p,
             }
 
-            # Add logprobs argument if capturing logits
             if capture_logits:
                 completion_args["logprobs"] = True
                 completion_args["top_logprobs"] = 5
 
             try:
-                response = None # Initialize response
+                response = None
 
                 # --- Handle different model types/calling conventions ---
                 if self.use_local_model:
@@ -412,12 +406,10 @@ class ChatOpenAI(EngineLM, CachedEngine):
                             # Standard logprobs structure
                             if hasattr(response.choices[0].logprobs, 'content'):
                                 raw_logprob_content = response.choices[0].logprobs.content
-                                # Convert ChatCompletionTokenLogprob objects to dictionaries if needed
                                 try:
                                     logprob_content = []
                                     for item in raw_logprob_content:
                                         if hasattr(item, 'to_dict'):
-                                            # If it has a to_dict method (like OpenAI's ChatCompletionTokenLogprob), use it
                                             item_dict = item.to_dict()
                                             # Conditionally exclude fields to save memory
                                             if self.exclude_top_logprobs and 'top_logprobs' in item_dict:
@@ -428,7 +420,6 @@ class ChatOpenAI(EngineLM, CachedEngine):
                                         elif hasattr(item, 'model_dump'):
                                             # For Pydantic models
                                             item_dict = item.model_dump()
-                                            # Conditionally exclude fields to save memory
                                             if self.exclude_top_logprobs and 'top_logprobs' in item_dict:
                                                 del item_dict['top_logprobs']
                                             if self.exclude_bytes and 'bytes' in item_dict:
@@ -448,9 +439,7 @@ class ChatOpenAI(EngineLM, CachedEngine):
                                             logprob_dict = {
                                                 'token': getattr(item, 'token', ''),
                                                 'logprob': getattr(item, 'logprob', -5.0)
-                                                # Don't include bytes or top_logprobs if excluded
                                             }
-                                                # Include optional fields if needed
                                             if not self.exclude_top_logprobs and hasattr(item, 'top_logprobs'):
                                                 logprob_dict['top_logprobs'] = getattr(item, 'top_logprobs')
                                             if not self.exclude_bytes and hasattr(item, 'bytes'):
@@ -560,15 +549,13 @@ class ChatOpenAI(EngineLM, CachedEngine):
                 result = GenerationResult(text=response_text, logprob_content=logprob_content)
 
                 if self.enable_cache and result.text is not None:
-                    # Cache the result dictionary
                     self._save_cache(cache_key, result.dict(exclude_none=True))
 
-                return result # Return GenerationResult for plain text
+                return result
 
             except Exception as e:
                 error_msg = f"Error generating text response: {str(e)}"
                 print(error_msg)
-                # Return error within the standard structure
                 return GenerationResult(error="generation_error", error_details={"message": error_msg})
 
     def _call_local_model_and_get_response(self, messages, temperature=0, max_tokens=4000, top_p=0.99) -> Optional[Dict]:
@@ -580,12 +567,12 @@ class ChatOpenAI(EngineLM, CachedEngine):
             "max_tokens": max_tokens,
             "top_p": top_p,
             "stream": False,
-            "logprobs": True, # Explicitly request logprobs
+            "logprobs": True,
             "top_logprobs": 5
         }
 
         base_url_str = str(self.client.base_url).rstrip('/')
-        endpoint_url = f"{base_url_str}/chat/completions" # Standard v1 path
+        endpoint_url = f"{base_url_str}/chat/completions" 
 
         print(f"\n[Local Call] Request to: {endpoint_url}")
         print(f"[Local Call] Model: {self.model_string}")
@@ -596,7 +583,7 @@ class ChatOpenAI(EngineLM, CachedEngine):
                 endpoint_url,
                 json=request_body,
                 headers={"Content-Type": "application/json"},
-                timeout=120 # Increased timeout for potentially slower local models
+                timeout=120
             )
 
             print(f"[Local Call] Response status: {response.status_code}")
@@ -608,7 +595,7 @@ class ChatOpenAI(EngineLM, CachedEngine):
                     f"Endpoint URL: {endpoint_url}"
                 )
                 print(error_msg)
-                return {"error": error_msg} # Return error dict
+                return {"error": error_msg}
 
             result = response.json()
             
@@ -667,7 +654,7 @@ class ChatOpenAI(EngineLM, CachedEngine):
                       print(f"Error saving local logits to file: {save_e}")
             # --- End Logits Saving ---
 
-            return result # Return the full JSON response
+            return result
 
         except Exception as e:
             error_msg = (
