@@ -14,7 +14,7 @@ LOG_DIR="$TASK/logs/$LABEL"
 OUT_DIR="$TASK/results/$LABEL"
 CACHE_DIR="$TASK/cache"
 
-LLM="gpt-4o-mini"
+LLM="gpt-4.1-nano"
 
 # Keep tools the same, unless validation requires specific tools (unlikely)
 ENABLED_TOOLS="Generalist_Solution_Generator_Tool"
