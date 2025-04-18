@@ -24,6 +24,9 @@ VALIDATION_ALPHA=0.1
 
 # Path to the pre-calibrated conformal threshold file
 THRESHOLD_FILE="$TASK/conformal_threshold.npz"
+
+# Set to "true" to enable LLM-based annotation for validation instead of conformal
+ENABLE_ANNOTATION="true"
 ############
 
 cd $PROJECT_DIR
@@ -31,7 +34,7 @@ mkdir -p $LOG_DIR
 mkdir -p $OUT_DIR # Ensure output directory is also created
 
 # Define the array of specific indices
-indices=($(seq 83 83))
+indices=($(seq 85 85))
 
 # Skip indices if the output file already exists
 new_indices=()
@@ -54,33 +57,46 @@ else
         local i=$1
         local alpha=$2 # Pass alpha as an argument
         local threshold_file=$3 # Pass threshold file as an argument
+        local enable_annotation=$4 # Pass enable_annotation setting
+        
         echo "Running task for index $i with validation alpha $alpha and threshold file $threshold_file"
-        python solve.py \
+        echo "Enable annotation: $enable_annotation"
+        
+        # Build the command based on annotation setting
+        cmd="python solve.py \
         --index $i \
         --task $TASK \
         --data_file $DATA_FILE \
         --llm_engine_name $LLM \
         --root_cache_dir $CACHE_DIR \
         --output_json_dir $OUT_DIR \
-        --output_types "direct,validated_direct" \
+        --output_types \"direct,validated_direct\" \
         --validation_alpha $alpha \
         --conformal_threshold_file $threshold_file \
-        --enabled_tools "$ENABLED_TOOLS" \
+        --enabled_tools \"$ENABLED_TOOLS\" \
         --max_time 300 \
-        --verbose False \
-        2>&1 | tee $LOG_DIR/$i.log
+        --verbose False"
+        
+        # Add enable_annotation flag if true
+        if [ "$enable_annotation" = "true" ]; then
+            cmd="$cmd --enable_annotation"
+        fi
+        
+        # Execute the command
+        eval $cmd 2>&1 | tee $LOG_DIR/$i.log
+        
         echo "Completed task for index $i"
         echo "------------------------"
     }
 
     # Export the function and variables so they can be used by parallel
     export -f run_task
-    export TASK DATA_FILE LOG_DIR OUT_DIR CACHE_DIR LLM ENABLED_TOOLS VALIDATION_ALPHA THRESHOLD_FILE
+    export TASK DATA_FILE LOG_DIR OUT_DIR CACHE_DIR LLM ENABLED_TOOLS VALIDATION_ALPHA THRESHOLD_FILE ENABLE_ANNOTATION
 
     # Run the tasks in parallel using GNU Parallel
     echo "Starting parallel execution..."
-    # Pass VALIDATION_ALPHA and THRESHOLD_FILE to each task
-    parallel -j $THREADS run_task {1} $VALIDATION_ALPHA $THRESHOLD_FILE ::: "${indices[@]}"
+    # Pass VALIDATION_ALPHA, THRESHOLD_FILE, and ENABLE_ANNOTATION to each task
+    parallel -j $THREADS run_task {1} $VALIDATION_ALPHA $THRESHOLD_FILE $ENABLE_ANNOTATION ::: "${indices[@]}"
     echo "All tasks completed."
 fi
 

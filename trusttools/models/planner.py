@@ -339,7 +339,8 @@ Your response should be well-organized and include the following sections:
                 return f"Error generating final output: Could not read image {str(e)}"
 
         try:
-            # Generate with potential logit capture
+            # Generate with potential logit capture for validation purposes only
+            # We don't need to store these in memory
             generation_result: GenerationResult = self.llm_engine_mm.generate(
                 input_data,
                 capture_logits=self.capture_logits_for_outputs
@@ -351,10 +352,8 @@ Your response should be well-organized and include the following sections:
                 print(f"Error generating final output: {error_msg}")
                 # Create a fallback response from memory
                 final_output_text = self._create_fallback_output_from_memory(question, memory)
-                logprob_content = None
             else:
                 final_output_text = generation_result.text
-                logprob_content = generation_result.logprob_content
 
                 # Handle potential generation errors (like rate limits)
                 if final_output_text is None:
@@ -362,12 +361,10 @@ Your response should be well-organized and include the following sections:
                     print(f"Error generating final output: {error_msg}")
                     # Create a fallback response from memory
                     final_output_text = self._create_fallback_output_from_memory(question, memory)
-                    logprob_content = None
         except Exception as e:
             print(f"Unexpected error in generate_final_output: {str(e)}")
             # Create a fallback response from memory
             final_output_text = self._create_fallback_output_from_memory(question, memory)
-            logprob_content = None
 
         memory.add_action(
             step_count=step_count,
@@ -375,7 +372,8 @@ Your response should be well-organized and include the following sections:
             sub_goal="Generate comprehensive final answer",
             command=None,
             result=final_output_text,
-            logprob_content=logprob_content
+            # Don't store logprob content in memory
+            logprob_content=None
         )
 
         return final_output_text
@@ -407,7 +405,8 @@ Answer:
                 return f"Error generating direct output: Could not read image {str(e)}"
 
         try:
-            # Generate with potential logit capture
+            # Generate with potential logit capture for validation purposes only
+            # We don't need to store these in memory
             generation_result: GenerationResult = self.llm_engine_mm.generate(
                 input_data,
                 capture_logits=self.capture_logits_for_outputs
@@ -419,10 +418,8 @@ Answer:
                 print(f"Error generating direct output: {error_msg}")
                 # Create a fallback response from memory
                 direct_output_text = self._create_fallback_output_from_memory(question, memory)
-                logprob_content = None
             else:
                 direct_output_text = generation_result.text
-                logprob_content = generation_result.logprob_content
 
                 # Handle potential generation errors (like rate limits)
                 if direct_output_text is None:
@@ -430,12 +427,10 @@ Answer:
                     print(f"Error generating direct output: {error_msg}")
                     # Create a fallback response from memory
                     direct_output_text = self._create_fallback_output_from_memory(question, memory)
-                    logprob_content = None
         except Exception as e:
             print(f"Unexpected error in generate_direct_output: {str(e)}")
             # Create a fallback response from memory
             direct_output_text = self._create_fallback_output_from_memory(question, memory)
-            logprob_content = None
 
         memory.add_action(
             step_count=step_count,
@@ -443,7 +438,8 @@ Answer:
             sub_goal="Generate concise direct answer",
             command=None,
             result=direct_output_text,
-            logprob_content=logprob_content
+            # Don't store logprob content in memory
+            logprob_content=None
         )
 
         return direct_output_text

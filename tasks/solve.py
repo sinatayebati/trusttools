@@ -36,7 +36,8 @@ class Solver:
         max_tokens: int = 4000,
         output_json_dir: str = "results",
         root_cache_dir: str = "cache",
-        validation_alpha: float = 0.1
+        validation_alpha: float = 0.1,
+        enable_annotation: bool = False
     ):
         self.planner = planner
         self.memory = memory
@@ -53,6 +54,7 @@ class Solver:
         self.output_json_dir = output_json_dir
         self.root_cache_dir = root_cache_dir
         self.validation_alpha = validation_alpha
+        self.enable_annotation = enable_annotation
 
         self.output_types = output_types.lower().split(',')
         self.requires_validation = any(vt in output_types for vt in ['validated_final', 'validated_direct'])
@@ -104,18 +106,15 @@ class Solver:
         Args:
             index (int): Index of the problem to solve
         """
-        # Update cache directory for the executor
         _cache_dir = os.path.join(self.root_cache_dir, f"{index}")
         self.executor.set_query_cache_dir(_cache_dir)
     
-        # Create output directory and file path
         json_dir = os.path.join(self.output_json_dir)
         os.makedirs(json_dir, exist_ok=True)
         output_file = os.path.join(json_dir, f"output_{index}.json")
 
         # Get the problem
         problem = self.benchmark_data[index]
-        # use 'query' by default for LLM inputs
         question = problem.get("query") if "query" in problem else problem["question"]
         image_path = problem['image']
         print(f"image_path: {image_path}")  
@@ -136,7 +135,7 @@ class Solver:
             "query": question,
             "image": image_path,
             "answer": answer,
-            "query_analysis": "",  # Initialize empty, will be populated later
+            "query_analysis": "",
             "outputs": {},
             "validation_results": {}
         }
@@ -159,7 +158,6 @@ class Solver:
                 print(f"{base_response}")
                 print("#"*50)
 
-        # If only base response is needed, save and return
         if set(self.output_types) == {'base'}:
             with open(output_file, 'w') as f:
                 json.dump(json_data, f, indent=4)
@@ -323,7 +321,7 @@ class Solver:
 
             # Generate direct output if requested
             if 'direct' in self.output_types:
-                direct_output = self.planner.generate_direct_output(question, image_path, self.memory, step_count + 2)
+                direct_output = self.planner.generate_direct_output(question, image_path, self.memory, step_count + 1)
                 json_data["outputs"]["direct"] = direct_output
                 if self.verbose:
                     print("\n## Direct Output:")
@@ -345,71 +343,90 @@ class Solver:
         # Conformal Validation Step
         if self.requires_validation:
             if self.verbose: print("\n--- Performing Conformal Validation ---")
+            
+            # Initialize the validation_results as an empty list
+            json_data["validation_results"] = []
 
             if 'final' in json_data["outputs"] and any(t == 'validated_final' for t in self.output_types):
-                action_name = f"Action Step {step_count + 1}"
-                if f"{action_name}_FinalOutputGenerator" in json_data["memory"]:
-                    action_name = f"{action_name}_FinalOutputGenerator"
-
-                final_action = self.memory.get_action(action_name)
-                if final_action and final_action.get('result'):
-                    original_final = final_action['result']
-                    logprobs_final = final_action.get('logprob_content')
-                    if logprobs_final:
-                        validated_final, final_atoms = self.validator.validate(
-                            original_final, logprobs_final, alpha=self.validation_alpha
-                        )
-                        json_data["outputs"]["validated_final"] = validated_final
-                        json_data["validation_results"]["final_output_atoms"] = [atom.dict_without_logprobs() for atom in final_atoms]
-                        if self.verbose:
-                            print(f"\n## Validated Final Output (alpha={self.validation_alpha}):")
-                            print("#"*50 + f"\n{validated_final}\n" + "#"*50)
-                    else:
-                        print("Skipping validation for final_output: Logprobs not found in memory.")
-                        json_data["outputs"]["validated_final"] = "[Validation Skipped: No Logprobs]"
-                else:
-                     print(f"Skipping validation for final_output: Action '{action_name}' not found or has no result in memory.")
-                     json_data["outputs"]["validated_final"] = "[Validation Skipped: Action/Result Not Found]"
+                if self.verbose: print("\nValidating final output...")
+                original_final = json_data["outputs"]["final"]
+                
+                # Call the new validation method with appropriate parameters
+                validated_final, final_atoms = self.validator.validate(
+                    response=original_final, 
+                    query=question, 
+                    query_analysis=query_analysis,
+                    enable_annotation=self.enable_annotation,
+                    alpha=self.validation_alpha
+                )
+                
+                # Store the validated response
+                json_data["outputs"]["validated_final"] = validated_final
+                
+                # Store validation results for final output
+                for atom in final_atoms:
+                    atom_dict = atom.dict_without_logprobs()
+                    atom_dict["source"] = "final"  # Add source field to identify which output this came from
+                    json_data["validation_results"].append(atom_dict)
+                
+                if self.verbose:
+                    print(f"\n## Validated Final Output (alpha={self.validation_alpha}):")
+                    print("#"*50 + f"\n{validated_final}\n" + "#"*50)
 
             if 'direct' in json_data["outputs"] and any(t == 'validated_direct' for t in self.output_types):
-                action_name = f"Action Step {step_count + 2}"
-                if f"{action_name}_DirectOutputGenerator" in json_data["memory"]:
-                     action_name = f"{action_name}_DirectOutputGenerator"
-
-                direct_action = self.memory.get_action(action_name)
-                if direct_action and direct_action.get('result'):
-                     original_direct = direct_action['result']
-                     logprobs_direct = direct_action.get('logprob_content')
-                     if logprobs_direct:
-                          validated_direct, direct_atoms = self.validator.validate(
-                              original_direct, logprobs_direct, alpha=self.validation_alpha
-                          )
-                          json_data["outputs"]["validated_direct"] = validated_direct
-                          json_data["validation_results"]["direct_output_atoms"] = [atom.dict_without_logprobs() for atom in direct_atoms]
-                          if self.verbose:
-                              print(f"\n## Validated Direct Output (alpha={self.validation_alpha}):")
-                              print("#"*50 + f"\n{validated_direct}\n" + "#"*50)
-                     else:
-                          print("Skipping validation for direct_output: Logprobs not found in memory.")
-                          json_data["outputs"]["validated_direct"] = "[Validation Skipped: No Logprobs]"
-                else:
-                      print(f"Skipping validation for direct_output: Action '{action_name}' not found or has no result in memory.")
-                      json_data["outputs"]["validated_direct"] = "[Validation Skipped: Action/Result Not Found]"
+                if self.verbose: print("\nValidating direct output...")
+                original_direct = json_data["outputs"]["direct"]
+                
+                # Call the new validation method with appropriate parameters
+                validated_direct, direct_atoms = self.validator.validate(
+                    response=original_direct, 
+                    query=question, 
+                    query_analysis=query_analysis,
+                    enable_annotation=self.enable_annotation,
+                    alpha=self.validation_alpha
+                )
+                
+                # Store the validated response
+                json_data["outputs"]["validated_direct"] = validated_direct
+                
+                # Store validation results for direct output
+                for atom in direct_atoms:
+                    atom_dict = atom.dict_without_logprobs()
+                    atom_dict["source"] = "direct"  # Add source field to identify which output this came from
+                    json_data["validation_results"].append(atom_dict)
+                
+                if self.verbose:
+                    print(f"\n## Validated Direct Output (alpha={self.validation_alpha}):")
+                    print("#"*50 + f"\n{validated_direct}\n" + "#"*50)
 
         # --- Save Final Results ---
         # Clean up memory before saving (logprobs can be large)
-        # if "memory" in json_data:
-        #     for action in json_data["memory"].values():
-        #         action.pop('logprob_content', None) # Remove logprobs before saving JSON
+        if "memory" in json_data:
+            # Recursively clean logprob_content from memory
+            def clean_logprobs(obj):
+                if isinstance(obj, dict):
+                    # Remove logprob_content directly
+                    if "logprob_content" in obj:
+                        obj["logprob_content"] = None
+                    # Process all nested dictionaries
+                    for key, value in list(obj.items()):
+                        if isinstance(value, (dict, list)):
+                            clean_logprobs(value)
+                elif isinstance(obj, list):
+                    # Process all items in list
+                    for item in obj:
+                        if isinstance(item, (dict, list)):
+                            clean_logprobs(item)
+            
+            # Apply the cleaning to memory
+            clean_logprobs(json_data["memory"])
 
         # Final save
         with open(output_file, 'w') as f:
-            # Use the utility to handle potential non-serializable types in results/metadata
             serializable_json_data = make_json_serializable_truncated(json_data)
             json.dump(serializable_json_data, f, indent=4, ensure_ascii=False)
             print(f"\n==> Output saved to: {output_file}")
 
-        # Print execution statistics if we ran the full pipeline
         if {'final', 'direct', 'validated_final', 'validated_direct'} & set(self.output_types):
             print(f"\n## Execution Statistics for Problem {index}:")
             print(f"==>Total steps executed: {step_count}")
@@ -441,6 +458,7 @@ def parse_arguments():
     parser.add_argument("--capture_logits", action='store_true', help="Capture and save logits to file (for debugging). Validation enables capture for specific steps regardless.")
     parser.add_argument("--logits_dir", default=None, help="Directory to save captured logits JSON files.")
     parser.add_argument("--conformal_threshold_file", default=None, help="Path to conformal threshold .npz file for factual validation.")
+    parser.add_argument("--enable_annotation", action='store_true', help="Enable LLM-based annotation and validation for sub-claims.")
     return parser.parse_args()
 
 
@@ -494,7 +512,8 @@ def main(args):
         max_tokens=args.max_tokens,
         output_json_dir=args.output_json_dir,
         root_cache_dir=args.root_cache_dir,
-        validation_alpha=args.validation_alpha
+        validation_alpha=args.validation_alpha,
+        enable_annotation=args.enable_annotation
     )
 
     # Solve the task or problem
@@ -503,5 +522,5 @@ def main(args):
 if __name__ == "__main__":
     args = parse_arguments()
     if args.capture_logits:
-         print("Note: Global logit capture flag enabled. Engines configured to capture may save logs to file.")
+         print("Note: Global logit capture flag disabled. Engines configured to capture may save logs to file.")
     main(args)
