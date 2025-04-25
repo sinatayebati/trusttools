@@ -6,6 +6,18 @@ from typing import List, Dict, Any, Tuple, Optional
 from trusttools.engine.openai import ChatOpenAI, GenerationResult
 from pydantic import BaseModel, Field
 
+
+def _span_to_token_range(token_starts, span_start, span_end):
+        """
+        Map a character span [span_start, span_end) in generated_text
+        to (first_token_idx, last_token_idx) in logprobs_data.
+        Assumes token_starts[i] is the char offset where token i begins.
+        """
+        import bisect
+        left  = bisect.bisect_left(token_starts, span_start)
+        right = bisect.bisect_right(token_starts, span_end - 1) - 1
+        return left, max(left, right)
+
 class Atom(BaseModel):
     """Represents a single atomic claim extracted from a response."""
     text: str
@@ -45,6 +57,7 @@ class ConformalValidator:
                 print(f"Loaded pre-calibrated threshold: {self.calibrated_threshold} from {threshold_file}")
             except Exception as e:
                 print(f"Warning: Failed to load threshold from {threshold_file}: {e}")
+
 
     def extract_subclaims(self, query: str, query_analysis: str, response: str, enable_annotation: bool = False) -> List[Atom]:
         """
@@ -129,6 +142,14 @@ Begin extracting sub-claims now:
             
             generated_text = extraction_result.text
             logprobs_data = extraction_result.logprob_content
+
+            # Build a list that maps each token to its character start offset
+            token_starts = []
+            if isinstance(logprobs_data, list):
+                running = ""
+                for tok in logprobs_data:
+                    token_starts.append(len(running))
+                    running += tok["token"]
             
             if not logprobs_data:
                 print("Warning: No logprobs captured during generation")
@@ -174,30 +195,22 @@ Begin extracting sub-claims now:
                 claim_start_idx = generated_text.find(claim_with_tags)
                 claim_end_idx = claim_start_idx + len(claim_with_tags) if claim_start_idx >= 0 else -1
                 
-                # Calculate claim-specific logprob if we can find the claim in the text
-                claim_logprob = None
-                if claim_start_idx >= 0 and logprobs_data and isinstance(logprobs_data, list):
-                    # Get tokens that correspond to this claim
-                    claim_tokens = []
-                    token_text = ""
-                    for token_info in logprobs_data:
-                        if 'token' in token_info and 'logprob' in token_info:
-                            token_text += token_info['token']
-                            # If we're within the claim text bounds
-                            if token_text.find(claim_text) >= 0:
-                                claim_tokens.append(token_info['logprob'])
-                    
-                    # Calculate mean logprob for this specific claim
-                    if claim_tokens:
-                        mean_logprob = float(np.mean([lp for lp in claim_tokens if lp is not None]))
-                        # map mean log-prob  (−∞,0]  →  (0,1] with a strictly-monotone exp ----------
-                        prob_score = float(np.clip(np.exp(mean_logprob), 1e-12, 1.0))
-                    else:
-                        prob_score = None
+                # Calculate claim-specific log-prob in one shot using char→token mapping
+                claim_prob_score = None
+                if (claim_start_idx >= 0 and logprobs_data and isinstance(logprobs_data, list)):
+                    t0, t1 = _span_to_token_range(token_starts,
+                                                claim_start_idx,
+                                                claim_end_idx)
+                    slice_lp = [logprobs_data[i]["logprob"] for i in range(t0, t1 + 1)
+                                if logprobs_data[i]["logprob"] is not None]
+                    if slice_lp:
+                        mean_lp = float(np.mean(slice_lp))
+                        claim_prob_score = float(np.clip(np.exp(mean_lp), 1e-12, 1.0))
+
                 
                 atoms.append(Atom(
                     text=claim_text.strip(),
-                    score_logprobs=prob_score,
+                    score_logprobs=claim_prob_score,
                     score_selfeval=score_selfeval,
                     valid=valid
                 ))
