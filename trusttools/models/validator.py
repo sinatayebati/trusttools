@@ -189,11 +189,15 @@ Begin extracting sub-claims now:
                     
                     # Calculate mean logprob for this specific claim
                     if claim_tokens:
-                        claim_logprob = sum(lp for lp in claim_tokens if lp is not None) / len(claim_tokens)
+                        mean_logprob = float(np.mean([lp for lp in claim_tokens if lp is not None]))
+                        # map mean log-prob  (−∞,0]  →  (0,1] with a strictly-monotone exp ----------
+                        prob_score = float(np.clip(np.exp(mean_logprob), 1e-12, 1.0))
+                    else:
+                        prob_score = None
                 
                 atoms.append(Atom(
                     text=claim_text.strip(),
-                    score_logprobs=claim_logprob,
+                    score_logprobs=prob_score,
                     score_selfeval=score_selfeval,
                     valid=valid
                 ))
@@ -204,9 +208,10 @@ Begin extracting sub-claims now:
             if token_logprobs:
                 claims_missing_logprobs = [atom for atom in atoms if atom.score_logprobs is None]
                 if claims_missing_logprobs:
-                    global_mean_logprob = sum(lp for lp in token_logprobs if lp is not None) / sum(1 for lp in token_logprobs if lp is not None)
+                    global_mean_logprob = float(np.mean([lp for lp in token_logprobs if lp is not None]))
+                    global_prob_score   = float(np.clip(np.exp(global_mean_logprob), 1e-12, 1.0))
                     for atom in claims_missing_logprobs:
-                        atom.score_logprobs = global_mean_logprob
+                        atom.score_logprobs = global_prob_score
             
             return atoms
             
@@ -261,9 +266,8 @@ Begin extracting sub-claims now:
                 if atom.score_logprobs is None:
                     atom.valid = False
                 else:
-                    inverted_score = -float(atom.score_logprobs)
-                    # Valid if inverted score is BELOW threshold (less bad)
-                    atom.valid = inverted_score <= threshold
+                    # scores are now positive and “higher = better”
+                    atom.valid = atom.score_logprobs >= threshold
                     if atom.valid:
                         kept_count += 1
                 trimmed_atoms.append(atom)
