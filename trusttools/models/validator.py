@@ -6,6 +6,18 @@ from typing import List, Dict, Any, Tuple, Optional
 from trusttools.engine.openai import ChatOpenAI, GenerationResult
 from pydantic import BaseModel, Field
 
+
+def _span_to_token_range(token_starts, span_start, span_end):
+        """
+        Map a character span [span_start, span_end) in generated_text
+        to (first_token_idx, last_token_idx) in logprobs_data.
+        Assumes token_starts[i] is the char offset where token i begins.
+        """
+        import bisect
+        left  = bisect.bisect_left(token_starts, span_start)
+        right = bisect.bisect_right(token_starts, span_end - 1) - 1
+        return left, max(left, right)
+
 class Atom(BaseModel):
     """Represents a single atomic claim extracted from a response."""
     text: str
@@ -38,11 +50,17 @@ class ConformalValidator:
         
         # Load pre-calibrated threshold if provided
         self.calibrated_threshold = None
+        self.required_accuracy = None
         if threshold_file:
             try:
                 threshold_data = np.load(threshold_file)
                 self.calibrated_threshold = float(threshold_data['threshold'])
-                print(f"Loaded pre-calibrated threshold: {self.calibrated_threshold} from {threshold_file}")
+                # Load required_accuracy if available (for paper's method)
+                if 'required_accuracy' in threshold_data:
+                    self.required_accuracy = float(threshold_data['required_accuracy'])
+                    print(f"Loaded conformal threshold: {self.calibrated_threshold} (required_accuracy: {self.required_accuracy}) from {threshold_file}")
+                else:
+                    print(f"Loaded conformal threshold: {self.calibrated_threshold} from {threshold_file}")
             except Exception as e:
                 print(f"Warning: Failed to load threshold from {threshold_file}: {e}")
 
@@ -80,7 +98,7 @@ IMPORTANT: You must follow this exact format to output each sub-claim:
 [The atomic statement extracted from the response]
 </claim>
 <score>
-[A self-evaluation score between 0.0 and 1.0 for factuality and relevance. Be critical and use the full range from 0.0 to 1.0, where 0.0 means completely incorrect or irrelevant, and 1.0 means perfectly factual and relevant. Most claims should fall somewhere in between.]
+[A self-evaluation score between 0.0 and 1.0 for factuality and relevance. Be very critical in analyzing factuality and relevance of each subclaim and use the full range from 0.0 to 1.0, where 0.0 means completely incorrect or irrelevant, and 1.0 means perfectly factual and relevant. Most claims should fall somewhere in between. If the claim is not factual or relevant, set the score to 0.0. If the claim is perfectly factual and relevant, set the score to 1.0. ]
 </score>
 {valid_tag_section}
 
@@ -96,7 +114,7 @@ AGENT RESPONSE:
 Instructions:
 - Break down the response into the smallest meaningful sub-claims
 - Ensure each sub-claim is a standalone, factual statement
-- Evaluate each sub-claim independently and critically
+- Evaluate each sub-claim independently and critically for factuality and relevance to the user query
 - Use the full scoring range (0.0-1.0), not just high scores
 - Be thorough in identifying all factual claims in the response
 - Place each sub-claim within the exact marker tags as shown above
@@ -129,6 +147,14 @@ Begin extracting sub-claims now:
             
             generated_text = extraction_result.text
             logprobs_data = extraction_result.logprob_content
+
+            # Build a list that maps each token to its character start offset
+            token_starts = []
+            if isinstance(logprobs_data, list):
+                running = ""
+                for tok in logprobs_data:
+                    token_starts.append(len(running))
+                    running += tok["token"]
             
             if not logprobs_data:
                 print("Warning: No logprobs captured during generation")
@@ -174,30 +200,22 @@ Begin extracting sub-claims now:
                 claim_start_idx = generated_text.find(claim_with_tags)
                 claim_end_idx = claim_start_idx + len(claim_with_tags) if claim_start_idx >= 0 else -1
                 
-                # Calculate claim-specific logprob if we can find the claim in the text
-                claim_logprob = None
-                if claim_start_idx >= 0 and logprobs_data and isinstance(logprobs_data, list):
-                    # Get tokens that correspond to this claim
-                    claim_tokens = []
-                    token_text = ""
-                    for token_info in logprobs_data:
-                        if 'token' in token_info and 'logprob' in token_info:
-                            token_text += token_info['token']
-                            # If we're within the claim text bounds
-                            if token_text.find(claim_text) >= 0:
-                                claim_tokens.append(token_info['logprob'])
-                    
-                    # Calculate mean logprob for this specific claim
-                    if claim_tokens:
-                        mean_logprob = float(np.mean([lp for lp in claim_tokens if lp is not None]))
-                        # map mean log-prob  (−∞,0]  →  (0,1] with a strictly-monotone exp ----------
-                        prob_score = float(np.clip(np.exp(mean_logprob), 1e-12, 1.0))
-                    else:
-                        prob_score = None
+                # Calculate claim-specific log-prob in one shot using char→token mapping
+                claim_prob_score = None
+                if (claim_start_idx >= 0 and logprobs_data and isinstance(logprobs_data, list)):
+                    t0, t1 = _span_to_token_range(token_starts,
+                                                claim_start_idx,
+                                                claim_end_idx)
+                    slice_lp = [logprobs_data[i]["logprob"] for i in range(t0, t1 + 1)
+                                if logprobs_data[i]["logprob"] is not None]
+                    if slice_lp:
+                        mean_lp = float(np.mean(slice_lp))
+                        claim_prob_score = float(np.clip(np.exp(mean_lp), 1e-12, 1.0))
+
                 
                 atoms.append(Atom(
                     text=claim_text.strip(),
-                    score_logprobs=prob_score,
+                    score_logprobs=claim_prob_score,
                     score_selfeval=score_selfeval,
                     valid=valid
                 ))
@@ -224,70 +242,67 @@ Begin extracting sub-claims now:
 
     def trim_split_conformal(self, atoms: List[Atom], alpha: float) -> List[Atom]:
         """
-        Trims atoms using Split Conformal Prediction based on either:
-        1. A pre-calibrated threshold loaded from file (preferred)
-        2. A batch-computed threshold if no pre-calibrated threshold is available
+        Applies conformal prediction threshold exactly as in the paper:
+        Keep subclaims where score >= threshold.
+        
+        This provides the guarantee that with probability (1-alpha), 
+        the fraction of correct subclaims will be >= required_accuracy.
 
         Args:
             atoms: List of Atom objects with scores.
-            alpha: Significance level (e.g., 0.1 means keep claims in the top 90% confidence).
+            alpha: Significance level (used for fallback if no threshold available).
 
         Returns:
             List of Atom objects with the `valid` flag updated.
         """
-        print(f"Trimming atoms with alpha = {alpha}...")
+        print(f"Applying conformal prediction with alpha = {alpha}...")
         if not atoms:
             return []
 
         # Check if validation is already done
         if all(atom.valid is not None for atom in atoms):
-            print("Atoms already validated, skipping conformal inference")
+            print("Atoms already validated, skipping conformal prediction")
             return atoms
 
-        # Filter out atoms without a valid score for threshold calculation
+        # Filter out atoms without valid scores
         valid_atoms = [atom for atom in atoms if atom.score_logprobs is not None]
 
         if not valid_atoms:
-            print("Warning: No valid scores found for trimming. Marking all atoms as invalid.")
+            print("Warning: No valid scores found. Marking all atoms as invalid.")
             for atom in atoms:
                 atom.valid = False
             return atoms
 
-        # Use pre-calibrated threshold if available
+        # Use pre-calibrated threshold (paper's method)
         if self.calibrated_threshold is not None:
-            print(f"Using pre-calibrated threshold: {self.calibrated_threshold}")
-            threshold = self.calibrated_threshold
+            print(f"Using calibrated threshold: {self.calibrated_threshold}")
+            if self.required_accuracy is not None:
+                print(f"Conformal guarantee: with prob. {1-alpha:.1%}, ≥{self.required_accuracy:.1%} of accepted subclaims will be correct")
             
-            # When using the pre-calibrated threshold, we need to invert the scores
-            # because the threshold was calibrated on inverted scores (higher = worse)
-            trimmed_atoms = []
+            # Apply threshold directly: keep atoms where score >= threshold
             kept_count = 0
             for atom in atoms:
                 if atom.score_logprobs is None:
                     atom.valid = False
                 else:
-                    # scores are now positive and “higher = better”
-                    atom.valid = atom.score_logprobs >= threshold
+                    atom.valid = atom.score_logprobs >= self.calibrated_threshold
                     if atom.valid:
                         kept_count += 1
-                trimmed_atoms.append(atom)
         else:
             # Fallback: Use self-evaluation scores if available
             print("No calibrated threshold available. Using self-evaluation scores for filtering.")
             kept_count = 0
             for atom in atoms:
                 if atom.score_selfeval is not None:
-                    atom.valid = atom.score_selfeval >= 0.5  # Simple threshold on self-evaluation
+                    atom.valid = atom.score_selfeval >= 0.5
                 else:
                     atom.valid = True  # Keep by default if no scores
                 
                 if atom.valid:
                     kept_count += 1
-            
-            trimmed_atoms = atoms
         
-        print(f"Trimming complete. Kept {kept_count}/{len(atoms)} atoms.")
-        return trimmed_atoms
+        print(f"Conformal prediction complete. Kept {kept_count}/{len(atoms)} atoms.")
+        return atoms
 
     def merge(self, atoms: List[Atom]) -> str:
         """
