@@ -19,14 +19,15 @@ LLM="gpt-4.1-nano"
 # Keep tools the same, unless validation requires specific tools (unlikely)
 ENABLED_TOOLS="Generalist_Solution_Generator_Tool"
 
-# Set the desired alpha for validation
-VALIDATION_ALPHA=0.1
+# Set the desired alpha for validation (should match or be close to calibration alpha)
+VALIDATION_ALPHA=0.2
 
 # Path to the pre-calibrated conformal threshold file
 THRESHOLD_FILE="$TASK/conformal_threshold.npz"
 
-# Set to "true" to enable LLM-based annotation for validation instead of conformal
-ENABLE_ANNOTATION="true"
+# Set to "false" to use conformal prediction (what you just calibrated)
+# Set to "true" to use LLM-based annotation instead
+ENABLE_ANNOTATION="false"
 ############
 
 cd $PROJECT_DIR
@@ -34,7 +35,7 @@ mkdir -p $LOG_DIR
 mkdir -p $OUT_DIR # Ensure output directory is also created
 
 # Define the array of specific indices
-indices=($(seq 82 82))
+indices=($(seq 4793 4793))
 
 # Skip indices if the output file already exists
 new_indices=()
